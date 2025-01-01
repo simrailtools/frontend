@@ -152,20 +152,20 @@ export type JourneySnapshotFrame = {
   /**
    * The steam id of the current driver.
    */
-  driverSteamId?: string;
+  driverSteamId?: string | null;
 
   /**
    * The id of the signal ahead of the journey.
    */
-  nextSignalId?: string;
+  nextSignalId?: string | null;
   /**
    * The distance (in meters) of the journey to the next signal.
    */
-  nextSignalDistance?: number;
+  nextSignalDistance?: number | null;
   /**
    * The max speed allowed at the signal ahead of the journey.
    */
-  nextSignalMaxSpeed?: number;
+  nextSignalMaxSpeed?: number | null;
 
   /**
    * The latitude of the current journey position.
@@ -193,20 +193,20 @@ export type JourneyUpdateFrame = {
   /**
    * The steam id of the current driver.
    */
-  driverSteamId?: string;
+  driverSteamId?: string | null;
 
   /**
    * The id of the signal ahead of the journey.
    */
-  nextSignalId?: string;
+  nextSignalId?: string | null;
   /**
    * The distance (in meters) of the journey to the next signal.
    */
-  nextSignalDistance?: number;
+  nextSignalDistance?: number | null;
   /**
    * The max speed allowed at the signal ahead of the journey.
    */
-  nextSignalMaxSpeed?: number;
+  nextSignalMaxSpeed?: number | null;
 
   /**
    * The latitude of the current journey position.
