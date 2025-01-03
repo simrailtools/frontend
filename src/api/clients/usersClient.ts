@@ -1,5 +1,5 @@
+import { type BaseRequestOptions, requestJson, SIT_BASE_URL } from "../client.ts";
 import type { BySteamIdsRequestOptions, SitUser } from "../types/users.types.ts";
-import { requestJson, SIT_BASE_URL } from "../client.ts";
 
 /**
  * The base url for the users api client.
@@ -12,7 +12,7 @@ const USERS_V1_BASE_URL = `${SIT_BASE_URL}/sit-users/v1`;
  * to the id in the response array. The provided ids must all be in the SteamID64 format.
  * @param request the request options.
  */
-export const usersBySteamIds = (request: BySteamIdsRequestOptions): Promise<SitUser[]> => {
+export const usersBySteamIds = (request: BaseRequestOptions & BySteamIdsRequestOptions): Promise<SitUser[]> => {
   const { steamIds, abortSignal } = request;
   return requestJson<SitUser[]>({
     url: `${USERS_V1_BASE_URL}/by-steam-ids`,

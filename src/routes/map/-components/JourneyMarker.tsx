@@ -1,18 +1,21 @@
-import { type FC, memo } from "react";
-import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
-import { Popup, Tooltip } from "react-leaflet";
+import { usersBySteamIds } from "@/api/clients/usersClient.ts";
+import personOffIcon from "@/assets/icons/person_off.svg";
+import { useSelectedJourney } from "@/hooks/useSelectedJourney.tsx";
+import { steamAvatarUrl } from "@/lib/utils.ts";
+import { constructIcon } from "@/routes/map/-lib/iconFactory.ts";
+import type { JourneySnapshotWithRequiredPosition } from "@/routes/map/-lib/map.types.ts";
 import { useQuery } from "@tanstack/react-query";
-import type { JourneySnapshotWithRequiredPosition } from "./map.types.ts";
-import { usersBySteamIds } from "../api/clients/usersClient.ts";
-import { constructIcon } from "./iconFactory.ts";
-import { steamAvatarUrl } from "../lib/utils.ts";
 import type { BaseIconOptions, Icon } from "leaflet";
+import { type FC, memo } from "react";
+import { Popup, Tooltip } from "react-leaflet";
+import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
 
 interface MarkerComponentProps {
   journey: JourneySnapshotWithRequiredPosition;
 }
 
-export const MarkerComponent: FC<MarkerComponentProps> = memo(({ journey }) => {
+export const JourneyMarker: FC<MarkerComponentProps> = memo(({ journey }) => {
+  const { setSelectedJourney } = useSelectedJourney();
   const { isLoading, data } = useQuery({
     enabled: !!journey.driverSteamId,
     queryKey: ["steam_user", journey.driverSteamId],
@@ -34,7 +37,7 @@ export const MarkerComponent: FC<MarkerComponentProps> = memo(({ journey }) => {
     });
   } else {
     icon = constructIcon({
-      url: "/person_off.svg",
+      url: personOffIcon,
       alt: "Bot Driver Icon",
       className: "rounded-full h-8 w-8 p-1",
       popupAnchor: [0, -14],
@@ -42,9 +45,20 @@ export const MarkerComponent: FC<MarkerComponentProps> = memo(({ journey }) => {
   }
 
   return (
-    <ReactLeafletDriftMarker duration={750} icon={icon} position={[journey.positionLat, journey.positionLng]}>
-      <Tooltip permanent={true} direction={"bottom"} offset={[0, 20]}>
-        {journey.journeyId}
+    <ReactLeafletDriftMarker
+      icon={icon}
+      duration={750}
+      zIndexOffset={50}
+      alt={`${journey.category} ${journey.number}`}
+      position={[journey.positionLat, journey.positionLng]}
+      eventHandlers={{
+        mouseup: () => setSelectedJourney(journey),
+      }}
+    >
+      <Tooltip permanent={true} direction={"bottom"} offset={[0, 20]} opacity={0.9} className={"!p-0.5"}>
+        <span className={"text-[85%]"}>
+          {journey.category} {journey.number}
+        </span>
       </Tooltip>
       <Popup>
         {journey.category} {journey.number} ({journey.journeyId})

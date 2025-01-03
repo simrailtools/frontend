@@ -1,5 +1,7 @@
+import errorIcon from "@/assets/icons/error.svg";
+import refreshIcon from "@/assets/icons/refresh.svg";
+import { cn } from "@/lib/utils.ts";
 import L, { type BaseIconOptions, type Icon, type PointExpression } from "leaflet";
-import { cn } from "../lib/utils.ts";
 
 /**
  * Options for construction of a leaflet marker icon.
@@ -27,7 +29,7 @@ export const constructIcon = (options: IconOptions): Icon<BaseIconOptions> => {
     return constructIconInternal({
       ...options,
       alt: "Loading",
-      url: "/refresh.svg",
+      url: refreshIcon,
       imgClassName: "animate-spin",
     });
   }
@@ -40,7 +42,7 @@ export const constructIcon = (options: IconOptions): Icon<BaseIconOptions> => {
   // display a load error if the url is not present/couldn't be loaded
   return constructIconInternal({
     ...options,
-    url: "/error.svg",
+    url: errorIcon,
     alt: "Load Error",
   });
 };
@@ -58,7 +60,7 @@ const constructIconInternal = (options: IconOptions & { imgClassName?: string })
           src="${url}" 
           alt="${alt}" 
           class="h-full w-full ${imgClassName}" 
-          onerror="this.src='/error.svg'; this.classList.remove('${imgClassName}')" 
+          onerror="this.src='data:image/svg+xml;base64,${btoa(errorIcon)}'; if ('${imgClassName}'.trim()) { this.classList.remove('${imgClassName}'); }"
         />
       </div>
     `,

@@ -20,7 +20,8 @@ export type RequestOptions = BaseRequestOptions & {
   method: string;
   body?: unknown;
   headers?: Record<string, string>;
-  urlParams?: Record<string, string>;
+  pathParams?: Record<string, string>;
+  queryParams?: Record<string, string | Array<string> | null | undefined>;
 };
 
 /**
@@ -28,10 +29,36 @@ export type RequestOptions = BaseRequestOptions & {
  * @param options the options to build the http request based on.
  */
 export const request = (options: RequestOptions): Promise<Response> => {
-  const { url, method, body, headers = {}, urlParams = {}, abortSignal } = options;
+  const { url, method, body, headers = {}, pathParams = {}, queryParams, abortSignal } = options;
 
   const bodyData = JSON.stringify(body);
-  const formattedUrl = url.replace(/{{(.*?)}}/g, (match, key) => urlParams[key] || match);
+  let formattedUrl = url.replace(/{{(.*?)}}/g, (match, key) => pathParams[key] || match);
+
+  // append the query params that were provided to the url
+  if (queryParams) {
+    const queryParamsToAppend: Array<string> = [];
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value === undefined || value === null) {
+        continue;
+      }
+
+      if (Array.isArray(value)) {
+        // if the value is an array append one query param per value
+        for (const item of value) {
+          queryParamsToAppend.push(`${key}=${item}`);
+        }
+      } else {
+        // append the single query value
+        queryParamsToAppend.push(`${key}=${value}`);
+      }
+    }
+
+    // append the query params to the url if any were provided
+    if (queryParamsToAppend.length > 0) {
+      const query = `?${queryParamsToAppend.join("&")}`;
+      formattedUrl += query;
+    }
+  }
 
   // set content type to application/json if a body is provided
   // as the backend requires this in order to parse the body

@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+@theme {
+  --background-image-trains-snow: url("assets/background/background_snow.jpg");
+  --background-image-trains-night: url("assets/background/background_night.jpg");
+  --background-image-trains-normal: url("assets/background/background_normal.jpg");
+}
