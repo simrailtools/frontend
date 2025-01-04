@@ -33,9 +33,12 @@ export const Route = createFileRoute("/map/$serverId")({
 function MapServerComponent() {
   const server = Route.useLoaderData();
   return (
-    <SelectedJourneyProvider>
-      <ServerMap server={server} />
-    </SelectedJourneyProvider>
+    <>
+      <title>{`${server.code.toUpperCase()} Map`}</title>
+      <SelectedJourneyProvider>
+        <ServerMap server={server} />
+      </SelectedJourneyProvider>
+    </>
   );
 }
 
