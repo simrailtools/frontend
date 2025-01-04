@@ -7,7 +7,7 @@ import type { JourneySnapshotWithRequiredPosition } from "@/routes/map/-lib/map.
 import { useQuery } from "@tanstack/react-query";
 import type { BaseIconOptions, Icon } from "leaflet";
 import { type FC, memo } from "react";
-import { Popup, Tooltip } from "react-leaflet";
+import { Tooltip } from "react-leaflet";
 import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
 
 interface MarkerComponentProps {
@@ -60,9 +60,6 @@ export const JourneyMarker: FC<MarkerComponentProps> = memo(({ journey }) => {
           {journey.category} {journey.number}
         </span>
       </Tooltip>
-      <Popup>
-        {journey.category} {journey.number} ({journey.journeyId})
-      </Popup>
     </ReactLeafletDriftMarker>
   );
 });
