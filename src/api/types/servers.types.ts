@@ -26,6 +26,7 @@ export type GetServerByCodeRequestOptions = {
 export type SitServer = {
   id: string;
   code: string;
+  timezoneId: string;
   region: "ASIA" | "EUROPE" | "US_NORTH";
   tags: Array<string>;
   spokenLanguage: string | null;
