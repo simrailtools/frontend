@@ -5,7 +5,7 @@ import { Suspense, lazy } from "react";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   component: Root,
-  notFoundComponent: () => <ErrorDisplay errorMessage={"The requested page does not exist"}/>,
+  notFoundComponent: () => <ErrorDisplay errorMessage={"The requested page does not exist"} />,
 });
 
 /**
@@ -14,11 +14,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 const TanStackRouterDevtools = import.meta.env.PROD
   ? () => null
   : lazy(async () => {
-    const res = await import("@tanstack/router-devtools");
-    return {
-      default: res.TanStackRouterDevtools,
-    };
-  });
+      const res = await import("@tanstack/router-devtools");
+      return {
+        default: res.TanStackRouterDevtools,
+      };
+    });
 
 /**
  * Component for the TanStack query devtools, only displayed in dev.
@@ -26,19 +26,19 @@ const TanStackRouterDevtools = import.meta.env.PROD
 const TanStackQueryDevtools = import.meta.env.PROD
   ? () => null
   : lazy(async () => {
-    const res = await import("@tanstack/react-query-devtools");
-    return {
-      default: res.ReactQueryDevtools,
-    };
-  });
+      const res = await import("@tanstack/react-query-devtools");
+      return {
+        default: res.ReactQueryDevtools,
+      };
+    });
 
 function Root() {
   return (
     <>
-      <Outlet/>
+      <Outlet />
       <Suspense>
-        <TanStackRouterDevtools position={"bottom-left"}/>
-        <TanStackQueryDevtools buttonPosition={"bottom-right"}/>
+        <TanStackRouterDevtools position={"bottom-left"} />
+        <TanStackQueryDevtools buttonPosition={"bottom-right"} />
       </Suspense>
     </>
   );
