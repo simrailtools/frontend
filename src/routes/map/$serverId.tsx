@@ -2,12 +2,14 @@ import "leaflet/dist/leaflet.css";
 import { serverByCodeRequestOptions, serverByIdQueryOptions } from "@/api/clients/serversClient.ts";
 import type { SitServer } from "@/api/types/servers.types.ts";
 import useEventWebsocket from "@/hooks/useEventWebsocket.ts";
+import { JourneyFocusHandler } from "@/routes/map/-components/JourneyFocusHandler.tsx";
 import { JourneyMarker } from "@/routes/map/-components/JourneyMarker.tsx";
+import { MapElementWithoutEventPropagation } from "@/routes/map/-components/MapElementWithoutEventPropagation.tsx";
 import { isJourneyWithPosition } from "@/routes/map/-lib/map.types.ts";
 import { createFileRoute } from "@tanstack/react-router";
-import type { FC } from "react";
-import { MapContainer, Marker, TileLayer } from "react-leaflet";
-import { SelectedJourneyProvider } from "../../hooks/useSelectedJourney.tsx";
+import { type FC, useEffect } from "react";
+import { MapContainer, Marker, TileLayer, useMapEvent } from "react-leaflet";
+import { SelectedJourneyProvider, useSelectedJourney } from "../../hooks/useSelectedJourney.tsx";
 
 export const Route = createFileRoute("/map/$serverId")({
   loader: async ({ context: { queryClient }, params: { serverId } }) => {
@@ -36,12 +38,31 @@ function MapServerComponent() {
   );
 }
 
+const MapEventHandler: FC = () => {
+  // reset journey selection when clicked somewhere on the map
+  const { setSelectedJourney } = useSelectedJourney();
+  useMapEvent("click", () => setSelectedJourney(null));
+
+  return null;
+};
+
 const ServerMap: FC<{ server: SitServer }> = ({ server }) => {
   const { journeys, dispatchPosts } = useEventWebsocket({
     servers: [server.id],
     journeys: server.id,
     dispatchPosts: server.id,
   });
+
+  // update the selected journey or reset it to null if the journey was removed
+  const { selectedJourney, setSelectedJourney } = useSelectedJourney();
+  useEffect(() => {
+    if (selectedJourney) {
+      const updatedJourney = journeys
+        .filter(isJourneyWithPosition)
+        .find(journey => journey.journeyId === selectedJourney.journeyId);
+      setSelectedJourney(updatedJourney ?? null);
+    }
+  }, [journeys, selectedJourney, setSelectedJourney]);
 
   // satellite
   // https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
@@ -71,12 +92,18 @@ const ServerMap: FC<{ server: SitServer }> = ({ server }) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://sgx.geodatenzentrum.de/wmts_topplus_open/tile/1.0.0/web/default/WEBMERCATOR/{z}/{y}/{x}.png"
         />
-        {journeys.filter(isJourneyWithPosition).map(train => (
-          <JourneyMarker key={train.journeyId} journey={train} />
+
+        {journeys.filter(isJourneyWithPosition).map(journey => (
+          <JourneyMarker key={journey.journeyId} journey={journey} />
         ))}
-        {dispatchPosts.map(train => (
-          <Marker key={train.postId} position={[train.latitude, train.longitude]} />
+        {dispatchPosts.map(dispatchPost => (
+          <Marker key={dispatchPost.postId} position={[dispatchPost.latitude, dispatchPost.longitude]} />
         ))}
+
+        <MapElementWithoutEventPropagation>
+          <MapEventHandler />
+          <JourneyFocusHandler />
+        </MapElementWithoutEventPropagation>
       </MapContainer>
     </>
   );
