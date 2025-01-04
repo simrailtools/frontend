@@ -2,6 +2,7 @@ import "leaflet/dist/leaflet.css";
 import { serverByCodeRequestOptions, serverByIdQueryOptions } from "@/api/clients/serversClient.ts";
 import type { SitServer } from "@/api/types/servers.types.ts";
 import useEventWebsocket from "@/hooks/useEventWebsocket.ts";
+import { DispatchPostMarker } from "@/routes/map/-components/DispatchPostMarker.tsx";
 import { JourneyFocusHandler } from "@/routes/map/-components/JourneyFocusHandler.tsx";
 import { JourneyMarker } from "@/routes/map/-components/JourneyMarker.tsx";
 import { MapElementWithoutEventPropagation } from "@/routes/map/-components/MapElementWithoutEventPropagation.tsx";
@@ -9,7 +10,7 @@ import { ServerStatusPopup } from "@/routes/map/-components/ServerStatusPopup.ts
 import { isJourneyWithPosition } from "@/routes/map/-lib/map.types.ts";
 import { createFileRoute } from "@tanstack/react-router";
 import { type FC, useEffect } from "react";
-import { MapContainer, Marker, TileLayer, useMapEvent } from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvent } from "react-leaflet";
 import { SelectedJourneyProvider, useSelectedJourney } from "../../hooks/useSelectedJourney.tsx";
 
 export const Route = createFileRoute("/map/$serverId")({
@@ -102,7 +103,7 @@ const ServerMap: FC<{ server: SitServer }> = ({ server }) => {
           <JourneyMarker key={journey.journeyId} journey={journey} />
         ))}
         {dispatchPosts.map(dispatchPost => (
-          <Marker key={dispatchPost.postId} position={[dispatchPost.latitude, dispatchPost.longitude]} />
+          <DispatchPostMarker key={dispatchPost.postId} dispatchPost={dispatchPost} />
         ))}
 
         <MapElementWithoutEventPropagation>
