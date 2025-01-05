@@ -1,6 +1,5 @@
 import "leaflet/dist/leaflet.css";
 import { serverByCodeRequestOptions, serverByIdQueryOptions } from "@/api/clients/serversClient.ts";
-import type { SitServer } from "@/api/types/servers.types.ts";
 import useEventWebsocket from "@/hooks/useEventWebsocket.ts";
 import { DispatchPostMarker } from "@/routes/map/-components/DispatchPostMarker.tsx";
 import { JourneyFocusHandler } from "@/routes/map/-components/JourneyFocusHandler.tsx";
@@ -37,7 +36,7 @@ function MapServerComponent() {
     <>
       <title>{`${server.code.toUpperCase()} Map`}</title>
       <SelectedJourneyProvider>
-        <ServerMap server={server} />
+        <ServerMap serverId={server.id} />
       </SelectedJourneyProvider>
     </>
   );
@@ -51,11 +50,11 @@ const MapEventHandler: FC = () => {
   return null;
 };
 
-const ServerMap: FC<{ server: SitServer }> = ({ server }) => {
-  const { journeys, dispatchPosts } = useEventWebsocket({
-    servers: [server.id],
-    journeys: server.id,
-    dispatchPosts: server.id,
+const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
+  const { servers, journeys, dispatchPosts } = useEventWebsocket({
+    servers: [serverId],
+    journeys: serverId,
+    dispatchPosts: serverId,
   });
 
   // update the selected journey or reset it to null if the journey was removed
@@ -68,6 +67,9 @@ const ServerMap: FC<{ server: SitServer }> = ({ server }) => {
       setSelectedJourney(updatedJourney ?? null);
     }
   }, [journeys, selectedJourney, setSelectedJourney]);
+
+  // get the updated selected server info
+  const server = servers.find(updatedServer => updatedServer.serverId === serverId);
 
   // satellite
   // https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
@@ -85,7 +87,7 @@ const ServerMap: FC<{ server: SitServer }> = ({ server }) => {
 
   return (
     <>
-      <ServerStatusPopup server={server} />
+      {server && <ServerStatusPopup server={server} />}
       <div className={"top-0 right-0 fixed bg-gray-800 z-[100000]"}>world</div>
       <MapContainer
         zoom={10}

@@ -1,5 +1,5 @@
 import "react-clock/dist/Clock.css";
-import type { SitServer } from "@/api/types/servers.types.ts";
+import type { ServerSnapshotFrame } from "@/api/types/event.types.ts";
 import { Heading } from "@/components/Heading.tsx";
 import { timeStringAtIsoZoneOffset } from "@/lib/timeHelper.ts";
 import { cn } from "@/lib/utils.ts";
@@ -7,7 +7,7 @@ import { type FC, useEffect, useState } from "react";
 import Clock from "react-clock";
 import { MdOutlineTimer, MdOutlineTimerOff } from "react-icons/md";
 
-export const ServerStatusPopup: FC<{ server: SitServer }> = ({ server }) => {
+export const ServerStatusPopup: FC<{ server: ServerSnapshotFrame }> = ({ server }) => {
   // holds the current server time in 'HH:mm:ss' format,
   // updated every second based on the server timezone id
   const [serverTime, setServerTime] = useState<string | null>(null);
