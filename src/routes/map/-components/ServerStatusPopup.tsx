@@ -1,7 +1,7 @@
 import "react-clock/dist/Clock.css";
 import type { ServerSnapshotFrame } from "@/api/types/event.types.ts";
 import { Heading } from "@/components/Heading.tsx";
-import { timeStringAtIsoZoneOffset } from "@/lib/timeHelper.ts";
+import { formatLocalTimezoneDifference, timeStringAtIsoZoneOffset } from "@/lib/timeHelper.ts";
 import { cn } from "@/lib/utils.ts";
 import { type FC, memo, useEffect, useState } from "react";
 import Clock from "react-clock";
@@ -24,6 +24,10 @@ export const ServerStatusPopup: FC<{ server: ServerSnapshotFrame }> = memo(({ se
   const clockVisibilityToggle = () => {
     setClockVisible(prevState => !prevState);
   };
+
+  // get the formatted timezone diff from the local user timezone to the server timezone
+  // it's null in case there is no difference between the timezones
+  const serverTimezoneDiff = formatLocalTimezoneDifference(server.timezoneId);
 
   return (
     <div className="fixed top-4 left-4 p-4 bg-white shadow-lg rounded-lg min-w-36 max-w-48 z-[10000]">
@@ -56,6 +60,7 @@ export const ServerStatusPopup: FC<{ server: ServerSnapshotFrame }> = memo(({ se
           </button>
         </div>
       </div>
+      {serverTimezoneDiff && clockVisible && <span className={"text-sm"}>{serverTimezoneDiff}</span>}
       {clockVisible && (
         <div className={"mt-1"}>
           <Clock
