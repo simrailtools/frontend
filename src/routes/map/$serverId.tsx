@@ -7,6 +7,7 @@ import { safeExternalUrlTag } from "@/lib/urlFactory.ts";
 import { DispatchPostMarker } from "@/routes/map/-components/DispatchPostMarker.tsx";
 import { JourneyFocusHandler } from "@/routes/map/-components/JourneyFocusHandler.tsx";
 import { JourneyMarker } from "@/routes/map/-components/JourneyMarker.tsx";
+import { JourneyPopup } from "@/routes/map/-components/JourneyPopup.tsx";
 import { MapElementWithoutEventPropagation } from "@/routes/map/-components/MapElementWithoutEventPropagation.tsx";
 import { MapEventHandler } from "@/routes/map/-components/MapEventHandler.tsx";
 import { PointMarker } from "@/routes/map/-components/PointMarker.tsx";
@@ -93,7 +94,8 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
   return (
     <>
       {server && <ServerStatusPopup server={server} />}
-      <div className={"top-0 right-0 fixed bg-gray-800 z-[100000]"}>world</div>
+      {selectedJourney && <JourneyPopup journey={selectedJourney} />}
+
       <MapContainer
         zoom={10}
         zoomControl={false}
