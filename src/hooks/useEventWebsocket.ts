@@ -1,4 +1,5 @@
 import { useState } from "react";
+import useWebSocket, { ReadyState } from "react-use-websocket";
 import type {
   DispatchPostSnapshotFrame,
   DispatchPostUpdateFrame,
@@ -8,7 +9,6 @@ import type {
   ServerSnapshotFrame,
   ServerUpdateFrame,
 } from "../api/types/event.types.ts";
-import useWebSocket, { ReadyState } from "react-use-websocket";
 
 /**
  * The backend socket base url for events.
@@ -112,7 +112,13 @@ const useEventWebsocket = (selector: EventSelector): EventWebsocketHook => {
    * @param event the message receive event.
    */
   const handleIncomingMessage = (event: MessageEvent) => {
-    const frame = JSON.parse(event.data) as EventStreamFrame<unknown>;
+    // skip decoding of ping responses or non-text messages
+    const data = event.data;
+    if (typeof data !== "string" || data === "pong") {
+      return;
+    }
+
+    const frame = JSON.parse(data) as EventStreamFrame<unknown>;
     switch (frame.frameType) {
       case "SERVER": {
         const serverUpdateFrame = frame as EventStreamFrame<ServerSnapshotFrame | ServerUpdateFrame>;
@@ -151,13 +157,18 @@ const useEventWebsocket = (selector: EventSelector): EventWebsocketHook => {
   };
 
   const { readyState } = useWebSocket(buildWebsocketUrl(selector), {
-    // send a heartbeat ping message every 15 seconds to the server,
-    // close the connection if no pong is received within 10 seconds
+    // send a heartbeat ping text message every 15 seconds to the server,
+    // close the connection if no message is received within 90 seconds
+    // this high value is used as some browsers (such as chrome) might go
+    // into resource saving mode which causes any effect handlers to only be
+    // checked every minute which will cause timeouts if the value is less
+    // than or equal to 60 seconds. note that heartbeats are only sent to the
+    // server if the server is not sending messages within the provided interval
     heartbeat: {
       message: "ping",
       returnMessage: "pong",
-      timeout: 10000,
-      interval: 15000,
+      timeout: 90_000,
+      interval: 15_000,
     },
     // never update the lastMessage, re-render should only happen
     // if the state of this hook is updated
