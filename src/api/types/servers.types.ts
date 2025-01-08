@@ -30,8 +30,8 @@ export type SitServer = {
   region: "ASIA" | "EUROPE" | "US_NORTH";
   tags: Array<string>;
   spokenLanguage: string | null;
-  lastUpdated: Date;
-  registeredSince: Date;
+  lastUpdated: string;
+  registeredSince: string;
   online: boolean;
   deleted: boolean;
 };
