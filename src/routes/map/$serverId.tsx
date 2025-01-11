@@ -42,7 +42,7 @@ function MapServerComponent() {
   const server = Route.useLoaderData();
   return (
     <>
-      <title>{`${server.code.toUpperCase()} Map`}</title>
+      <title>{`${server.code.toUpperCase()} Map - SIT`}</title>
       <SelectedJourneyProvider>
         <ServerMap serverId={server.id} />
       </SelectedJourneyProvider>
