@@ -112,7 +112,8 @@ export const JourneyPopup: FC<{ journey: JourneySnapshotFrame }> = ({ journey })
         <div className="mt-4">
           <Link
             target={"_blank"}
-            to={"/"}
+            to={"/journeys/$journeyId"}
+            params={{ journeyId }}
             className="w-full block text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg"
           >
             Journey Details

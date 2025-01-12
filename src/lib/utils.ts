@@ -1,13 +1,12 @@
 import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 /**
  * Joins the inputs (conditionally) and deduplicates them using tailwind-merge.
  * @param inputs the inputs to join.
  */
-// TODO: add tailwind-merge into the mix once its released for v4
-// with tw-merge: twMerge(clsx(inputs))
 export const cn = (...inputs: ClassValue[]) => {
-  return clsx(inputs);
+  return twMerge(clsx(inputs));
 };
 
 /**

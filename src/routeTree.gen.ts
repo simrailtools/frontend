@@ -14,6 +14,7 @@ import { Route as rootRoute } from "./routes/__root"
 import { Route as IndexImport } from "./routes/index"
 import { Route as MapIndexImport } from "./routes/map/index"
 import { Route as MapServerIdImport } from "./routes/map/$serverId"
+import { Route as JourneysJourneyIdImport } from "./routes/journeys/$journeyId"
 
 // Create/Update Routes
 
@@ -35,6 +36,12 @@ const MapServerIdRoute = MapServerIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const JourneysJourneyIdRoute = JourneysJourneyIdImport.update({
+  id: "/journeys/$journeyId",
+  path: "/journeys/$journeyId",
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module "@tanstack/react-router" {
@@ -44,6 +51,13 @@ declare module "@tanstack/react-router" {
       path: "/"
       fullPath: "/"
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    "/journeys/$journeyId": {
+      id: "/journeys/$journeyId"
+      path: "/journeys/$journeyId"
+      fullPath: "/journeys/$journeyId"
+      preLoaderRoute: typeof JourneysJourneyIdImport
       parentRoute: typeof rootRoute
     }
     "/map/$serverId": {
@@ -67,12 +81,14 @@ declare module "@tanstack/react-router" {
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
+  "/journeys/$journeyId": typeof JourneysJourneyIdRoute
   "/map/$serverId": typeof MapServerIdRoute
   "/map": typeof MapIndexRoute
 }
 
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
+  "/journeys/$journeyId": typeof JourneysJourneyIdRoute
   "/map/$serverId": typeof MapServerIdRoute
   "/map": typeof MapIndexRoute
 }
@@ -80,27 +96,30 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   "/": typeof IndexRoute
+  "/journeys/$journeyId": typeof JourneysJourneyIdRoute
   "/map/$serverId": typeof MapServerIdRoute
   "/map/": typeof MapIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: "/" | "/map/$serverId" | "/map"
+  fullPaths: "/" | "/journeys/$journeyId" | "/map/$serverId" | "/map"
   fileRoutesByTo: FileRoutesByTo
-  to: "/" | "/map/$serverId" | "/map"
-  id: "__root__" | "/" | "/map/$serverId" | "/map/"
+  to: "/" | "/journeys/$journeyId" | "/map/$serverId" | "/map"
+  id: "__root__" | "/" | "/journeys/$journeyId" | "/map/$serverId" | "/map/"
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  JourneysJourneyIdRoute: typeof JourneysJourneyIdRoute
   MapServerIdRoute: typeof MapServerIdRoute
   MapIndexRoute: typeof MapIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  JourneysJourneyIdRoute: JourneysJourneyIdRoute,
   MapServerIdRoute: MapServerIdRoute,
   MapIndexRoute: MapIndexRoute,
 }
@@ -116,12 +135,16 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/journeys/$journeyId",
         "/map/$serverId",
         "/map/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/journeys/$journeyId": {
+      "filePath": "journeys/$journeyId.tsx"
     },
     "/map/$serverId": {
       "filePath": "map/$serverId.tsx"
