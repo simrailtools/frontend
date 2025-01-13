@@ -1,5 +1,6 @@
 /* hack for setting a "settings" icon as the layer control button icon */
 .leaflet-control-layers-toggle {
   margin: 0.125rem;
-  background-image: url("/src/assets/icons/settings.svg");
+  background-size: contain !important;
+  background-image: url("/src/assets/icons/settings.svg") !important;
 }
