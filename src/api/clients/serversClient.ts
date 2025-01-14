@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { type BaseRequestOptions, requestConditionalJson, requestJson, SIT_BASE_URL } from "../client.ts";
+import { type BaseRequestOptions, SIT_BASE_URL, requestConditionalJson, requestJson } from "../client.ts";
 import type {
   GetServerByCodeRequestOptions,
   GetServerByIdRequestOptions,

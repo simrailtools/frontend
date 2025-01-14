@@ -1,4 +1,4 @@
-import { type BaseRequestOptions, requestJson, SIT_BASE_URL } from "../client.ts";
+import { type BaseRequestOptions, SIT_BASE_URL, requestJson } from "../client.ts";
 import type { BySteamIdsRequestOptions, SitUser } from "../types/users.types.ts";
 
 /**

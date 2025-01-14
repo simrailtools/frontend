@@ -3,7 +3,7 @@ import type { ListServersRequestOptions, SitServer } from "@/api/types/servers.t
 import { BackgroundImage } from "@/components/BackgroundImage.tsx";
 import { cn } from "@/lib/utils.ts";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import type { FC } from "react";
 
 /**
