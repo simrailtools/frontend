@@ -43,7 +43,7 @@ const ServerItem: FC<{ server: SitServer }> = ({ server }) => {
     <Link
       to={"/map/$serverId"}
       params={{ serverId: server.code }}
-      className={"flex flex-col bg-gray-100 border border-gray-400 rounded-xl shadow shadow-gray-300 p-3 m-2"}
+      className={"flex flex-col bg-gray-100 border-2 border-gray-600 rounded-xl p-3 m-2"}
     >
       <div className={"flex flex-row w-96 items-center"}>
         <span className={"relative flex h-3 w-3"}>
@@ -64,6 +64,9 @@ const ServerItem: FC<{ server: SitServer }> = ({ server }) => {
         </span>
         <div className={"ml-2 font-bold"}>{server.code}</div>
         {server.spokenLanguage && <div className={"ml-2"}>({server.spokenLanguage})</div>}
+        <span className={"ml-auto text-sm font-semibold"}>
+          {server.timezoneId === "Z" ? "UTC" : `UTC${server.timezoneId}`}
+        </span>
       </div>
       {server.tags && <span className={"text-gray-600 text-sm"}>{server.tags.join(", ")}</span>}
     </Link>
