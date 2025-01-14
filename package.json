@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "biome lint && eslint .",
     "format": "biome format --fix",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "ci": "biome ci && eslint . --quiet --no-color && pnpm run build"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.64.0",

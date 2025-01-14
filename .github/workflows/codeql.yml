@@ -1,0 +1,51 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ "main" ]
+    tags-ignore: [ "**" ]
+  pull_request:
+  schedule:
+    - cron: '00 2 * * *'
+
+concurrency:
+  cancel-in-progress: true
+  group: cq-${{ github.event.pull_request.number || github.job }}
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    if: ${{ !startsWith(github.ref, 'refs/heads/renovate/') }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          cache: pnpm
+          node-version: latest
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          tools: linked
+          languages: "javascript-typescript"
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
