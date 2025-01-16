@@ -1,12 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":combinePatchMinorReleases", "group:allNonMajor"],
+  "extends": ["config:recommended", "schedule:earlyMondays", ":combinePatchMinorReleases", "group:allNonMajor"],
   "labels": ["t: dependencies"],
   "reviewers": ["derklaro"],
-  "prHourlyLimit": 10,
+  "timezone": "UTC",
   "rebaseWhen": "conflicted",
-  "rebaseLabel": "s: rebase",
-  "stopUpdatingLabel": "s: stop updates",
   "commitMessagePrefix": "chore: ",
   "commitMessageAction": "update"
 }
