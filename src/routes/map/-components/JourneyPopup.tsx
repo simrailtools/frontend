@@ -94,7 +94,9 @@ export const JourneyPopup: FC<{ journey: JourneySnapshotFrame }> = ({ journey })
             <MdTraffic className="text-gray-700" size={24} />
             <span className={"flex space-x-1"}>
               <span className={"font-medium"}>{nextSignalId}</span>
-              {nextSignalDistance && <span>in {formatDistance(nextSignalDistance)}</span>}
+              {nextSignalDistance !== undefined && nextSignalDistance !== null && (
+                <span>in {formatDistance(nextSignalDistance)}</span>
+              )}
               <span
                 className={cn(
                   "font-medium",
