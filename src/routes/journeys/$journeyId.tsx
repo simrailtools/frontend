@@ -87,7 +87,7 @@ function JourneyDetailsComponent() {
   return (
     <>
       <title>{`${firstEvent.transport.category} ${firstEvent.transport.number} - SIT`}</title>
-      <div className="bg-gray-100 p-2 rounded-md shadow-md">
+      <div className="bg-gray-100 p-2 min-h-dvh min-w-screen">
         <div className={"hidden lg:block"}>
           <JourneyBaseInfo journey={journey} composition={vehicleComposition} timeFormatter={timeFormatter} />
           <div className={"flex items-center p-4"}>

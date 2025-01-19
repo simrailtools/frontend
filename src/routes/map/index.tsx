@@ -27,7 +27,7 @@ function MapIndexComponent() {
   });
   return (
     <BackgroundImage>
-      <div className={"flex flex-col justify-center items-center min-h-screen"}>
+      <div className={"flex flex-col justify-center items-center min-h-dvh"}>
         {data
           ?.sort((left, right) => left.code.localeCompare(right.code, "en"))
           .map(server => (
