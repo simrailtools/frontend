@@ -102,7 +102,7 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
         preferCanvas={true}
         center={[50.5305, 19.6394]}
         scrollWheelZoom={true}
-        className={"min-h-dvh min-w-screen"}
+        className={"min-h-dvh w-full"}
       >
         <LayersControl position={"bottomright"} collapsed={true} sortLayers={false}>
           {/* Selectable base layers for the map */}
