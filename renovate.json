@@ -4,6 +4,7 @@
   "labels": ["t: dependencies"],
   "reviewers": ["derklaro"],
   "timezone": "UTC",
+  "rangeStrategy": "bump",
   "rebaseWhen": "conflicted",
   "commitMessagePrefix": "chore: ",
   "commitMessageAction": "update"
