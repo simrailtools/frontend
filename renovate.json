@@ -7,5 +7,11 @@
   "rangeStrategy": "bump",
   "rebaseWhen": "conflicted",
   "commitMessagePrefix": "chore: ",
-  "commitMessageAction": "update"
+  "commitMessageAction": "update",
+  "vulnerabilityAlerts": {
+    "rangeStrategy": "bump",
+    "commitMessagePrefix": "chore(sec): ",
+    "commitMessageAction": "update",
+    "commitMessageSuffix": ""
+  }
 }
