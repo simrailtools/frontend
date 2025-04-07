@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "biome lint && eslint .",
-    "format": "biome format --fix",
+    "format": "biome check --fix && eslint . --fix",
     "preview": "vite preview",
     "ci": "biome ci && eslint . --quiet --no-color && pnpm run build"
   },
