@@ -59,9 +59,12 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
   const server = servers.find(updatedServer => updatedServer.serverId === serverId);
 
   // update the selected journey or reset it to null if the journey was removed
+  // only update if there is at least one known journey, an empty journeys array
+  // (after a journey was selected) should only happen when the websocket has to
+  // reconnect to the backend which shouldn't remove the focused journey
   const { selectedJourney, setSelectedJourney } = useSelectedJourney();
   useEffect(() => {
-    if (selectedJourney) {
+    if (selectedJourney && journeys.length > 0) {
       const updatedJourney = journeys
         .filter(isJourneyWithPosition)
         .find(journey => journey.journeyId === selectedJourney.journeyId);
