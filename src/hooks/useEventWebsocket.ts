@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useDocumentVisibility } from "@/hooks/useDocumentVisibility.tsx";
+import { useEffect, useState } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import type {
   DispatchPostSnapshotFrame,
@@ -97,6 +98,27 @@ const useEventWebsocket = (selector: EventSelector): EventWebsocketHook => {
   const [journeys, setJourneys] = useState<Array<JourneySnapshotFrame>>([]);
   const [dispatchPosts, setDispatchPosts] = useState<Array<DispatchPostSnapshotFrame>>([]);
 
+  // disconnect the websocket connection if the page is in the background
+  // for 60 seconds. this is due to the fact that modern browsers often have
+  // a 'sleep' mode build-in for tabs, which prevents them from doing updates
+  // when in the background. this leads to a huge amount of event frames getting
+  // queued up (sometimes a few gigabytes), which makes the page greatly
+  // unresponsive when the tab is being opened again
+  const isDocumentVisible = useDocumentVisibility();
+  const [shouldConnect, setShouldConnect] = useState(true);
+  useEffect(() => {
+    if (isDocumentVisible) {
+      setShouldConnect(true);
+      console.debug("Re-enabled connection to backend after window became visible");
+    } else {
+      const timeout = setTimeout(() => {
+        setShouldConnect(false);
+        console.debug("Disabled connection to backend after window was invisible for 60 seconds");
+      }, 60_000);
+      return () => clearTimeout(timeout);
+    }
+  }, [isDocumentVisible]);
+
   /**
    * Handles the establishment of a connection to the backend, resets the known state.
    */
@@ -156,33 +178,37 @@ const useEventWebsocket = (selector: EventSelector): EventWebsocketHook => {
     }
   };
 
-  const { readyState } = useWebSocket(buildWebsocketUrl(selector), {
-    // send a heartbeat ping text message every 15 seconds to the server,
-    // close the connection if no message is received within 90 seconds
-    // this high value is used as some browsers (such as chrome) might go
-    // into resource saving mode which causes any effect handlers to only be
-    // checked every minute which will cause timeouts if the value is less
-    // than or equal to 60 seconds. note that heartbeats are only sent to the
-    // server if the server is not sending messages within the provided interval
-    heartbeat: {
-      message: "ping",
-      returnMessage: "pong",
-      timeout: 90_000,
-      interval: 15_000,
+  const { readyState } = useWebSocket(
+    buildWebsocketUrl(selector),
+    {
+      // send a heartbeat ping text message every 15 seconds to the server,
+      // close the connection if no message is received within 90 seconds
+      // this high value is used as some browsers (such as chrome) might go
+      // into resource saving mode which causes any effect handlers to only be
+      // checked every minute which will cause timeouts if the value is less
+      // than or equal to 60 seconds. note that heartbeats are only sent to the
+      // server if the server is not sending messages within the provided interval
+      heartbeat: {
+        message: "ping",
+        returnMessage: "pong",
+        timeout: 90_000,
+        interval: 15_000,
+      },
+      // never update the lastMessage, re-render should only happen
+      // if the state of this hook is updated
+      filter: () => false,
+      // try to reconnect to the backend every 2.5s for a maximum of 10 minutes
+      retryOnError: true,
+      shouldReconnect: () => shouldConnect,
+      reconnectAttempts: 240,
+      reconnectInterval: 2500,
+      // websocket event handlers
+      onOpen: handleConnectionEstablished,
+      onClose: () => console.debug("Connection to SIT-Event backend closed"),
+      onMessage: handleIncomingMessage,
     },
-    // never update the lastMessage, re-render should only happen
-    // if the state of this hook is updated
-    filter: () => false,
-    // try to reconnect to the backend every 2.5s for a maximum of 10 minutes
-    retryOnError: true,
-    shouldReconnect: () => true,
-    reconnectAttempts: 240,
-    reconnectInterval: 2500,
-    // websocket event handlers
-    onOpen: handleConnectionEstablished,
-    onClose: () => console.debug("Connection to SIT-Event backend closed"),
-    onMessage: handleIncomingMessage,
-  });
+    shouldConnect,
+  );
 
   const connected = readyState === ReadyState.OPEN;
   return {
