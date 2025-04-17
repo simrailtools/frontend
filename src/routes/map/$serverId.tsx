@@ -51,12 +51,18 @@ function MapServerComponent() {
 }
 
 const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
-  const { servers, journeys, dispatchPosts } = useEventWebsocket({
-    servers: [serverId],
-    journeys: serverId,
-    dispatchPosts: serverId,
-  });
+  const { servers, journeys, dispatchPosts, connected, sendRequest } = useEventWebsocket();
   const server = servers.find(updatedServer => updatedServer.serverId === serverId);
+
+  // subscribe to all data of the server when the connection to the backend was (re-) established
+  useEffect(() => {
+    if (connected) {
+      const baseRequest = { action: "subscribe", dataVersion: 1, serverId } as const;
+      sendRequest({ ...baseRequest, dataType: "servers", dataId: serverId });
+      sendRequest({ ...baseRequest, dataType: "dispatch-posts", dataId: "+" });
+      sendRequest({ ...baseRequest, dataType: "journey-positions", dataId: "+" });
+    }
+  }, [serverId, connected, sendRequest]);
 
   // update the selected journey or reset it to null if the journey was removed
   // only update if there is at least one known journey, an empty journeys array

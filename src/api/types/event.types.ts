@@ -2,7 +2,7 @@
  * A wrapper for a single frame being sent by the backend.
  */
 export type EventStreamFrame<T> = {
-  frameType: "SERVER" | "JOURNEY" | "DISPATCH_POST";
+  frameType: "SERVER" | "JOURNEY_POSITION" | "JOURNEY_DETAILS" | "DISPATCH_POST";
   updateType: "ADD" | "REMOVE" | "UPDATE";
   frameData: T;
 };

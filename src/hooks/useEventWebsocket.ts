@@ -14,18 +14,17 @@ import type {
 /**
  * The backend socket base url for events.
  */
-const EVENT_API_BACKEND_URL = "wss://apis.simrail.tools/sit-events/v1";
+const EVENT_API_BACKEND_URL = "wss://apis.simrail.tools/sit-events";
 
 /**
- * Selector type to provide events to subscribe to. Each value is a server id
- * (which means that the subscription is applied to all e.g. journeys on a server).
- * Subscriptions to journeys and dispatch posts can only be applied to one server at
- * a time, however a subscription to updates of multiple servers is possible.
+ * Request to the backend to subscribe/unsubscribe to/from event data frames.
  */
-type EventSelector = {
-  servers?: Array<string>;
-  journeys?: string;
-  dispatchPosts?: string;
+export type EventDataRequest = {
+  action: "subscribe" | "unsubscribe";
+  dataType: "servers" | "dispatch-posts" | "journey-positions";
+  dataVersion: 1;
+  serverId: string;
+  dataId: string | "+";
 };
 
 /**
@@ -33,30 +32,12 @@ type EventSelector = {
  * the snapshots that are currently valid and are updated by the backend. If not subscribed
  * to update events of a specific type (e.g. journeys), the corresponding array is empty.
  */
-type EventWebsocketHook = {
+export type EventWebsocketHook = {
   connected: boolean;
   servers: Array<ServerSnapshotFrame>;
   journeys: Array<JourneySnapshotFrame>;
   dispatchPosts: Array<DispatchPostSnapshotFrame>;
-};
-
-/**
- * Builds the websocket connect url based on the given event selector.
- * @param selector the provided event selector to build the requested events selector based off.
- */
-const buildWebsocketUrl = (selector: EventSelector) => {
-  const params: Array<string> = [];
-  if (selector.servers) {
-    params.push(`event=server,${selector.servers.join(",")}`);
-  }
-  if (selector.journeys) {
-    params.push(`event=journey,${selector.journeys}`);
-  }
-  if (selector.dispatchPosts) {
-    params.push(`event=dispatch_post,${selector.dispatchPosts}`);
-  }
-
-  return `${EVENT_API_BACKEND_URL}?${params.join("&")}`;
+  sendRequest: (request: EventDataRequest) => void;
 };
 
 /**
@@ -91,9 +72,8 @@ const applyEventStreamFrame = <S, U>(
 
 /**
  * Hook to connect to the SIT-Event websocket backend, subscribing to specific events.
- * @param selector the selector that determines which events are to be subscribed to.
  */
-const useEventWebsocket = (selector: EventSelector): EventWebsocketHook => {
+const useEventWebsocket = (): EventWebsocketHook => {
   const [servers, setServers] = useState<Array<ServerSnapshotFrame>>([]);
   const [journeys, setJourneys] = useState<Array<JourneySnapshotFrame>>([]);
   const [dispatchPosts, setDispatchPosts] = useState<Array<DispatchPostSnapshotFrame>>([]);
@@ -153,7 +133,7 @@ const useEventWebsocket = (selector: EventSelector): EventWebsocketHook => {
         );
         break;
       }
-      case "JOURNEY": {
+      case "JOURNEY_POSITION": {
         const journeyUpdateFrame = frame as EventStreamFrame<JourneySnapshotFrame | JourneyUpdateFrame>;
         setJourneys(prevState =>
           applyEventStreamFrame<JourneySnapshotFrame, JourneyUpdateFrame>(
@@ -178,8 +158,8 @@ const useEventWebsocket = (selector: EventSelector): EventWebsocketHook => {
     }
   };
 
-  const { readyState } = useWebSocket(
-    buildWebsocketUrl(selector),
+  const { sendMessage, readyState } = useWebSocket(
+    EVENT_API_BACKEND_URL,
     {
       // send a heartbeat ping text message every 15 seconds to the server,
       // close the connection if no message is received within 90 seconds
@@ -210,12 +190,22 @@ const useEventWebsocket = (selector: EventSelector): EventWebsocketHook => {
     shouldConnect,
   );
 
+  /**
+   * Sends a formatted data request text to the backend based on the given request object.
+   * @param request the request to format and send to the backend.
+   */
+  const sendRequest = (request: EventDataRequest) => {
+    const formattedMessage = `sit-events/${request.action}/${request.dataType}/v${request.dataVersion}/${request.serverId}/${request.dataId}`;
+    sendMessage(formattedMessage);
+  };
+
   const connected = readyState === ReadyState.OPEN;
   return {
     connected,
     servers,
     journeys,
     dispatchPosts,
+    sendRequest,
   };
 };
 
