@@ -1,5 +1,5 @@
 import { useDocumentVisibility } from "@/hooks/useDocumentVisibility.tsx";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import type {
   DispatchPostSnapshotFrame,
@@ -194,10 +194,13 @@ const useEventWebsocket = (): EventWebsocketHook => {
    * Sends a formatted data request text to the backend based on the given request object.
    * @param request the request to format and send to the backend.
    */
-  const sendRequest = (request: EventDataRequest) => {
-    const formattedMessage = `sit-events/${request.action}/${request.dataType}/v${request.dataVersion}/${request.serverId}/${request.dataId}`;
-    sendMessage(formattedMessage);
-  };
+  const sendRequest = useCallback(
+    (request: EventDataRequest) => {
+      const formattedMessage = `sit-events/${request.action}/${request.dataType}/v${request.dataVersion}/${request.serverId}/${request.dataId}`;
+      sendMessage(formattedMessage);
+    },
+    [sendMessage],
+  );
 
   const connected = readyState === ReadyState.OPEN;
   return {
