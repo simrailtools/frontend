@@ -1,7 +1,10 @@
 /**
  * The base url (http) for the sit api.
  */
-export const SIT_BASE_URL = "https://apis.simrail.tools";
+export const SIT_BASE_URL =
+  import.meta.env.PROD || !import.meta.env.BACKEND_HTTP_URL
+    ? "https://apis.simrail.tools"
+    : import.meta.env.BACKEND_HTTP_URL;
 
 /**
  * Base request options that can be passed to all clients.

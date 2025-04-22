@@ -14,7 +14,10 @@ import type {
 /**
  * The backend socket base url for events.
  */
-const EVENT_API_BACKEND_URL = "wss://apis.simrail.tools/sit-events";
+export const EVENT_API_BACKEND_URL =
+  import.meta.env.PROD || !import.meta.env.BACKEND_WS_URL
+    ? "wss://apis.simrail.tools/sit-events"
+    : import.meta.env.BACKEND_WS_URL;
 
 /**
  * Request to the backend to subscribe/unsubscribe to/from event data frames.
