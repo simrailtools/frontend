@@ -14,7 +14,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 const TanStackRouterDevtools = import.meta.env.PROD
   ? () => null
   : lazy(async () => {
-      const res = await import("@tanstack/router-devtools");
+      const res = await import("@tanstack/react-router-devtools");
       return {
         default: res.TanStackRouterDevtools,
       };
