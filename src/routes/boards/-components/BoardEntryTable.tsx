@@ -24,7 +24,6 @@ export const BoardEntryTable: FC<BoardEntryTableProps> = ({
   const { data: boardEntries, isLoading } = useQuery({
     queryFn: async ({ signal }) => {
       const [timeStart, timeEnd] = getBoardFetchTimeRange(server, timeSpan);
-      console.log(timeStart, timeEnd);
       const { data } = await listBoardDepartures({
         query: {
           serverId: server.id,
