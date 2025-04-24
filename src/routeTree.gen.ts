@@ -13,6 +13,7 @@
 import { Route as rootRoute } from "./routes/__root"
 import { Route as IndexImport } from "./routes/index"
 import { Route as MapIndexImport } from "./routes/map/index"
+import { Route as BoardsIndexImport } from "./routes/boards/index"
 import { Route as MapServerIdImport } from "./routes/map/$serverId"
 import { Route as JourneysJourneyIdImport } from "./routes/journeys/$journeyId"
 
@@ -27,6 +28,12 @@ const IndexRoute = IndexImport.update({
 const MapIndexRoute = MapIndexImport.update({
   id: "/map/",
   path: "/map/",
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BoardsIndexRoute = BoardsIndexImport.update({
+  id: "/boards/",
+  path: "/boards/",
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -67,6 +74,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof MapServerIdImport
       parentRoute: typeof rootRoute
     }
+    "/boards/": {
+      id: "/boards/"
+      path: "/boards"
+      fullPath: "/boards"
+      preLoaderRoute: typeof BoardsIndexImport
+      parentRoute: typeof rootRoute
+    }
     "/map/": {
       id: "/map/"
       path: "/map"
@@ -83,6 +97,7 @@ export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
   "/journeys/$journeyId": typeof JourneysJourneyIdRoute
   "/map/$serverId": typeof MapServerIdRoute
+  "/boards": typeof BoardsIndexRoute
   "/map": typeof MapIndexRoute
 }
 
@@ -90,6 +105,7 @@ export interface FileRoutesByTo {
   "/": typeof IndexRoute
   "/journeys/$journeyId": typeof JourneysJourneyIdRoute
   "/map/$serverId": typeof MapServerIdRoute
+  "/boards": typeof BoardsIndexRoute
   "/map": typeof MapIndexRoute
 }
 
@@ -98,15 +114,27 @@ export interface FileRoutesById {
   "/": typeof IndexRoute
   "/journeys/$journeyId": typeof JourneysJourneyIdRoute
   "/map/$serverId": typeof MapServerIdRoute
+  "/boards/": typeof BoardsIndexRoute
   "/map/": typeof MapIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: "/" | "/journeys/$journeyId" | "/map/$serverId" | "/map"
+  fullPaths:
+    | "/"
+    | "/journeys/$journeyId"
+    | "/map/$serverId"
+    | "/boards"
+    | "/map"
   fileRoutesByTo: FileRoutesByTo
-  to: "/" | "/journeys/$journeyId" | "/map/$serverId" | "/map"
-  id: "__root__" | "/" | "/journeys/$journeyId" | "/map/$serverId" | "/map/"
+  to: "/" | "/journeys/$journeyId" | "/map/$serverId" | "/boards" | "/map"
+  id:
+    | "__root__"
+    | "/"
+    | "/journeys/$journeyId"
+    | "/map/$serverId"
+    | "/boards/"
+    | "/map/"
   fileRoutesById: FileRoutesById
 }
 
@@ -114,6 +142,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   JourneysJourneyIdRoute: typeof JourneysJourneyIdRoute
   MapServerIdRoute: typeof MapServerIdRoute
+  BoardsIndexRoute: typeof BoardsIndexRoute
   MapIndexRoute: typeof MapIndexRoute
 }
 
@@ -121,6 +150,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   JourneysJourneyIdRoute: JourneysJourneyIdRoute,
   MapServerIdRoute: MapServerIdRoute,
+  BoardsIndexRoute: BoardsIndexRoute,
   MapIndexRoute: MapIndexRoute,
 }
 
@@ -137,6 +167,7 @@ export const routeTree = rootRoute
         "/",
         "/journeys/$journeyId",
         "/map/$serverId",
+        "/boards/",
         "/map/"
       ]
     },
@@ -148,6 +179,9 @@ export const routeTree = rootRoute
     },
     "/map/$serverId": {
       "filePath": "map/$serverId.tsx"
+    },
+    "/boards/": {
+      "filePath": "boards/index.tsx"
     },
     "/map/": {
       "filePath": "map/index.tsx"
