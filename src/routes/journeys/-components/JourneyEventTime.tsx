@@ -1,9 +1,9 @@
-import type { SitJourneyEvent } from "@/api/types/journeys.types.ts";
+import type { JourneyEventDto } from "@/api/generated";
 import { cn } from "@/lib/utils.ts";
 import type { FC } from "react";
 
 type JourneyEventTimeProps = {
-  event: SitJourneyEvent;
+  event: JourneyEventDto;
   timeFormatter: (isoTime: string) => string;
 };
 

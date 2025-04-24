@@ -1,7 +1,10 @@
 import "leaflet/dist/leaflet.css";
 import "./map.css";
-import { listPointsQueryOptions } from "@/api/clients/pointClient.ts";
-import { serverByCodeRequestOptions, serverByIdQueryOptions } from "@/api/clients/serversClient.ts";
+import {
+  findServerByCodeOptions,
+  findServerByIdOptions,
+  listPointsOptions,
+} from "@/api/generated/@tanstack/react-query.gen.ts";
 import useEventWebsocket from "@/hooks/useEventWebsocket.ts";
 import { safeExternalUrlTag } from "@/lib/urlFactory.ts";
 import { DispatchPostMarker } from "@/routes/map/-components/DispatchPostMarker.tsx";
@@ -24,8 +27,8 @@ export const Route = createFileRoute("/map/$serverId")({
   loader: async ({ context: { queryClient }, params: { serverId } }) => {
     const getServer = () => {
       return serverId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)?.length
-        ? queryClient.ensureQueryData(serverByIdQueryOptions({ serverId }))
-        : queryClient.ensureQueryData(serverByCodeRequestOptions({ serverCode: serverId }));
+        ? queryClient.ensureQueryData(findServerByIdOptions({ path: { id: serverId } }))
+        : queryClient.ensureQueryData(findServerByCodeOptions({ path: { code: serverId } }));
     };
 
     const server = await getServer();
@@ -80,7 +83,7 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
 
   // fetch points located on the map, filter out points that have an associated dispatch post
   const { data: pointsListData } = useQuery({
-    ...listPointsQueryOptions({ limit: 10_000 }),
+    ...listPointsOptions({ query: { limit: 10_000 } }),
     refetchInterval: 5 * 60 * 1000, // 5 minutes
   });
   const points = useMemo(() => {

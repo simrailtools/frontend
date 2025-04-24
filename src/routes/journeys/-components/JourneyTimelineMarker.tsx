@@ -1,13 +1,13 @@
-import type { SitJourneyEvent } from "@/api/types/journeys.types.ts";
+import type { JourneyEventDto } from "@/api/generated";
 import { cn } from "@/lib/utils.ts";
 import type { FC } from "react";
 
 type JourneyTimelineMarkerProps = {
-  arrival?: SitJourneyEvent;
-  departure?: SitJourneyEvent;
+  arrival?: JourneyEventDto;
+  departure?: JourneyEventDto;
 };
 
-const eventTimeStatus = (arrival?: SitJourneyEvent, departure?: SitJourneyEvent) => {
+const eventTimeStatus = (arrival?: JourneyEventDto, departure?: JourneyEventDto) => {
   // check if the event is happening now
   if (
     arrival &&

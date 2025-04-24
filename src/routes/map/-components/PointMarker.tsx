@@ -1,8 +1,8 @@
-import type { SitPoint } from "@/api/types/points.types.ts";
+import type { PointInfoDto } from "@/api/generated";
 import type { FC } from "react";
 import { CircleMarker, Tooltip } from "react-leaflet";
 
-export const PointMarker: FC<{ point: SitPoint }> = ({ point }) => {
+export const PointMarker: FC<{ point: PointInfoDto }> = ({ point }) => {
   const { name, position } = point;
   return (
     <CircleMarker center={[position.latitude, position.longitude]} radius={5} fill={true} fillOpacity={1}>

@@ -1,7 +1,9 @@
-import { journeyByIdQueryOptions } from "@/api/clients/journeysClient.ts";
-import { serverByIdQueryOptions } from "@/api/clients/serversClient.ts";
-import { vehicleCompositionByJourneyIdQueryOptions } from "@/api/clients/vehiclesClient.ts";
-import type { SitJourneyEvent } from "@/api/types/journeys.types.ts";
+import type { JourneyEventDto } from "@/api/generated";
+import {
+  findJourneyByIdOptions,
+  findServerByIdOptions,
+  findVehicleCompositionByJourneyIdOptions,
+} from "@/api/generated/@tanstack/react-query.gen.ts";
 import { JourneyBaseInfo } from "@/routes/journeys/-components/JourneyBaseInfo.tsx";
 import { JourneyStopItem } from "@/routes/journeys/-components/JourneyStopItem.tsx";
 import { useQuery } from "@tanstack/react-query";
@@ -10,12 +12,12 @@ import { DateTime } from "luxon";
 
 export const Route = createFileRoute("/journeys/$journeyId")({
   loader: async ({ context: { queryClient }, params: { journeyId } }) => {
-    const journey = await queryClient.ensureQueryData(journeyByIdQueryOptions({ id: journeyId }));
+    const journey = await queryClient.ensureQueryData(findJourneyByIdOptions({ path: { id: journeyId } }));
     if (!journey) {
       throw new Error("The requested journey does not exist");
     }
 
-    const server = await queryClient.ensureQueryData(serverByIdQueryOptions({ serverId: journey.serverId }));
+    const server = await queryClient.ensureQueryData(findServerByIdOptions({ path: { id: journey.serverId } }));
     if (!server) {
       throw new Error("The server the journey runs on does not exist");
     }
@@ -29,13 +31,13 @@ function JourneyDetailsComponent() {
   const { journeyId } = Route.useParams();
   const { server } = Route.useLoaderData();
   const { data: journey } = useQuery({
-    ...journeyByIdQueryOptions({ id: journeyId }),
+    ...findJourneyByIdOptions({ path: { id: journeyId } }),
     refetchInterval: query => {
       return query.state.data?.lastSeenTime ? false : 30_000;
     },
   });
   const { data: vehicleComposition } = useQuery({
-    ...vehicleCompositionByJourneyIdQueryOptions({ journeyId }),
+    ...findVehicleCompositionByJourneyIdOptions({ path: { id: journeyId } }),
     enabled: query => {
       if (query.state.data) {
         return !!journey?.firstSeenTime && query.state.data.status !== "REAL";
@@ -72,7 +74,7 @@ function JourneyDetailsComponent() {
 
       return acc;
     },
-    [] as Array<[SitJourneyEvent | undefined, SitJourneyEvent | undefined]>,
+    [] as Array<[JourneyEventDto | undefined, JourneyEventDto | undefined]>,
   );
 
   // formats the given iso date/time in the server timezone using the optionally provided format

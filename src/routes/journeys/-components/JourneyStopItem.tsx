@@ -1,4 +1,4 @@
-import type { SitJourneyEvent } from "@/api/types/journeys.types.ts";
+import type { JourneyEventDto } from "@/api/generated";
 import { JourneyEventTime } from "@/routes/journeys/-components/JourneyEventTime.tsx";
 import { JourneyStopPlatform } from "@/routes/journeys/-components/JourneyStopPlatform.tsx";
 import { JourneyStopTypeIndicator } from "@/routes/journeys/-components/JourneyStopTypeIndicator.tsx";
@@ -6,8 +6,8 @@ import { JourneyTimelineMarker } from "@/routes/journeys/-components/JourneyTime
 import type { FC } from "react";
 
 type StopItemProps = {
-  arrival?: SitJourneyEvent;
-  departure?: SitJourneyEvent;
+  arrival?: JourneyEventDto;
+  departure?: JourneyEventDto;
   timeFormatter: (isoTime: string) => string;
 };
 

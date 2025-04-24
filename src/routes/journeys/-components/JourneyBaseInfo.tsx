@@ -1,15 +1,14 @@
-import type { SitJourney, SitJourneyEvent } from "@/api/types/journeys.types.ts";
-import type { SitJourneyComposition } from "@/api/types/vehicles.types.ts";
+import type { JourneyDto, JourneyEventDto, VehicleCompositionDto } from "@/api/generated";
 import { Heading } from "@/components/Heading.tsx";
 import type { FC, PropsWithChildren } from "react";
 
 type JourneyBaseInfoProps = {
-  journey: SitJourney;
-  composition?: SitJourneyComposition | null;
+  journey: JourneyDto;
+  composition?: VehicleCompositionDto | null;
   timeFormatter: (isoTime: string) => string;
 };
 
-const findLastPlayableEvent = (events: Array<SitJourneyEvent>) => {
+const findLastPlayableEvent = (events: Array<JourneyEventDto>) => {
   for (let index = events.length - 1; index >= 0; index--) {
     const event = events[index];
     if (event.stopPlace.inPlayableBorder) {

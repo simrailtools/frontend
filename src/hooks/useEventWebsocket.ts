@@ -9,7 +9,7 @@ import type {
   JourneyUpdateFrame,
   ServerSnapshotFrame,
   ServerUpdateFrame,
-} from "../api/types/event.types.ts";
+} from "../api/eventbus.types.ts";
 
 /**
  * The backend socket base url for events.

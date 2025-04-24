@@ -1,6 +1,6 @@
-import { usersBySteamIds } from "@/api/clients/usersClient.ts";
-import type { DispatchPostSnapshotFrame } from "@/api/types/event.types.ts";
-import type { SitUser } from "@/api/types/users.types.ts";
+import type { DispatchPostSnapshotFrame } from "@/api/eventbus.types.ts";
+import type { SimRailUserDto } from "@/api/generated";
+import { findUsersBySteamIdsOptions } from "@/api/generated/@tanstack/react-query.gen.ts";
 import personOffIcon from "@/assets/icons/person_off.svg";
 import { cn, steamAvatarUrl } from "@/lib/utils.ts";
 import { constructIcon } from "@/routes/map/-lib/iconFactory.ts";
@@ -15,7 +15,7 @@ const mapDifficultyName = (difficulty: number): string => {
   return difficultyNames.at(difficulty - 1) ?? `${difficulty}`;
 };
 
-const formatUserName = (user?: SitUser): string | undefined => {
+const formatUserName = (user?: SimRailUserDto): string | undefined => {
   // append the country code of the user to the username if known, only
   // return the username on case the country is unknown. undefined is only
   // returned in case the input user is undefined as well
@@ -28,9 +28,8 @@ export const DispatchPostMarker: FC<{ dispatchPost: DispatchPostSnapshotFrame }>
   // first element in the dispatcher list as the user dispatching the post
   const relevantUser = dispatchPost.dispatcherSteamIds.at(0);
   const { isLoading, data } = useQuery({
+    ...findUsersBySteamIdsOptions({ body: dispatchPost.dispatcherSteamIds }),
     enabled: !!relevantUser,
-    queryKey: ["steam_user", relevantUser],
-    queryFn: ({ signal }) => usersBySteamIds({ steamIds: dispatchPost.dispatcherSteamIds, abortSignal: signal }),
   });
   const userInfo = data?.find(user => user.id === relevantUser);
 

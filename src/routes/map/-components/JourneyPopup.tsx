@@ -1,5 +1,5 @@
-import { usersBySteamIds } from "@/api/clients/usersClient.ts";
-import type { JourneySnapshotFrame } from "@/api/types/event.types.ts";
+import type { JourneySnapshotFrame } from "@/api/eventbus.types.ts";
+import { findUsersBySteamIds } from "@/api/generated";
 import { cn, steamAvatarUrl } from "@/lib/utils.ts";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -38,8 +38,11 @@ export const JourneyPopup: FC<{ journey: JourneySnapshotFrame }> = ({ journey })
   const { data } = useQuery({
     enabled: !!driverSteamId,
     queryKey: ["steam_user", driverSteamId],
-    // biome-ignore lint/style/noNonNullAssertion: must be present here, see enabled field
-    queryFn: ({ signal }) => usersBySteamIds({ steamIds: [driverSteamId!], abortSignal: signal }),
+    queryFn: async ({ signal }) => {
+      // biome-ignore lint/style/noNonNullAssertion: must be present here, see enabled field
+      const { data } = await findUsersBySteamIds({ body: [journey.driverSteamId!], signal, throwOnError: true });
+      return data;
+    },
   });
   const userInfo = data?.find(user => user.id === journey.driverSteamId);
 

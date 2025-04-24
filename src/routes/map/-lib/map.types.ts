@@ -1,4 +1,4 @@
-import type { JourneySnapshotFrame } from "@/api/types/event.types.ts";
+import type { JourneySnapshotFrame } from "@/api/eventbus.types.ts";
 
 /**
  * A journey snapshot with the position attributes required.

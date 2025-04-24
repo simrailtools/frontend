@@ -1,4 +1,4 @@
-import { usersBySteamIds } from "@/api/clients/usersClient.ts";
+import { findUsersBySteamIds } from "@/api/generated";
 import personOffIcon from "@/assets/icons/person_off.svg";
 import { useSelectedJourney } from "@/hooks/useSelectedJourney.tsx";
 import { steamAvatarUrl } from "@/lib/utils.ts";
@@ -19,8 +19,11 @@ export const JourneyMarker: FC<MarkerComponentProps> = memo(({ journey }) => {
   const { isLoading, data } = useQuery({
     enabled: !!journey.driverSteamId,
     queryKey: ["steam_user", journey.driverSteamId],
-    // biome-ignore lint/style/noNonNullAssertion: must be present here, see enabled field
-    queryFn: ({ signal }) => usersBySteamIds({ steamIds: [journey.driverSteamId!], abortSignal: signal }),
+    queryFn: async ({ signal }) => {
+      // biome-ignore lint/style/noNonNullAssertion: must be present here, see enabled field
+      const { data } = await findUsersBySteamIds({ body: [journey.driverSteamId!], signal, throwOnError: true });
+      return data;
+    },
   });
 
   let icon: Icon<BaseIconOptions>;

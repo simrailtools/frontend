@@ -1,28 +1,21 @@
-import { listServersQueryOptions } from "@/api/clients/serversClient.ts";
-import type { ListServersRequestOptions, SitServer } from "@/api/types/servers.types.ts";
+import type { SimRailServerDto } from "@/api/generated";
+import { listServersOptions } from "@/api/generated/@tanstack/react-query.gen.ts";
 import { BackgroundImage } from "@/components/BackgroundImage.tsx";
 import { cn } from "@/lib/utils.ts";
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import type { FC } from "react";
 
-/**
- *
- */
-const listServersRequest: ListServersRequestOptions = {
-  includeOffline: true,
-};
-
 export const Route = createFileRoute("/map/")({
   loader: ({ context: { queryClient } }) => {
-    return queryClient.ensureQueryData(listServersQueryOptions(listServersRequest));
+    return queryClient.ensureQueryData(listServersOptions({ query: { includeOffline: true } }));
   },
   component: MapIndexComponent,
 });
 
 function MapIndexComponent() {
   const { data } = useQuery({
-    ...listServersQueryOptions(listServersRequest),
+    ...listServersOptions({ query: { includeOffline: true } }),
     refetchInterval: 30_000,
   });
   return (
@@ -38,7 +31,7 @@ function MapIndexComponent() {
   );
 }
 
-const ServerItem: FC<{ server: SitServer }> = ({ server }) => {
+const ServerItem: FC<{ server: SimRailServerDto }> = ({ server }) => {
   return (
     <Link
       to={"/map/$serverId"}

@@ -1,11 +1,11 @@
-import type { SitJourneyEvent, SitJourneyPassengerStopInfo } from "@/api/types/journeys.types.ts";
+import type { JourneyEventDto, JourneyStopInfoDto } from "@/api/generated";
 import type { FC } from "react";
 
-const formatPlatformInfo = (platformInfo: SitJourneyPassengerStopInfo) => {
+const formatPlatformInfo = (platformInfo: JourneyStopInfoDto) => {
   return `P: ${platformInfo.platform} T: ${platformInfo.track}`;
 };
 
-export const JourneyStopPlatform: FC<{ event: SitJourneyEvent }> = ({ event }) => {
+export const JourneyStopPlatform: FC<{ event: JourneyEventDto }> = ({ event }) => {
   const scheduledPlatformInfo = event.scheduledPassengerStop && formatPlatformInfo(event.scheduledPassengerStop);
   const realtimePlatformInfo = event.realtimePassengerStop && formatPlatformInfo(event.realtimePassengerStop);
   if (!scheduledPlatformInfo) {

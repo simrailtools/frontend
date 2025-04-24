@@ -1,5 +1,5 @@
 import "react-clock/dist/Clock.css";
-import type { ServerSnapshotFrame } from "@/api/types/event.types.ts";
+import type { ServerSnapshotFrame } from "@/api/eventbus.types.ts";
 import { Heading } from "@/components/Heading.tsx";
 import { formatLocalTimezoneDifference, timeStringAtIsoZoneOffset } from "@/lib/timeHelper.ts";
 import { cn } from "@/lib/utils.ts";
