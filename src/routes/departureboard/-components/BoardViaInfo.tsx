@@ -21,10 +21,25 @@ export const BoardViaInfo: FC<BoardViaInfoProps> = ({ via }) => {
     }
   }, []);
 
+  // code that calculates the duration of the via text animation, so that all texts are
+  // running at the same speed, regardless of the text length
+  const animatedDivRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const container = containerRef.current;
+    const animatedDiv = animatedDivRef.current;
+    if (container && animatedDiv && isOverflowing) {
+      const clientWidth = container.clientWidth;
+      const scrollWidth = container.scrollWidth;
+      const animationDuration = (scrollWidth * 10) / clientWidth;
+      animatedDiv.style.animationDuration = `${animationDuration}s`;
+    }
+  }, [isOverflowing]);
+
   const viaPoints = createViaElements(via);
   return (
     <div ref={containerRef} className={"ml-7 pt-2 overflow-hidden h-max text-start w-3/4"}>
       <div
+        ref={animatedDivRef}
         className={cn(
           "inline-block whitespace-nowrap text-2xl text-black tracking-tight",
           isOverflowing && "animate-marquee",
@@ -32,6 +47,8 @@ export const BoardViaInfo: FC<BoardViaInfoProps> = ({ via }) => {
       >
         <span className={"mt-4"}>{...viaPoints}</span>
         {isOverflowing && <span> +++&nbsp;</span>}
+        {isOverflowing && <span className={"mt-4"}>{...viaPoints} +++&nbsp;</span>}
+        {isOverflowing && <span className={"mt-4"}>{...viaPoints} +++&nbsp;</span>}
         {isOverflowing && <span className={"mt-4"}>{...viaPoints} +++&nbsp;</span>}
       </div>
     </div>
