@@ -1,4 +1,4 @@
-import { type BoardEntryDto, listBoardDepartures, type PointInfoDto, type SimRailServerDto } from "@/api/generated";
+import { type BoardEntryDto, type PointInfoDto, type SimRailServerDto, listBoardDepartures } from "@/api/generated";
 import { Throbber } from "@/components/Throbber.tsx";
 import { BoardEntry } from "@/routes/boards/-components/BoardEntry.tsx";
 import { BoardTableHeading } from "@/routes/boards/-components/BoardTableHeading.tsx";
@@ -101,7 +101,7 @@ const getBoardFetchTimeRange = (server: SimRailServerDto, timeSpan: number): [st
   const sdt = cdt.setZone(serverTz);
   const dt = sdt.isValid ? sdt : cdt;
 
-  const timeStart = dt.minus(3 * 60 * 1000); // current time - 3 minutes
+  const timeStart = dt.minus(5 * 60 * 1000); // current time - 5 minutes
   const timeEnd = dt.plus(timeSpan * 60 * 1000); // current time + timeSpan minutes
   return [timeStart.toISO(), timeEnd.toISO()];
 };

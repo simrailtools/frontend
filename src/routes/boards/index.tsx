@@ -1,6 +1,7 @@
 import { findPointByIdOptions, findServerByIdOptions } from "@/api/generated/@tanstack/react-query.gen.ts";
 import { BoardEntryTable } from "@/routes/boards/-components/BoardEntryTable.tsx";
 import { BoardHeader } from "@/routes/boards/-components/BoardHeader.tsx";
+import { BoardSelectForm } from "@/routes/boards/-components/BoardSelectForm.tsx";
 import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -49,4 +50,6 @@ function BoardComponent() {
       </>
     );
   }
+
+  return <BoardSelectForm {...searchParameters} />;
 }

@@ -41,8 +41,8 @@ const findDestination = (via: Array<BoardViaEventDto>): [string | null, "schedul
   }
 
   if (firstCancelledViaIndex === 0) {
-    // the first event is canceled, train ends at the current point
-    return [null, "canceled"];
+    // the first event is canceled, actual train destination is unknown
+    return [destination.pointName, "canceled"];
   }
 
   // train ends at the first non-canceled via point
