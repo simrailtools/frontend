@@ -48,12 +48,11 @@ export const BoardEntryTable: FC<BoardEntryTableProps> = ({
   }
 
   // formats the given iso date/time in the server timezone using the optionally provided format
-  const timeFormatter = (isoTime: string, format?: string) => {
+  const timeParser = (isoTime: string) => {
     const serverTz = server.timezoneId === "Z" ? "utc" : server.timezoneId;
     const givenDt = DateTime.fromISO(isoTime);
     const dtZoned = givenDt.setZone(serverTz);
-    const dt = dtZoned.isValid ? dtZoned : givenDt;
-    return dt.toFormat(format ?? "HH:mm");
+    return dtZoned.isValid ? dtZoned : givenDt;
   };
 
   return (
@@ -68,7 +67,7 @@ export const BoardEntryTable: FC<BoardEntryTableProps> = ({
           })
           .filter(train => !onlyPassengerTrains || !train.isFreight)
           .map(train => (
-            <BoardEntry key={train.entry.journeyId} {...train} currentPoint={point} timeFormatter={timeFormatter} />
+            <BoardEntry key={train.entry.journeyId} {...train} currentPoint={point} timeParser={timeParser} />
           ))}
       </ul>
     </div>
