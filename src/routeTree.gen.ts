@@ -13,7 +13,7 @@
 import { Route as rootRoute } from "./routes/__root"
 import { Route as IndexImport } from "./routes/index"
 import { Route as MapIndexImport } from "./routes/map/index"
-import { Route as BoardsIndexImport } from "./routes/boards/index"
+import { Route as DepartureboardIndexImport } from "./routes/departureboard/index"
 import { Route as MapServerIdImport } from "./routes/map/$serverId"
 import { Route as JourneysJourneyIdImport } from "./routes/journeys/$journeyId"
 
@@ -31,9 +31,9 @@ const MapIndexRoute = MapIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const BoardsIndexRoute = BoardsIndexImport.update({
-  id: "/boards/",
-  path: "/boards/",
+const DepartureboardIndexRoute = DepartureboardIndexImport.update({
+  id: "/departureboard/",
+  path: "/departureboard/",
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -74,11 +74,11 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof MapServerIdImport
       parentRoute: typeof rootRoute
     }
-    "/boards/": {
-      id: "/boards/"
-      path: "/boards"
-      fullPath: "/boards"
-      preLoaderRoute: typeof BoardsIndexImport
+    "/departureboard/": {
+      id: "/departureboard/"
+      path: "/departureboard"
+      fullPath: "/departureboard"
+      preLoaderRoute: typeof DepartureboardIndexImport
       parentRoute: typeof rootRoute
     }
     "/map/": {
@@ -97,7 +97,7 @@ export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
   "/journeys/$journeyId": typeof JourneysJourneyIdRoute
   "/map/$serverId": typeof MapServerIdRoute
-  "/boards": typeof BoardsIndexRoute
+  "/departureboard": typeof DepartureboardIndexRoute
   "/map": typeof MapIndexRoute
 }
 
@@ -105,7 +105,7 @@ export interface FileRoutesByTo {
   "/": typeof IndexRoute
   "/journeys/$journeyId": typeof JourneysJourneyIdRoute
   "/map/$serverId": typeof MapServerIdRoute
-  "/boards": typeof BoardsIndexRoute
+  "/departureboard": typeof DepartureboardIndexRoute
   "/map": typeof MapIndexRoute
 }
 
@@ -114,7 +114,7 @@ export interface FileRoutesById {
   "/": typeof IndexRoute
   "/journeys/$journeyId": typeof JourneysJourneyIdRoute
   "/map/$serverId": typeof MapServerIdRoute
-  "/boards/": typeof BoardsIndexRoute
+  "/departureboard/": typeof DepartureboardIndexRoute
   "/map/": typeof MapIndexRoute
 }
 
@@ -124,16 +124,21 @@ export interface FileRouteTypes {
     | "/"
     | "/journeys/$journeyId"
     | "/map/$serverId"
-    | "/boards"
+    | "/departureboard"
     | "/map"
   fileRoutesByTo: FileRoutesByTo
-  to: "/" | "/journeys/$journeyId" | "/map/$serverId" | "/boards" | "/map"
+  to:
+    | "/"
+    | "/journeys/$journeyId"
+    | "/map/$serverId"
+    | "/departureboard"
+    | "/map"
   id:
     | "__root__"
     | "/"
     | "/journeys/$journeyId"
     | "/map/$serverId"
-    | "/boards/"
+    | "/departureboard/"
     | "/map/"
   fileRoutesById: FileRoutesById
 }
@@ -142,7 +147,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   JourneysJourneyIdRoute: typeof JourneysJourneyIdRoute
   MapServerIdRoute: typeof MapServerIdRoute
-  BoardsIndexRoute: typeof BoardsIndexRoute
+  DepartureboardIndexRoute: typeof DepartureboardIndexRoute
   MapIndexRoute: typeof MapIndexRoute
 }
 
@@ -150,7 +155,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   JourneysJourneyIdRoute: JourneysJourneyIdRoute,
   MapServerIdRoute: MapServerIdRoute,
-  BoardsIndexRoute: BoardsIndexRoute,
+  DepartureboardIndexRoute: DepartureboardIndexRoute,
   MapIndexRoute: MapIndexRoute,
 }
 
@@ -167,7 +172,7 @@ export const routeTree = rootRoute
         "/",
         "/journeys/$journeyId",
         "/map/$serverId",
-        "/boards/",
+        "/departureboard/",
         "/map/"
       ]
     },
@@ -180,8 +185,8 @@ export const routeTree = rootRoute
     "/map/$serverId": {
       "filePath": "map/$serverId.tsx"
     },
-    "/boards/": {
-      "filePath": "boards/index.tsx"
+    "/departureboard/": {
+      "filePath": "departureboard/index.tsx"
     },
     "/map/": {
       "filePath": "map/index.tsx"

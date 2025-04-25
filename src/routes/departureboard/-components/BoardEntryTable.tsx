@@ -1,7 +1,7 @@
 import { type BoardEntryDto, type PointInfoDto, type SimRailServerDto, listBoardDepartures } from "@/api/generated";
 import { Throbber } from "@/components/Throbber.tsx";
-import { BoardEntry } from "@/routes/boards/-components/BoardEntry.tsx";
-import { BoardTableHeading } from "@/routes/boards/-components/BoardTableHeading.tsx";
+import { BoardEntry } from "@/routes/departureboard/-components/BoardEntry.tsx";
+import { BoardTableHeading } from "@/routes/departureboard/-components/BoardTableHeading.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import type { FC } from "react";

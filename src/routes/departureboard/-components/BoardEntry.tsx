@@ -1,9 +1,9 @@
 import type { BoardEntryDto, PointInfoDto } from "@/api/generated";
-import { BoardDestinationInfo } from "@/routes/boards/-components/BoardDestinationInfo.tsx";
-import { BoardPlatformInfo } from "@/routes/boards/-components/BoardPlatformInfo.tsx";
-import { BoardTimeInfo } from "@/routes/boards/-components/BoardTimeInfo.tsx";
-import { BoardTrainInfo } from "@/routes/boards/-components/BoardTrainInfo.tsx";
-import { BoardViaInfo } from "@/routes/boards/-components/BoardViaInfo.tsx";
+import { BoardDestinationInfo } from "@/routes/departureboard/-components/BoardDestinationInfo.tsx";
+import { BoardPlatformInfo } from "@/routes/departureboard/-components/BoardPlatformInfo.tsx";
+import { BoardTimeInfo } from "@/routes/departureboard/-components/BoardTimeInfo.tsx";
+import { BoardTrainInfo } from "@/routes/departureboard/-components/BoardTrainInfo.tsx";
+import { BoardViaInfo } from "@/routes/departureboard/-components/BoardViaInfo.tsx";
 import type { FC } from "react";
 
 type BoardEntryProps = {

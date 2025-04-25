@@ -1,7 +1,7 @@
 import { findPointByIdOptions, findServerByIdOptions } from "@/api/generated/@tanstack/react-query.gen.ts";
-import { BoardEntryTable } from "@/routes/boards/-components/BoardEntryTable.tsx";
-import { BoardHeader } from "@/routes/boards/-components/BoardHeader.tsx";
-import { BoardSelectForm } from "@/routes/boards/-components/BoardSelectForm.tsx";
+import { BoardEntryTable } from "@/routes/departureboard/-components/BoardEntryTable.tsx";
+import { BoardHeader } from "@/routes/departureboard/-components/BoardHeader.tsx";
+import { BoardSelectForm } from "@/routes/departureboard/-components/BoardSelectForm.tsx";
 import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -18,7 +18,7 @@ const boardSearchSchema = z.object({
   sortOrder: z.enum(["schedule", "realtime"]).catch("realtime"),
 });
 
-export const Route = createFileRoute("/boards/")({
+export const Route = createFileRoute("/departureboard/")({
   validateSearch: zodValidator(boardSearchSchema),
   loaderDeps: ({ search: { serverId, pointId } }) => ({ serverId, pointId }),
   loader: async ({ context: { queryClient }, deps: { serverId, pointId } }) => {
