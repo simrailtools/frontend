@@ -36,7 +36,7 @@ export const BoardSelectForm: FC<BoardSelectFormProps> = ({ timeSpan, onlyPassen
     } as BoardSelectFormFields,
     onSubmit: async ({ value }) =>
       navigate({
-        to: "/boards",
+        to: "/departureboard",
         search: {
           serverId: value.server?.id,
           pointId: value.point?.id,
