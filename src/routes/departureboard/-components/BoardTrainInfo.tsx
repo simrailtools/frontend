@@ -1,27 +1,26 @@
-import type { BoardTransportDto, BoardViaEventDto } from "@/api/generated";
+import type { BoardTransportDto } from "@/api/generated";
 import { cn } from "@/lib/utils.ts";
 import type { FC } from "react";
 
 type BoardTrainInfoProps = {
   isFreight: boolean;
-  via: Array<BoardViaEventDto>;
+  isEventCancelled: boolean;
   transport: BoardTransportDto;
 };
 
-export const BoardTrainInfo: FC<BoardTrainInfoProps> = ({ isFreight, via, transport }) => {
+export const BoardTrainInfo: FC<BoardTrainInfoProps> = ({ isFreight, isEventCancelled, transport }) => {
   const formattedName = formatTrainName(transport);
-  const allViaCancelled = via.every(entry => entry.cancelled);
   return (
     <div
       className={cn(
         "w-80 text-center rounded-lg py-1 px-2 ml-4 text-white text-4xl font-medium",
         "bg-gray-700",
         isFreight && "bg-gray-500",
-        allViaCancelled && "bg-transparent text-gray-600 border-2",
+        isEventCancelled && "bg-transparent text-gray-600 border-2",
       )}
     >
       <span
-        className={cn("inline-block max-w-full whitespace-nowrap overflow-hidden", allViaCancelled && "line-through")}
+        className={cn("inline-block max-w-full whitespace-nowrap overflow-hidden", isEventCancelled && "line-through")}
       >
         {formattedName}
       </span>
