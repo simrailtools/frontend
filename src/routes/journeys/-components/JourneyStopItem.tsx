@@ -1,4 +1,5 @@
 import type { JourneyEventDto } from "@/api/generated";
+import { cn } from "@/lib/utils.ts";
 import { JourneyEventTime } from "@/routes/journeys/-components/JourneyEventTime.tsx";
 import { JourneyStopPlatform } from "@/routes/journeys/-components/JourneyStopPlatform.tsx";
 import { JourneyStopTypeIndicator } from "@/routes/journeys/-components/JourneyStopTypeIndicator.tsx";
@@ -23,7 +24,11 @@ export const JourneyStopItem: FC<StopItemProps> = ({ arrival, departure, timeFor
       </div>
 
       <div className={"flex items-center space-x-1.5 basis-0 grow"}>
-        <span className={"font-medium text-balance"}>{stopPlace?.name}</span>
+        <span
+          className={cn("font-medium text-balance", (arrival?.additional || departure?.additional) && "text-green-600")}
+        >
+          {stopPlace?.name}
+        </span>
         <JourneyStopTypeIndicator stopType={arrival?.stopType ?? departure?.stopType ?? "NONE"} />
       </div>
 
