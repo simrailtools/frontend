@@ -204,7 +204,7 @@ export const BoardSelectForm: FC<BoardSelectFormProps> = ({ timeSpan, onlyPassen
               {field => (
                 <div className={"flex items-center space-x-4"}>
                   <label htmlFor={field.name} className={"text-black font-medium tracking-tighter"}>
-                    Sort By Best Known Time Information:
+                    Sort By Best Known Time Info:
                   </label>
                   <ToggleInput
                     id={field.name}
@@ -217,7 +217,11 @@ export const BoardSelectForm: FC<BoardSelectFormProps> = ({ timeSpan, onlyPassen
             </form.Field>
             <form.Subscribe selector={state => [state.canSubmit, state.isSubmitting]}>
               {([canSubmit, isSubmitting]) => (
-                <Button type={"submit"} disabled={!canSubmit} className={"mt-2"}>
+                <Button
+                  type={"submit"}
+                  disabled={!canSubmit}
+                  className={"mt-2 cursor-pointer disabled:cursor-not-allowed"}
+                >
                   {isSubmitting ? "..." : "Display Board"}
                 </Button>
               )}
