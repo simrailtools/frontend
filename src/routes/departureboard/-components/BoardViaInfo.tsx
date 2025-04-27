@@ -8,12 +8,14 @@ type BoardViaInfoProps = {
 
 export const BoardViaInfo: FC<BoardViaInfoProps> = ({ via }) => {
   // code that checks if the via text is overflowing the width of the screen
+  const measureRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
   useEffect(() => {
     const container = containerRef.current;
-    if (container) {
-      const checkOverflow = () => setIsOverflowing(container.scrollWidth > container.clientWidth);
+    const textMeasureDiv = measureRef.current;
+    if (container && textMeasureDiv) {
+      const checkOverflow = () => setIsOverflowing(textMeasureDiv.scrollWidth > container.clientWidth);
       checkOverflow(); // initial check
 
       window.addEventListener("resize", checkOverflow);
@@ -26,11 +28,12 @@ export const BoardViaInfo: FC<BoardViaInfoProps> = ({ via }) => {
   const animatedDivRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const container = containerRef.current;
+    const textMeasureDiv = measureRef.current;
     const animatedDiv = animatedDivRef.current;
-    if (container && animatedDiv && isOverflowing) {
+    if (container && textMeasureDiv && animatedDiv && isOverflowing) {
       const clientWidth = container.clientWidth;
-      const scrollWidth = container.scrollWidth;
-      const animationDuration = (scrollWidth * 10) / clientWidth;
+      const scrollWidth = textMeasureDiv.scrollWidth;
+      const animationDuration = (scrollWidth + clientWidth) / 50;
       animatedDiv.style.animationDuration = `${animationDuration}s`;
     }
   }, [isOverflowing]);
@@ -38,6 +41,12 @@ export const BoardViaInfo: FC<BoardViaInfoProps> = ({ via }) => {
   const viaPoints = createViaElements(via);
   return (
     <div ref={containerRef} className={"ml-7 pt-2 overflow-hidden h-max text-start w-3/4"}>
+      <div
+        ref={measureRef}
+        className="absolute tracking-tight text-2xl invisible whitespace-nowrap pointer-events-none select-none"
+      >
+        {...viaPoints}
+      </div>
       <div
         ref={animatedDivRef}
         className={cn(
