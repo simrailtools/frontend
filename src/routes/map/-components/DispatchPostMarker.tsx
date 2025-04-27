@@ -11,8 +11,8 @@ import { MdOutlineLocationOn, MdOutlinePsychology, MdPersonOutline } from "react
 import { Marker, Popup, Tooltip } from "react-leaflet";
 
 const mapDifficultyName = (difficulty: number): string => {
-  const difficultyNames = ["Very Easy", "Easy", "Normal", "Advanced", "Hard"];
-  return difficultyNames.at(difficulty - 1) ?? `${difficulty}`;
+  const difficultyNames = ["Very Easy", "Easy", "Intermediate", "Advanced", "Hard", "Expert"];
+  return difficultyNames.at(difficulty) ?? `${difficulty}`;
 };
 
 const formatUserName = (user?: SimRailUserDto): string | undefined => {
