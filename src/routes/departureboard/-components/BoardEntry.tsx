@@ -21,7 +21,7 @@ export const BoardEntry: FC<BoardEntryProps> = ({ isFreight, entry, currentPoint
         <div className={"flex flex-col w-full"}>
           <div className="flex flex-row">
             <BoardTimeInfo time={entry.scheduledTime} timeParser={timeParser} />
-            <BoardTrainInfo isFreight={isFreight} via={entry.via} transport={entry.transport} />
+            <BoardTrainInfo isFreight={isFreight} isEventCancelled={entry.cancelled} transport={entry.transport} />
             <BoardDestinationInfo currentPointName={currentPoint.name} via={entry.via} />
             <BoardPlatformInfo
               scheduledStop={entry.scheduledPassengerStop}
