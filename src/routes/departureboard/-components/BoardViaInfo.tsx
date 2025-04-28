@@ -43,7 +43,7 @@ export const BoardViaInfo: FC<BoardViaInfoProps> = ({ via }) => {
     <div ref={containerRef} className={"ml-7 pt-2 overflow-hidden h-max text-start w-3/4"}>
       <div
         ref={measureRef}
-        className="absolute tracking-tight text-2xl invisible whitespace-nowrap pointer-events-none select-none"
+        className="tracking-tight text-2xl invisible whitespace-nowrap pointer-events-none select-none h-0"
       >
         {...viaPoints}
       </div>
