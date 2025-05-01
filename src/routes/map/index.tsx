@@ -2,6 +2,7 @@ import type { SimRailServerDto } from "@/api/generated";
 import { listServersOptions } from "@/api/generated/@tanstack/react-query.gen.ts";
 import { BackgroundImage } from "@/components/BackgroundImage.tsx";
 import { cn } from "@/lib/utils.ts";
+import { ServerMapText } from "@/routes/map/-components/ServerMapText.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import type { FC } from "react";
@@ -61,6 +62,7 @@ const ServerItem: FC<{ server: SimRailServerDto }> = ({ server }) => {
           {server.timezoneId === "Z" ? "UTC" : `UTC${server.timezoneId}`}
         </span>
       </div>
+      <ServerMapText scenery={server.scenery} />
       {server.tags && <span className={"text-gray-600 text-sm"}>{server.tags.join(", ")}</span>}
     </Link>
   );

@@ -86,6 +86,10 @@ export type ServerSnapshotFrame = {
    * The region where the server is hosted.
    */
   region: "ASIA" | "EUROPE" | "US_NORTH";
+  /**
+   * The scenery (map part) of the server.
+   */
+  scenery: "WARSAW_LODZ_PSARY" | "WARSAW_LODZ_KRAKOW" | "WARSAW_KATOWICE_KRAKOW";
 
   /**
    * Indicates if the server is currently online.
