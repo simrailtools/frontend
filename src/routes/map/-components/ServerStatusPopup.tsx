@@ -3,6 +3,7 @@ import type { ServerSnapshotFrame } from "@/api/eventbus.types.ts";
 import { Heading } from "@/components/Heading.tsx";
 import { formatLocalTimezoneDifference, timeStringAtIsoZoneOffset } from "@/lib/timeHelper.ts";
 import { cn } from "@/lib/utils.ts";
+import { ServerMapText } from "@/routes/map/-components/ServerMapText.tsx";
 import { type FC, memo, useEffect, useState } from "react";
 import Clock from "react-clock";
 import { MdOutlineTimer, MdOutlineTimerOff } from "react-icons/md";
@@ -60,9 +61,10 @@ export const ServerStatusPopup: FC<{ server: ServerSnapshotFrame }> = memo(({ se
           </button>
         </div>
       </div>
+      <ServerMapText scenery={server.scenery} className={"leading-tight tracking-tight text-xs"} />
       {serverTimezoneDiff && clockVisible && <span className={"text-sm"}>{serverTimezoneDiff}</span>}
       {clockVisible && (
-        <div className={"mt-1"}>
+        <div className={"mt-2"}>
           <Clock
             size={160}
             hourHandLength={60}

@@ -20,7 +20,7 @@ export type SimRailUserDto = {
     /**
      * The ISO 3166-1 alpha-2 country code where the user resides, null if not visible or set
      */
-    countryCode?: string;
+    countryCode?: string | null;
     /**
      * Indicates if the steam profile page is publicly visible
      */
@@ -47,7 +47,7 @@ export type RailcarDto = {
     /**
      * The id of the DLC that is required for the railcar, null if included in the base game
      */
-    requiredDlcId?: string;
+    requiredDlcId?: string | null;
     /**
      * The designation of the railcar
      */
@@ -109,7 +109,7 @@ export type PointInfoDto = {
     /**
      * The UIC reference of the point, might not null in case it is unknown
      */
-    uicRef?: string;
+    uicRef?: string | null;
     /**
      * The OSM node id of the point
      */
@@ -155,11 +155,11 @@ export type JourneyDto = {
     /**
      * The time (ISO-8601 with offset) when the journey was first seen, null if the journey wasn't active yet
      */
-    firstSeenTime?: string;
+    firstSeenTime?: string | null;
     /**
-     * The time (ISO-8601 with offset) when the journey was last seen, null if the journey is still active or wasn't active
+     * The time (ISO-8601 with offset) when the journey was last seen, null if the journey is still or wasn't active
      */
-    lastSeenTime?: string;
+    lastSeenTime?: string | null;
     /**
      * Indicates if the journey was cancelled
      */
@@ -248,7 +248,7 @@ export type JourneyLiveDataDto = {
     /**
      * The steam id of the current driver
      */
-    driverSteamId?: string;
+    driverSteamId?: string | null;
     /**
      * The signal in front of the journey, null in case it is too far away or doesn't exist
      */
@@ -263,7 +263,7 @@ export type JourneySignalDto = {
     /**
      * The allowed speed of passing the signal, null in case it shows a Vmax aspect
      */
-    maxSpeed?: number;
+    maxSpeed?: number | null;
     /**
      * The distance of the journey to the signal, in 10 meter steps
      */
@@ -316,11 +316,11 @@ export type JourneyTransportDto = {
     /**
      * The line of the transport, null in case no line is associated with the transport
      */
-    line?: string;
+    line?: string | null;
     /**
      * The label of the transport, for example the marketing name or product name of the transport
      */
-    label?: string;
+    label?: string | null;
     /**
      * The higher-level category of the transport
      */
@@ -358,7 +358,7 @@ export type VehicleDto = {
     /**
      * The load weight of the vehicle, can be null in case nothing is loaded
      */
-    loadWeight?: number;
+    loadWeight?: number | null;
     /**
      * The load of the vehicle, can be null in case nothing is loaded
      */
@@ -424,7 +424,11 @@ export type SimRailServerDto = {
     /**
      * The language spoken on the server, null if the server is international and not specialised
      */
-    spokenLanguage?: string;
+    spokenLanguage?: string | null;
+    /**
+     * The scenery (map part) that is available on the server
+     */
+    scenery: 'WARSAW_LODZ_PSARY' | 'WARSAW_LODZ_KRAKOW' | 'WARSAW_KATOWICE_KRAKOW';
     /**
      * The time (ISO-8601 with offset) when the data of the server was last updated
      */
@@ -511,11 +515,11 @@ export type JourneySummaryDto = {
     /**
      * The time (ISO-8601 with offset) when the journey was first seen, null if the journey wasn't active yet
      */
-    firstSeenTime?: string;
+    firstSeenTime?: string | null;
     /**
-     * The time (ISO-8601 with offset) when the journey was last seen, null if the journey is still active or wasn't active
+     * The time (ISO-8601 with offset) when the journey was last seen, null if the journey is still or wasn't active
      */
-    lastSeenTime?: string;
+    lastSeenTime?: string | null;
     /**
      * Indicates if the journey was cancelled
      */
@@ -561,11 +565,11 @@ export type JourneyTransportSummaryDto = {
     /**
      * The line of the transport, null in case no line is associated with the transport
      */
-    line?: string;
+    line?: string | null;
     /**
      * The label of the transport, for example the marketing name or product name of the transport
      */
-    label?: string;
+    label?: string | null;
     /**
      * The higher-level category of the transport
      */
@@ -610,11 +614,11 @@ export type JourneySummaryWithPlayableEventDto = {
     /**
      * The time (ISO-8601 with offset) when the journey was first seen, null if the journey wasn't active yet
      */
-    firstSeenTime?: string;
+    firstSeenTime?: string | null;
     /**
-     * The time (ISO-8601 with offset) when the journey was last seen, null if the journey is still active or wasn't active
+     * The time (ISO-8601 with offset) when the journey was last seen, null if the journey is still or wasn't active
      */
-    lastSeenTime?: string;
+    lastSeenTime?: string | null;
     /**
      * Indicates if the journey was cancelled
      */
@@ -660,7 +664,7 @@ export type JourneyActiveDto = {
     /**
      * The steam id of the current driver
      */
-    driverSteamId?: string;
+    driverSteamId?: string | null;
     /**
      * The current, rounded speed of the journey
      */
@@ -683,11 +687,11 @@ export type JourneyActiveTransportDto = {
     /**
      * The line of the journey
      */
-    line?: string;
+    line?: string | null;
     /**
      * The label of the journey
      */
-    label?: string;
+    label?: string | null;
 };
 
 export type DispatchPointGeoPositionDto = {
@@ -702,16 +706,49 @@ export type DispatchPointGeoPositionDto = {
 };
 
 export type DispatchPostInfoDto = {
+    /**
+     * The id of the dispatch post
+     */
     id: string;
+    /**
+     * The name of the dispatch post
+     */
     name: string;
+    /**
+     * The id of the point where the dispatch post is located
+     */
     pointId: string;
+    /**
+     * The id of the server for which the dispatch post info is valid
+     */
     serverId: string;
+    /**
+     * The time (ISO-8601 with offset) when the dispatch post was last updated
+     */
     lastUpdated: string;
+    /**
+     * The time (ISO-8601 with offset) when the dispatch post was registered in the SimRail backend
+     */
     registeredSince: string;
+    /**
+     * The position where the dispatch post is located
+     */
     position: DispatchPointGeoPositionDto;
+    /**
+     * A list of image urls displaying the dispatch post
+     */
     images: Array<string>;
+    /**
+     * A list of steam ids of the users that are currently dispatching the dispatch post
+     */
     dispatchers: Array<string>;
+    /**
+     * The difficulty rating of the dispatch post, from 1 (easy) to 5 (hard)
+     */
     difficulty: number;
+    /**
+     * Indicates if the dispatch post was deleted in the SimRail backend
+     */
     deleted: boolean;
 };
 
@@ -803,11 +840,11 @@ export type BoardTransportDto = {
     /**
      * The line of the transport, null in case no line is associated with the transport
      */
-    line?: string;
+    line?: string | null;
     /**
      * The label of the transport, for example the marketing name or product name of the transport
      */
-    label?: string;
+    label?: string | null;
     /**
      * The higher-level category of the transport
      */
