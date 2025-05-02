@@ -89,7 +89,7 @@ export type ServerSnapshotFrame = {
   /**
    * The scenery (map part) of the server.
    */
-  scenery: "WARSAW_LODZ_PSARY" | "WARSAW_LODZ_KRAKOW" | "WARSAW_KATOWICE_KRAKOW";
+  scenery: "FULL" | "WARSAW_LODZ_PSARY" | "WARSAW_LODZ_KRAKOW" | "WARSAW_LODZ_KATOWICE" | "WARSAW_KATOWICE_KRAKOW";
 
   /**
    * Indicates if the server is currently online.

@@ -428,7 +428,7 @@ export type SimRailServerDto = {
     /**
      * The scenery (map part) that is available on the server
      */
-    scenery: 'WARSAW_LODZ_PSARY' | 'WARSAW_LODZ_KRAKOW' | 'WARSAW_KATOWICE_KRAKOW';
+    scenery: 'FULL' | 'WARSAW_LODZ_PSARY' | 'WARSAW_LODZ_KRAKOW' | 'WARSAW_LODZ_KATOWICE' | 'WARSAW_KATOWICE_KRAKOW';
     /**
      * The time (ISO-8601 with offset) when the data of the server was last updated
      */
