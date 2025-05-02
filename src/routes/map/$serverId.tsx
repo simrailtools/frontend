@@ -109,10 +109,10 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
       {selectedJourney && <JourneyPopup journey={selectedJourney} />}
 
       <MapContainer
-        zoom={10}
+        zoom={9}
         zoomControl={false}
         preferCanvas={true}
-        center={[50.5305, 19.6394]}
+        center={[51.331, 20.297]}
         scrollWheelZoom={true}
         className={"min-h-dvh w-full"}
       >
