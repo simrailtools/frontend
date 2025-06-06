@@ -21,8 +21,7 @@ export const JourneyMarker: FC<MarkerComponentProps> = memo(({ journey }) => {
     queryKey: ["steam_user", journey.driverSteamId],
     queryFn: async ({ signal }) => {
       // biome-ignore lint/style/noNonNullAssertion: must be present here, see enabled field
-      const { data } = await findUsersBySteamIds({ body: [journey.driverSteamId!], signal, throwOnError: true });
-      return data;
+      return await findUsersBySteamIds({ body: [journey.driverSteamId!], signal, throwOnError: true });
     },
   });
 
