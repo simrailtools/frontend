@@ -38,30 +38,42 @@ const createQueryKey = <TOptions extends Options>(id: string, options?: TOptions
 
 export const findUsersBySteamIdsQueryKey = (options: Options<FindUsersBySteamIdsData>) => createQueryKey('findUsersBySteamIds', options);
 
+/**
+ * Get a batch of users (up to 100) by their steam id
+ * Get a batch of users (up to 100) in a single request. If an id is provided which can't be resolved to a user info,
+ * the id is skipped and there will be no reference to the id in the response array. The provided ids must all be in
+ * the SteamID64 format.
+ *
+ */
 export const findUsersBySteamIdsOptions = (options: Options<FindUsersBySteamIdsData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findUsersBySteamIds({
+            return await findUsersBySteamIds({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findUsersBySteamIdsQueryKey(options)
     });
 };
 
+/**
+ * Get a batch of users (up to 100) by their steam id
+ * Get a batch of users (up to 100) in a single request. If an id is provided which can't be resolved to a user info,
+ * the id is skipped and there will be no reference to the id in the response array. The provided ids must all be in
+ * the SteamID64 format.
+ *
+ */
 export const findUsersBySteamIdsMutation = (options?: Partial<Options<FindUsersBySteamIdsData>>): UseMutationOptions<FindUsersBySteamIdsResponse, FindUsersBySteamIdsError, Options<FindUsersBySteamIdsData>> => {
     const mutationOptions: UseMutationOptions<FindUsersBySteamIdsResponse, FindUsersBySteamIdsError, Options<FindUsersBySteamIdsData>> = {
         mutationFn: async (localOptions) => {
-            const { data } = await findUsersBySteamIds({
+            return await findUsersBySteamIds({
                 ...options,
                 ...localOptions,
                 throwOnError: true
             });
-            return data;
         }
     };
     return mutationOptions;
@@ -69,30 +81,34 @@ export const findUsersBySteamIdsMutation = (options?: Partial<Options<FindUsersB
 
 export const findRailcarsByIdsQueryKey = (options: Options<FindRailcarsByIdsData>) => createQueryKey('findRailcarsByIds', options);
 
+/**
+ * Get a batch of railcars (up to 250) by their id
+ */
 export const findRailcarsByIdsOptions = (options: Options<FindRailcarsByIdsData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findRailcarsByIds({
+            return await findRailcarsByIds({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findRailcarsByIdsQueryKey(options)
     });
 };
 
+/**
+ * Get a batch of railcars (up to 250) by their id
+ */
 export const findRailcarsByIdsMutation = (options?: Partial<Options<FindRailcarsByIdsData>>): UseMutationOptions<FindRailcarsByIdsResponse, FindRailcarsByIdsError, Options<FindRailcarsByIdsData>> => {
     const mutationOptions: UseMutationOptions<FindRailcarsByIdsResponse, FindRailcarsByIdsError, Options<FindRailcarsByIdsData>> = {
         mutationFn: async (localOptions) => {
-            const { data } = await findRailcarsByIds({
+            return await findRailcarsByIds({
                 ...options,
                 ...localOptions,
                 throwOnError: true
             });
-            return data;
         }
     };
     return mutationOptions;
@@ -100,30 +116,40 @@ export const findRailcarsByIdsMutation = (options?: Partial<Options<FindRailcars
 
 export const findPointsByIdQueryKey = (options: Options<FindPointsByIdData>) => createQueryKey('findPointsById', options);
 
+/**
+ * Get a batch of points (up to 250) by their id
+ * Get a batch of points (up to 250) in a single request. If an id is provided which doesn't have a point associated,
+ * the id is skipped and there will be no reference to the id in the response array
+ *
+ */
 export const findPointsByIdOptions = (options: Options<FindPointsByIdData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findPointsById({
+            return await findPointsById({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findPointsByIdQueryKey(options)
     });
 };
 
+/**
+ * Get a batch of points (up to 250) by their id
+ * Get a batch of points (up to 250) in a single request. If an id is provided which doesn't have a point associated,
+ * the id is skipped and there will be no reference to the id in the response array
+ *
+ */
 export const findPointsByIdMutation = (options?: Partial<Options<FindPointsByIdData>>): UseMutationOptions<FindPointsByIdResponse, FindPointsByIdError, Options<FindPointsByIdData>> => {
     const mutationOptions: UseMutationOptions<FindPointsByIdResponse, FindPointsByIdError, Options<FindPointsByIdData>> = {
         mutationFn: async (localOptions) => {
-            const { data } = await findPointsById({
+            return await findPointsById({
                 ...options,
                 ...localOptions,
                 throwOnError: true
             });
-            return data;
         }
     };
     return mutationOptions;
@@ -131,30 +157,34 @@ export const findPointsByIdMutation = (options?: Partial<Options<FindPointsByIdD
 
 export const findJourneysByIdsQueryKey = (options: Options<FindJourneysByIdsData>) => createQueryKey('findJourneysByIds', options);
 
+/**
+ * Get a batch of journeys (up to 250) by their id
+ */
 export const findJourneysByIdsOptions = (options: Options<FindJourneysByIdsData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findJourneysByIds({
+            return await findJourneysByIds({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findJourneysByIdsQueryKey(options)
     });
 };
 
+/**
+ * Get a batch of journeys (up to 250) by their id
+ */
 export const findJourneysByIdsMutation = (options?: Partial<Options<FindJourneysByIdsData>>): UseMutationOptions<FindJourneysByIdsResponse, FindJourneysByIdsError, Options<FindJourneysByIdsData>> => {
     const mutationOptions: UseMutationOptions<FindJourneysByIdsResponse, FindJourneysByIdsError, Options<FindJourneysByIdsData>> = {
         mutationFn: async (localOptions) => {
-            const { data } = await findJourneysByIds({
+            return await findJourneysByIds({
                 ...options,
                 ...localOptions,
                 throwOnError: true
             });
-            return data;
         }
     };
     return mutationOptions;
@@ -162,16 +192,18 @@ export const findJourneysByIdsMutation = (options?: Partial<Options<FindJourneys
 
 export const findVehicleCompositionByJourneyIdQueryKey = (options: Options<FindVehicleCompositionByJourneyIdData>) => createQueryKey('findVehicleCompositionByJourneyId', options);
 
+/**
+ * Get the vehicle composition of a journey
+ */
 export const findVehicleCompositionByJourneyIdOptions = (options: Options<FindVehicleCompositionByJourneyIdData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findVehicleCompositionByJourneyId({
+            return await findVehicleCompositionByJourneyId({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findVehicleCompositionByJourneyIdQueryKey(options)
     });
@@ -179,16 +211,18 @@ export const findVehicleCompositionByJourneyIdOptions = (options: Options<FindVe
 
 export const findServerByIdQueryKey = (options: Options<FindServerByIdData>) => createQueryKey('findServerById', options);
 
+/**
+ * Get detail data about a single server by ID
+ */
 export const findServerByIdOptions = (options: Options<FindServerByIdData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findServerById({
+            return await findServerById({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findServerByIdQueryKey(options)
     });
@@ -196,16 +230,18 @@ export const findServerByIdOptions = (options: Options<FindServerByIdData>) => {
 
 export const findServerByCodeQueryKey = (options: Options<FindServerByCodeData>) => createQueryKey('findServerByCode', options);
 
+/**
+ * Get detail data about a single server by code
+ */
 export const findServerByCodeOptions = (options: Options<FindServerByCodeData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findServerByCode({
+            return await findServerByCode({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findServerByCodeQueryKey(options)
     });
@@ -213,16 +249,18 @@ export const findServerByCodeOptions = (options: Options<FindServerByCodeData>) 
 
 export const listServersQueryKey = (options?: Options<ListServersData>) => createQueryKey('listServers', options);
 
+/**
+ * List all registered servers
+ */
 export const listServersOptions = (options?: Options<ListServersData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await listServers({
+            return await listServers({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: listServersQueryKey(options)
     });
@@ -230,16 +268,18 @@ export const listServersOptions = (options?: Options<ListServersData>) => {
 
 export const findRailcarByApiNameQueryKey = (options: Options<FindRailcarByApiNameData>) => createQueryKey('findRailcarByApiName', options);
 
+/**
+ * Finds a single railcar using the given SimRail api id
+ */
 export const findRailcarByApiNameOptions = (options: Options<FindRailcarByApiNameData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findRailcarByApiName({
+            return await findRailcarByApiName({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findRailcarByApiNameQueryKey(options)
     });
@@ -247,16 +287,18 @@ export const findRailcarByApiNameOptions = (options: Options<FindRailcarByApiNam
 
 export const findRailcarByIdQueryKey = (options: Options<FindRailcarByIdData>) => createQueryKey('findRailcarById', options);
 
+/**
+ * Finds a single railcar using the given id
+ */
 export const findRailcarByIdOptions = (options: Options<FindRailcarByIdData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findRailcarById({
+            return await findRailcarById({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findRailcarByIdQueryKey(options)
     });
@@ -264,16 +306,21 @@ export const findRailcarByIdOptions = (options: Options<FindRailcarByIdData>) =>
 
 export const findPointByPositionQueryKey = (options: Options<FindPointByPositionData>) => createQueryKey('findPointByPosition', options);
 
+/**
+ * Finds points that are located in a specified around around a given geo position
+ * Finds points that are in the given radius around the given geo position. Results are sorted by their distance to
+ * the given geo point, ASC (nearest point first).
+ *
+ */
 export const findPointByPositionOptions = (options: Options<FindPointByPositionData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findPointByPosition({
+            return await findPointByPosition({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findPointByPositionQueryKey(options)
     });
@@ -281,16 +328,23 @@ export const findPointByPositionOptions = (options: Options<FindPointByPositionD
 
 export const findPointBySimRailPointIdQueryKey = (options: Options<FindPointBySimRailPointIdData>) => createQueryKey('findPointBySimRailPointId', options);
 
+/**
+ * Get a point by its SimRail point id
+ * Gets a point by its SimRail point id". Note that the resulting points are grouped by their operational unit, for
+ * example '2528' (Małogoszcz) and '5460' (Małogoszcz PZS R35) will both return 'Małogoszcz'. Also note that some
+ * points might not return any result if they are too close together and one point represents them enough
+ * (for example the case for 'Zawiercie' and 'Zawiercie GT')
+ *
+ */
 export const findPointBySimRailPointIdOptions = (options: Options<FindPointBySimRailPointIdData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findPointBySimRailPointId({
+            return await findPointBySimRailPointId({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findPointBySimRailPointIdQueryKey(options)
     });
@@ -298,16 +352,22 @@ export const findPointBySimRailPointIdOptions = (options: Options<FindPointBySim
 
 export const findPointByNameQueryKey = (options: Options<FindPointByNameData>) => createQueryKey('findPointByName', options);
 
+/**
+ * Finds points whose name are matching the given search query
+ * Fuzzy searches points by the given name search query. For example the search input 'Lazy' will return 'Łazy',
+ * 'Łazy Łc', 'Łazy Ła' etc. Wildcard search patterns are not supported by this endpoint. Results are sorted by match
+ * with the given search query, DESC (best match first).
+ *
+ */
 export const findPointByNameOptions = (options: Options<FindPointByNameData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findPointByName({
+            return await findPointByName({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findPointByNameQueryKey(options)
     });
@@ -315,16 +375,18 @@ export const findPointByNameOptions = (options: Options<FindPointByNameData>) =>
 
 export const findPointByIdQueryKey = (options: Options<FindPointByIdData>) => createQueryKey('findPointById', options);
 
+/**
+ * Get the full data of a point by its id
+ */
 export const findPointByIdOptions = (options: Options<FindPointByIdData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findPointById({
+            return await findPointById({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findPointByIdQueryKey(options)
     });
@@ -332,23 +394,27 @@ export const findPointByIdOptions = (options: Options<FindPointByIdData>) => {
 
 export const listPointsQueryKey = (options?: Options<ListPointsData>) => createQueryKey('listPoints', options);
 
+/**
+ * List all points that are registered
+ */
 export const listPointsOptions = (options?: Options<ListPointsData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await listPoints({
+            return await listPoints({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: listPointsQueryKey(options)
     });
 };
 
 const createInfiniteParams = <K extends Pick<QueryKey<Options>[0], 'body' | 'headers' | 'path' | 'query'>>(queryKey: QueryKey<Options>, page: K) => {
-    const params = queryKey[0];
+    const params = {
+        ...queryKey[0]
+    };
     if (page.body) {
         params.body = {
             ...queryKey[0].body as any,
@@ -378,6 +444,9 @@ const createInfiniteParams = <K extends Pick<QueryKey<Options>[0], 'body' | 'hea
 
 export const listPointsInfiniteQueryKey = (options?: Options<ListPointsData>): QueryKey<Options<ListPointsData>> => createQueryKey('listPoints', options, true);
 
+/**
+ * List all points that are registered
+ */
 export const listPointsInfiniteOptions = (options?: Options<ListPointsData>) => {
     return infiniteQueryOptions<ListPointsResponse, ListPointsError, InfiniteData<ListPointsResponse>, QueryKey<Options<ListPointsData>>, number | Pick<QueryKey<Options<ListPointsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
     // @ts-ignore
@@ -390,13 +459,12 @@ export const listPointsInfiniteOptions = (options?: Options<ListPointsData>) => 
                 }
             };
             const params = createInfiniteParams(queryKey, page);
-            const { data } = await listPoints({
+            return await listPoints({
                 ...options,
                 ...params,
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: listPointsInfiniteQueryKey(options)
     });
@@ -404,16 +472,18 @@ export const listPointsInfiniteOptions = (options?: Options<ListPointsData>) => 
 
 export const findMapPolylineByJourneyQueryKey = (options: Options<FindMapPolylineByJourneyData>) => createQueryKey('findMapPolylineByJourney', options);
 
+/**
+ * Get the polyline for a specific journey
+ */
 export const findMapPolylineByJourneyOptions = (options: Options<FindMapPolylineByJourneyData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findMapPolylineByJourney({
+            return await findMapPolylineByJourney({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findMapPolylineByJourneyQueryKey(options)
     });
@@ -421,16 +491,22 @@ export const findMapPolylineByJourneyOptions = (options: Options<FindMapPolyline
 
 export const findJourneysByRailcarQueryKey = (options: Options<FindJourneysByRailcarData>) => createQueryKey('findJourneysByRailcar', options);
 
+/**
+ * Finds journeys that are using the given railcar in their vehicle composition
+ * Finds journeys that use the given railcar in their vehicle composition on the given date. The results might be
+ * incomplete or incorrect for journeys that were not active yet, as the result data will be based on predictions
+ * and not the real composition of the journey.
+ *
+ */
 export const findJourneysByRailcarOptions = (options: Options<FindJourneysByRailcarData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findJourneysByRailcar({
+            return await findJourneysByRailcar({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findJourneysByRailcarQueryKey(options)
     });
@@ -438,6 +514,13 @@ export const findJourneysByRailcarOptions = (options: Options<FindJourneysByRail
 
 export const findJourneysByRailcarInfiniteQueryKey = (options: Options<FindJourneysByRailcarData>): QueryKey<Options<FindJourneysByRailcarData>> => createQueryKey('findJourneysByRailcar', options, true);
 
+/**
+ * Finds journeys that are using the given railcar in their vehicle composition
+ * Finds journeys that use the given railcar in their vehicle composition on the given date. The results might be
+ * incomplete or incorrect for journeys that were not active yet, as the result data will be based on predictions
+ * and not the real composition of the journey.
+ *
+ */
 export const findJourneysByRailcarInfiniteOptions = (options: Options<FindJourneysByRailcarData>) => {
     return infiniteQueryOptions<FindJourneysByRailcarResponse, FindJourneysByRailcarError, InfiniteData<FindJourneysByRailcarResponse>, QueryKey<Options<FindJourneysByRailcarData>>, number | Pick<QueryKey<Options<FindJourneysByRailcarData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
     // @ts-ignore
@@ -450,13 +533,12 @@ export const findJourneysByRailcarInfiniteOptions = (options: Options<FindJourne
                 }
             };
             const params = createInfiniteParams(queryKey, page);
-            const { data } = await findJourneysByRailcar({
+            return await findJourneysByRailcar({
                 ...options,
                 ...params,
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findJourneysByRailcarInfiniteQueryKey(options)
     });
@@ -464,16 +546,21 @@ export const findJourneysByRailcarInfiniteOptions = (options: Options<FindJourne
 
 export const findJourneysByTailQueryKey = (options: Options<FindJourneysByTailData>) => createQueryKey('findJourneysByTail', options);
 
+/**
+ * Find journeys based on its tails
+ * Filters journeys based on its start and end events, where the start event data is required for filtering and the
+ * end event data can optionally be supplied for further narrowing.
+ *
+ */
 export const findJourneysByTailOptions = (options: Options<FindJourneysByTailData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findJourneysByTail({
+            return await findJourneysByTail({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findJourneysByTailQueryKey(options)
     });
@@ -481,6 +568,12 @@ export const findJourneysByTailOptions = (options: Options<FindJourneysByTailDat
 
 export const findJourneysByTailInfiniteQueryKey = (options: Options<FindJourneysByTailData>): QueryKey<Options<FindJourneysByTailData>> => createQueryKey('findJourneysByTail', options, true);
 
+/**
+ * Find journeys based on its tails
+ * Filters journeys based on its start and end events, where the start event data is required for filtering and the
+ * end event data can optionally be supplied for further narrowing.
+ *
+ */
 export const findJourneysByTailInfiniteOptions = (options: Options<FindJourneysByTailData>) => {
     return infiniteQueryOptions<FindJourneysByTailResponse, FindJourneysByTailError, InfiniteData<FindJourneysByTailResponse>, QueryKey<Options<FindJourneysByTailData>>, number | Pick<QueryKey<Options<FindJourneysByTailData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
     // @ts-ignore
@@ -493,13 +586,12 @@ export const findJourneysByTailInfiniteOptions = (options: Options<FindJourneysB
                 }
             };
             const params = createInfiniteParams(queryKey, page);
-            const { data } = await findJourneysByTail({
+            return await findJourneysByTail({
                 ...options,
                 ...params,
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findJourneysByTailInfiniteQueryKey(options)
     });
@@ -507,16 +599,23 @@ export const findJourneysByTailInfiniteOptions = (options: Options<FindJourneysB
 
 export const findJourneysByPlayableDepartureQueryKey = (options: Options<FindJourneysByPlayableDepartureData>) => createQueryKey('findJourneysByPlayableDeparture', options);
 
+/**
+ * Find journeys that become playable in the provided time range
+ * Finds journeys that become playable in the provided time range. Optionally additional filter parameters can be
+ * provided to narrow down the results. The provided time range must be at least 1 minute and at most 60 minutes
+ * long. If the start time is omitted it defaults to the current server time, if the end time is omitted it defaults
+ * to the start time plus 15 minutes.
+ *
+ */
 export const findJourneysByPlayableDepartureOptions = (options: Options<FindJourneysByPlayableDepartureData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findJourneysByPlayableDeparture({
+            return await findJourneysByPlayableDeparture({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findJourneysByPlayableDepartureQueryKey(options)
     });
@@ -524,6 +623,14 @@ export const findJourneysByPlayableDepartureOptions = (options: Options<FindJour
 
 export const findJourneysByPlayableDepartureInfiniteQueryKey = (options: Options<FindJourneysByPlayableDepartureData>): QueryKey<Options<FindJourneysByPlayableDepartureData>> => createQueryKey('findJourneysByPlayableDeparture', options, true);
 
+/**
+ * Find journeys that become playable in the provided time range
+ * Finds journeys that become playable in the provided time range. Optionally additional filter parameters can be
+ * provided to narrow down the results. The provided time range must be at least 1 minute and at most 60 minutes
+ * long. If the start time is omitted it defaults to the current server time, if the end time is omitted it defaults
+ * to the start time plus 15 minutes.
+ *
+ */
 export const findJourneysByPlayableDepartureInfiniteOptions = (options: Options<FindJourneysByPlayableDepartureData>) => {
     return infiniteQueryOptions<FindJourneysByPlayableDepartureResponse, FindJourneysByPlayableDepartureError, InfiniteData<FindJourneysByPlayableDepartureResponse>, QueryKey<Options<FindJourneysByPlayableDepartureData>>, number | Pick<QueryKey<Options<FindJourneysByPlayableDepartureData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
     // @ts-ignore
@@ -536,13 +643,12 @@ export const findJourneysByPlayableDepartureInfiniteOptions = (options: Options<
                 }
             };
             const params = createInfiniteParams(queryKey, page);
-            const { data } = await findJourneysByPlayableDeparture({
+            return await findJourneysByPlayableDeparture({
                 ...options,
                 ...params,
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findJourneysByPlayableDepartureInfiniteQueryKey(options)
     });
@@ -550,16 +656,18 @@ export const findJourneysByPlayableDepartureInfiniteOptions = (options: Options<
 
 export const findJourneyByIdQueryKey = (options: Options<FindJourneyByIdData>) => createQueryKey('findJourneyById', options);
 
+/**
+ * Returns a single journey by the given id
+ */
 export const findJourneyByIdOptions = (options: Options<FindJourneyByIdData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findJourneyById({
+            return await findJourneyById({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findJourneyByIdQueryKey(options)
     });
@@ -567,16 +675,26 @@ export const findJourneyByIdOptions = (options: Options<FindJourneyByIdData>) =>
 
 export const findJourneysByEventQueryKey = (options: Options<FindJourneysByEventData>) => createQueryKey('findJourneysByEvent', options);
 
+/**
+ * Find journeys based on one journey event matching the given search criteria
+ * Find journeys based on one journey event matching the given search criteria, for example:
+ * - Searching for journey number '40180' will return 'EIP 40180', 'ROJ 40180' etc.
+ * - Searching for 'PWJ 146051' will also return 'ROJ 19369' that starts as 'ROJ' but switches to 'PWJ' along its route
+ * - Searching for 'RE1' at '2024-12-06' will also return journeys that start at '2024-12-05' and continue on '2024-12-06'
+ *
+ * Multiple filter parameter can be provided and are linked in a logical AND chain. Ensure that at least the
+ * journey number or journey line is provided.
+ *
+ */
 export const findJourneysByEventOptions = (options: Options<FindJourneysByEventData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findJourneysByEvent({
+            return await findJourneysByEvent({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findJourneysByEventQueryKey(options)
     });
@@ -584,6 +702,17 @@ export const findJourneysByEventOptions = (options: Options<FindJourneysByEventD
 
 export const findJourneysByEventInfiniteQueryKey = (options: Options<FindJourneysByEventData>): QueryKey<Options<FindJourneysByEventData>> => createQueryKey('findJourneysByEvent', options, true);
 
+/**
+ * Find journeys based on one journey event matching the given search criteria
+ * Find journeys based on one journey event matching the given search criteria, for example:
+ * - Searching for journey number '40180' will return 'EIP 40180', 'ROJ 40180' etc.
+ * - Searching for 'PWJ 146051' will also return 'ROJ 19369' that starts as 'ROJ' but switches to 'PWJ' along its route
+ * - Searching for 'RE1' at '2024-12-06' will also return journeys that start at '2024-12-05' and continue on '2024-12-06'
+ *
+ * Multiple filter parameter can be provided and are linked in a logical AND chain. Ensure that at least the
+ * journey number or journey line is provided.
+ *
+ */
 export const findJourneysByEventInfiniteOptions = (options: Options<FindJourneysByEventData>) => {
     return infiniteQueryOptions<FindJourneysByEventResponse, FindJourneysByEventError, InfiniteData<FindJourneysByEventResponse>, QueryKey<Options<FindJourneysByEventData>>, number | Pick<QueryKey<Options<FindJourneysByEventData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
     // @ts-ignore
@@ -596,13 +725,12 @@ export const findJourneysByEventInfiniteOptions = (options: Options<FindJourneys
                 }
             };
             const params = createInfiniteParams(queryKey, page);
-            const { data } = await findJourneysByEvent({
+            return await findJourneysByEvent({
                 ...options,
                 ...params,
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findJourneysByEventInfiniteQueryKey(options)
     });
@@ -610,16 +738,22 @@ export const findJourneysByEventInfiniteOptions = (options: Options<FindJourneys
 
 export const listActiveJourneysQueryKey = (options: Options<ListActiveJourneysData>) => createQueryKey('listActiveJourneys', options);
 
+/**
+ * Get all journeys that are currently active on a server
+ * Get descriptive information about all journeys that are currently active on a server. Data returned by this
+ * endpoint updates every 15 seconds. This endpoint shouldn't be used to poll journey updates, use the event system
+ * SIT-Events instead.
+ *
+ */
 export const listActiveJourneysOptions = (options: Options<ListActiveJourneysData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await listActiveJourneys({
+            return await listActiveJourneys({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: listActiveJourneysQueryKey(options)
     });
@@ -627,16 +761,22 @@ export const listActiveJourneysOptions = (options: Options<ListActiveJourneysDat
 
 export const findDispatchPostsQueryKey = (options?: Options<FindDispatchPostsData>) => createQueryKey('findDispatchPosts', options);
 
+/**
+ * Find dispatch posts based on the given filter parameters
+ * Finds dispatch posts paginated based on the given filter parameters. If multiple filter parameters are provided,
+ * they get chained into a logical AND chain. If no filter parameters are provided, this endpoint acts like a
+ * listing endpoint.
+ *
+ */
 export const findDispatchPostsOptions = (options?: Options<FindDispatchPostsData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findDispatchPosts({
+            return await findDispatchPosts({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findDispatchPostsQueryKey(options)
     });
@@ -644,6 +784,13 @@ export const findDispatchPostsOptions = (options?: Options<FindDispatchPostsData
 
 export const findDispatchPostsInfiniteQueryKey = (options?: Options<FindDispatchPostsData>): QueryKey<Options<FindDispatchPostsData>> => createQueryKey('findDispatchPosts', options, true);
 
+/**
+ * Find dispatch posts based on the given filter parameters
+ * Finds dispatch posts paginated based on the given filter parameters. If multiple filter parameters are provided,
+ * they get chained into a logical AND chain. If no filter parameters are provided, this endpoint acts like a
+ * listing endpoint.
+ *
+ */
 export const findDispatchPostsInfiniteOptions = (options?: Options<FindDispatchPostsData>) => {
     return infiniteQueryOptions<FindDispatchPostsResponse, FindDispatchPostsError, InfiniteData<FindDispatchPostsResponse>, QueryKey<Options<FindDispatchPostsData>>, number | Pick<QueryKey<Options<FindDispatchPostsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
     // @ts-ignore
@@ -656,13 +803,12 @@ export const findDispatchPostsInfiniteOptions = (options?: Options<FindDispatchP
                 }
             };
             const params = createInfiniteParams(queryKey, page);
-            const { data } = await findDispatchPosts({
+            return await findDispatchPosts({
                 ...options,
                 ...params,
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findDispatchPostsInfiniteQueryKey(options)
     });
@@ -670,16 +816,18 @@ export const findDispatchPostsInfiniteOptions = (options?: Options<FindDispatchP
 
 export const findDispatchPostByIdQueryKey = (options: Options<FindDispatchPostByIdData>) => createQueryKey('findDispatchPostById', options);
 
+/**
+ * Get the detail information of a single dispatch post by its id
+ */
 export const findDispatchPostByIdOptions = (options: Options<FindDispatchPostByIdData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await findDispatchPostById({
+            return await findDispatchPostById({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: findDispatchPostByIdQueryKey(options)
     });
@@ -687,16 +835,23 @@ export const findDispatchPostByIdOptions = (options: Options<FindDispatchPostByI
 
 export const listBoardDeparturesQueryKey = (options: Options<ListBoardDeparturesData>) => createQueryKey('listBoardDepartures', options);
 
+/**
+ * Get all departures within a specified timespan at a specified point
+ * Lists all journeys that are departing from the specified point on the specified server within the given time span.
+ * By default, a time span of 30 minutes is returned, starting at the current server time, unless otherwise specified.
+ * Results are sorted by realtime time information by default. A minimum time span of 5 minutes and a maximum time
+ * span of 6 hours can be requested. The start time can be 1 day in the future and 90 days in the past.
+ *
+ */
 export const listBoardDeparturesOptions = (options: Options<ListBoardDeparturesData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await listBoardDepartures({
+            return await listBoardDepartures({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: listBoardDeparturesQueryKey(options)
     });
@@ -704,16 +859,23 @@ export const listBoardDeparturesOptions = (options: Options<ListBoardDeparturesD
 
 export const listBoardArrivalsQueryKey = (options: Options<ListBoardArrivalsData>) => createQueryKey('listBoardArrivals', options);
 
+/**
+ * Get all arrivals within a specified timespan at a specified point
+ * Lists all journeys that are arriving at the specified point on the specified server within the given time span.
+ * By default, a time span of 30 minutes is returned, starting at the current server time, unless otherwise specified.
+ * Results are sorted by realtime time information by default. A minimum time span of 5 minutes and a maximum time
+ * span of 6 hours can be requested. The start time can be 1 day in the future and 90 days in the past.
+ *
+ */
 export const listBoardArrivalsOptions = (options: Options<ListBoardArrivalsData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await listBoardArrivals({
+            return await listBoardArrivals({
                 ...options,
                 ...queryKey[0],
                 signal,
                 throwOnError: true
             });
-            return data;
         },
         queryKey: listBoardArrivalsQueryKey(options)
     });

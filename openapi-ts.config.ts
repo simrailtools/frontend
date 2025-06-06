@@ -1,4 +1,4 @@
-import { defaultPlugins, defineConfig } from "@hey-api/openapi-ts";
+import { defineConfig } from "@hey-api/openapi-ts";
 
 export default defineConfig({
   input: "https://apis.simrail.tools/docs/openapi.yaml",
@@ -7,5 +7,8 @@ export default defineConfig({
     lint: "biome",
     format: "biome",
   },
-  plugins: [...defaultPlugins, "@hey-api/client-fetch", "@tanstack/react-query"],
+  plugins: ["@hey-api/typescript", "@hey-api/client-fetch", "@tanstack/react-query", {
+    name: "@hey-api/sdk",
+    responseStyle: "data",
+  }],
 });

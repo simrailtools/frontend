@@ -40,8 +40,7 @@ export const JourneyPopup: FC<{ journey: JourneySnapshotFrame }> = ({ journey })
     queryKey: ["steam_user", driverSteamId],
     queryFn: async ({ signal }) => {
       // biome-ignore lint/style/noNonNullAssertion: must be present here, see enabled field
-      const { data } = await findUsersBySteamIds({ body: [journey.driverSteamId!], signal, throwOnError: true });
-      return data;
+      return await findUsersBySteamIds({ body: [journey.driverSteamId!], signal, throwOnError: true });
     },
   });
   const userInfo = data?.find(user => user.id === journey.driverSteamId);
