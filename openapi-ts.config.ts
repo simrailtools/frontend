@@ -7,8 +7,13 @@ export default defineConfig({
     lint: "biome",
     format: "biome",
   },
-  plugins: ["@hey-api/typescript", "@hey-api/client-fetch", "@tanstack/react-query", {
-    name: "@hey-api/sdk",
-    responseStyle: "data",
-  }],
+  plugins: [
+    "@hey-api/typescript",
+    "@hey-api/client-fetch",
+    "@tanstack/react-query",
+    {
+      name: "@hey-api/sdk",
+      responseStyle: "data",
+    },
+  ],
 });
