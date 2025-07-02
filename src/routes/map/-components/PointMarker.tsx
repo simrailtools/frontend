@@ -1,6 +1,6 @@
-import type { PointInfoDto } from "@/api/generated";
 import type { FC } from "react";
 import { CircleMarker, Tooltip } from "react-leaflet";
+import type { PointInfoDto } from "@/api/generated";
 
 export const PointMarker: FC<{ point: PointInfoDto }> = ({ point }) => {
   const { name, position } = point;

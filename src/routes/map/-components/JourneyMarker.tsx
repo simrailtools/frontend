@@ -1,14 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
+import type { BaseIconOptions, Icon } from "leaflet";
+import { type FC, memo } from "react";
+import { Tooltip } from "react-leaflet";
+import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
 import { findUsersBySteamIds } from "@/api/generated";
 import personOffIcon from "@/assets/icons/person_off.svg";
 import { useSelectedJourney } from "@/hooks/useSelectedJourney.tsx";
 import { steamAvatarUrl } from "@/lib/utils.ts";
 import { constructIcon } from "@/routes/map/-lib/iconFactory.ts";
 import type { JourneySnapshotWithRequiredPosition } from "@/routes/map/-lib/map.types.ts";
-import { useQuery } from "@tanstack/react-query";
-import type { BaseIconOptions, Icon } from "leaflet";
-import { type FC, memo } from "react";
-import { Tooltip } from "react-leaflet";
-import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
 
 interface MarkerComponentProps {
   journey: JourneySnapshotWithRequiredPosition;

@@ -1,6 +1,6 @@
-import { useSelectedJourney } from "@/hooks/useSelectedJourney.tsx";
 import type { FC } from "react";
 import { useMapEvent } from "react-leaflet";
+import { useSelectedJourney } from "@/hooks/useSelectedJourney.tsx";
 
 export type MapEventHandlerProps = {
   /**

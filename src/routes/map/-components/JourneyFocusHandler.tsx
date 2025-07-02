@@ -1,7 +1,7 @@
-import { useSelectedJourney } from "@/hooks/useSelectedJourney.tsx";
 import { type FC, useEffect, useState } from "react";
 import { MdAdjust } from "react-icons/md";
 import { useMap, useMapEvent } from "react-leaflet";
+import { useSelectedJourney } from "@/hooks/useSelectedJourney.tsx";
 
 export const JourneyFocusHandler: FC = () => {
   const { selectedJourney } = useSelectedJourney();

@@ -1,6 +1,6 @@
-import { BackgroundImage } from "@/components/BackgroundImage.tsx";
 import type { FC } from "react";
 import { MdRefresh } from "react-icons/md";
+import { BackgroundImage } from "@/components/BackgroundImage.tsx";
 
 export const Throbber: FC = () => {
   return (

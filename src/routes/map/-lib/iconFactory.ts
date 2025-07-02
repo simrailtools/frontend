@@ -1,7 +1,7 @@
+import L, { type BaseIconOptions, type Icon, type PointExpression } from "leaflet";
 import errorIcon from "@/assets/icons/error.svg";
 import refreshIcon from "@/assets/icons/refresh.svg";
 import { cn } from "@/lib/utils.ts";
-import L, { type BaseIconOptions, type Icon, type PointExpression } from "leaflet";
 
 /**
  * Options for construction of a leaflet marker icon.

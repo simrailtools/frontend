@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils.ts";
 import type { FC } from "react";
+import { cn } from "@/lib/utils.ts";
 
 export const JourneyStopTypeIndicator: FC<{ stopType: "NONE" | "TECHNICAL" | "PASSENGER" }> = ({ stopType }) => {
   // don't display anything if there is no stop scheduled

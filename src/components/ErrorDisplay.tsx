@@ -1,7 +1,7 @@
-import { BackgroundImage } from "@/components/BackgroundImage.tsx";
-import { Heading } from "@/components/Heading.tsx";
 import type { FC } from "react";
 import { MdError } from "react-icons/md";
+import { BackgroundImage } from "@/components/BackgroundImage.tsx";
+import { Heading } from "@/components/Heading.tsx";
 
 export const ErrorDisplay: FC<{ errorMessage?: string }> = ({ errorMessage }) => {
   return (

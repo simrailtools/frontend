@@ -1,6 +1,6 @@
+import type { FC, PropsWithChildren } from "react";
 import type { JourneyDto, JourneyEventDto, VehicleCompositionDto } from "@/api/generated";
 import { Heading } from "@/components/Heading.tsx";
-import type { FC, PropsWithChildren } from "react";
 
 type JourneyBaseInfoProps = {
   journey: JourneyDto;

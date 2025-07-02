@@ -1,3 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { DateTime } from "luxon";
 import type { JourneyEventDto } from "@/api/generated";
 import {
   findJourneyByIdOptions,
@@ -6,9 +9,6 @@ import {
 } from "@/api/generated/@tanstack/react-query.gen.ts";
 import { JourneyBaseInfo } from "@/routes/journeys/-components/JourneyBaseInfo.tsx";
 import { JourneyStopItem } from "@/routes/journeys/-components/JourneyStopItem.tsx";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { DateTime } from "luxon";
 
 export const Route = createFileRoute("/journeys/$journeyId")({
   loader: async ({ context: { queryClient }, params: { journeyId } }) => {

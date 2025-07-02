@@ -1,5 +1,5 @@
+import { createContext, type FC, type PropsWithChildren, useContext, useState } from "react";
 import type { JourneySnapshotWithRequiredPosition } from "@/routes/map/-lib/map.types.ts";
-import { type FC, type PropsWithChildren, createContext, useContext, useState } from "react";
 
 type SelectedJourneyContextType = {
   selectedJourney: JourneySnapshotWithRequiredPosition | null;

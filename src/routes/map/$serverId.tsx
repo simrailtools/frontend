@@ -1,5 +1,9 @@
 import "leaflet/dist/leaflet.css";
 import "./map.css";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { type FC, useEffect, useMemo } from "react";
+import { LayerGroup, LayersControl, MapContainer, TileLayer } from "react-leaflet";
 import {
   findServerByCodeOptions,
   findServerByIdOptions,
@@ -17,10 +21,6 @@ import { PointMarker } from "@/routes/map/-components/PointMarker.tsx";
 import { ServerStatusPopup } from "@/routes/map/-components/ServerStatusPopup.tsx";
 import { useMapOptions } from "@/routes/map/-hooks/useMapOptions.ts";
 import { isJourneyWithPosition } from "@/routes/map/-lib/map.types.ts";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { type FC, useEffect, useMemo } from "react";
-import { LayerGroup, LayersControl, MapContainer, TileLayer } from "react-leaflet";
 import { SelectedJourneyProvider, useSelectedJourney } from "../../hooks/useSelectedJourney.tsx";
 
 export const Route = createFileRoute("/map/$serverId")({

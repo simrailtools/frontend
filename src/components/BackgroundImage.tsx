@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils.ts";
 import type { ComponentProps, FC, PropsWithChildren } from "react";
+import { cn } from "@/lib/utils.ts";
 
 type BackgroundImageProps = {
   bgStyle?: "default" | "night" | "snow";

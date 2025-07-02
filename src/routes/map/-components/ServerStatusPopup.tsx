@@ -1,12 +1,12 @@
 import "react-clock/dist/Clock.css";
+import { type FC, memo, useEffect, useState } from "react";
+import Clock from "react-clock";
+import { MdOutlineTimer, MdOutlineTimerOff } from "react-icons/md";
 import type { ServerSnapshotFrame } from "@/api/eventbus.types.ts";
 import { Heading } from "@/components/Heading.tsx";
 import { formatLocalTimezoneDifference, timeStringAtIsoZoneOffset } from "@/lib/timeHelper.ts";
 import { cn } from "@/lib/utils.ts";
 import { ServerMapText } from "@/routes/map/-components/ServerMapText.tsx";
-import { type FC, memo, useEffect, useState } from "react";
-import Clock from "react-clock";
-import { MdOutlineTimer, MdOutlineTimerOff } from "react-icons/md";
 
 export const ServerStatusPopup: FC<{ server: ServerSnapshotFrame }> = memo(({ server }) => {
   // holds the current server time in 'HH:mm:ss' format,

@@ -1,10 +1,10 @@
+import type { FC } from "react";
 import type { JourneyEventDto } from "@/api/generated";
 import { cn } from "@/lib/utils.ts";
 import { JourneyEventTime } from "@/routes/journeys/-components/JourneyEventTime.tsx";
 import { JourneyStopPlatform } from "@/routes/journeys/-components/JourneyStopPlatform.tsx";
 import { JourneyStopTypeIndicator } from "@/routes/journeys/-components/JourneyStopTypeIndicator.tsx";
 import { JourneyTimelineMarker } from "@/routes/journeys/-components/JourneyTimelineMarker.tsx";
-import type { FC } from "react";
 
 type StopItemProps = {
   arrival?: JourneyEventDto;

@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils.ts";
 import type { FC, PropsWithChildren } from "react";
+import { cn } from "@/lib/utils.ts";
 
 export const Heading: FC<PropsWithChildren<{ className?: string; level: 1 | 2 | 3 | 4 }>> = ({
   className,

@@ -1,10 +1,10 @@
-import type { JourneySnapshotFrame } from "@/api/eventbus.types.ts";
-import { findUsersBySteamIds } from "@/api/generated";
-import { cn, steamAvatarUrl } from "@/lib/utils.ts";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { FC } from "react";
 import { MdDirectionsTransit, MdPerson, MdSpeed, MdTraffic } from "react-icons/md";
+import type { JourneySnapshotFrame } from "@/api/eventbus.types.ts";
+import { findUsersBySteamIds } from "@/api/generated";
+import { cn, steamAvatarUrl } from "@/lib/utils.ts";
 
 const formatDistance = (distance: number): string => {
   return distance >= 1000 ? `${(distance / 1000).toFixed(2)}km` : `${distance}m`;

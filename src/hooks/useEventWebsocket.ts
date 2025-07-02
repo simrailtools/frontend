@@ -1,6 +1,6 @@
-import { useDocumentVisibility } from "@/hooks/useDocumentVisibility.tsx";
 import { useCallback, useEffect, useState } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
+import { useDocumentVisibility } from "@/hooks/useDocumentVisibility.tsx";
 import type {
   DispatchPostSnapshotFrame,
   DispatchPostUpdateFrame,

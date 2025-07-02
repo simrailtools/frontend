@@ -1,11 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import type { FC } from "react";
 import type { SimRailServerDto } from "@/api/generated";
 import { listServersOptions } from "@/api/generated/@tanstack/react-query.gen.ts";
 import { BackgroundImage } from "@/components/BackgroundImage.tsx";
 import { cn } from "@/lib/utils.ts";
 import { ServerMapText } from "@/routes/map/-components/ServerMapText.tsx";
-import { useQuery } from "@tanstack/react-query";
-import { Link, createFileRoute } from "@tanstack/react-router";
-import type { FC } from "react";
 
 export const Route = createFileRoute("/map/")({
   loader: ({ context: { queryClient } }) => {

@@ -1,6 +1,6 @@
+import type { FC } from "react";
 import type { JourneyEventDto } from "@/api/generated";
 import { cn } from "@/lib/utils.ts";
-import type { FC } from "react";
 
 type JourneyTimelineMarkerProps = {
   arrival?: JourneyEventDto;

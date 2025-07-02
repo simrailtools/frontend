@@ -1,9 +1,9 @@
-import { ErrorDisplay } from "@/components/ErrorDisplay.tsx";
-import { Throbber } from "@/components/Throbber.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { ErrorDisplay } from "@/components/ErrorDisplay.tsx";
+import { Throbber } from "@/components/Throbber.tsx";
 import "./index.css";
 import { routeTree } from "./routeTree.gen.ts";
 

@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils.ts";
 import type { ComponentProps, FC } from "react";
+import { cn } from "@/lib/utils.ts";
 
 type ServerMapTextProps = {
   scenery: "FULL" | "WARSAW_LODZ_PSARY" | "WARSAW_LODZ_KRAKOW" | "WARSAW_LODZ_KATOWICE" | "WARSAW_KATOWICE_KRAKOW";

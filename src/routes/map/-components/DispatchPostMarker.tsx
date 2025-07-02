@@ -1,14 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
+import type { BaseIconOptions, Icon } from "leaflet";
+import type { FC } from "react";
+import { MdOutlineLocationOn, MdOutlinePsychology, MdPersonOutline } from "react-icons/md";
+import { Marker, Popup, Tooltip } from "react-leaflet";
 import type { DispatchPostSnapshotFrame } from "@/api/eventbus.types.ts";
 import type { SimRailUserDto } from "@/api/generated";
 import { findUsersBySteamIdsOptions } from "@/api/generated/@tanstack/react-query.gen.ts";
 import personOffIcon from "@/assets/icons/person_off.svg";
 import { cn, steamAvatarUrl } from "@/lib/utils.ts";
 import { constructIcon } from "@/routes/map/-lib/iconFactory.ts";
-import { useQuery } from "@tanstack/react-query";
-import type { BaseIconOptions, Icon } from "leaflet";
-import type { FC } from "react";
-import { MdOutlineLocationOn, MdOutlinePsychology, MdPersonOutline } from "react-icons/md";
-import { Marker, Popup, Tooltip } from "react-leaflet";
 
 const mapDifficultyName = (difficulty: number): string => {
   const difficultyNames = ["Very Easy", "Easy", "Intermediate", "Advanced", "Hard", "Expert"];
