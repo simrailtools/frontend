@@ -117,6 +117,10 @@ export type ServerUpdateFrame = {
    * If the server is online or offline, not given if it didn't change.
    */
   online?: boolean;
+  /**
+   * The scenery (map part) of the server, not given if it didn't change.
+   */
+  scenery?: "FULL" | "WARSAW_LODZ_PSARY" | "WARSAW_LODZ_KRAKOW" | "WARSAW_LODZ_KATOWICE" | "WARSAW_KATOWICE_KRAKOW";
 };
 
 /**
