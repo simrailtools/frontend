@@ -14,6 +14,7 @@ import { safeExternalUrlTag } from "@/lib/urlFactory.ts";
 import { DispatchPostMarker } from "@/routes/map/-components/DispatchPostMarker.tsx";
 import { JourneyFocusHandler } from "@/routes/map/-components/JourneyFocusHandler.tsx";
 import { JourneyMarker } from "@/routes/map/-components/JourneyMarker.tsx";
+import { JourneyPolyline } from "@/routes/map/-components/JourneyPolyline.tsx";
 import { JourneyPopup } from "@/routes/map/-components/JourneyPopup.tsx";
 import { MapElementWithoutEventPropagation } from "@/routes/map/-components/MapElementWithoutEventPropagation.tsx";
 import { MapEventHandler } from "@/routes/map/-components/MapEventHandler.tsx";
@@ -166,6 +167,12 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
                 <PointMarker key={point.id} point={point} />
               ))}
             </LayerGroup>
+          </LayersControl.Overlay>
+          <LayersControl.Overlay
+            name={"Journey Polyline"}
+            checked={mapOptions.enabledLayers.includes("journey_polyline")}
+          >
+            <LayerGroup>{selectedJourney && <JourneyPolyline journey={selectedJourney} />}</LayerGroup>
           </LayersControl.Overlay>
 
           {/* Additional informative layers */}

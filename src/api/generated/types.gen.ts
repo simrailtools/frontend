@@ -1515,6 +1515,10 @@ export type FindMapPolylineByJourneyData = {
          * If additional events should be included in the polyline
          */
         includeAdditional?: boolean;
+        /**
+         * If a fallback polyline should be returned if a proper one is unavailable
+         */
+        allowFallbackComputation?: boolean;
     };
     url: '/sit-maps/v1/polyline/by-journey/{id}';
 };
