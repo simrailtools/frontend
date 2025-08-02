@@ -15,7 +15,7 @@ const tileLayers = Object.freeze(["standard", "wmts_topplusopen", "esri_satellit
  */
 const defaultMapOptions: MapOptions = Object.freeze({
   tileLayer: tileLayers[0],
-  enabledLayers: ["trains", "dispatch_posts"],
+  enabledLayers: ["trains", "dispatch_posts", "journey_polyline"],
 });
 
 /**
