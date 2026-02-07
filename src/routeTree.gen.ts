@@ -39,7 +39,7 @@ export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
   "/journeys/$journeyId": typeof JourneysJourneyIdRoute
   "/map/$serverId": typeof MapServerIdRoute
-  "/map": typeof MapIndexRoute
+  "/map/": typeof MapIndexRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
@@ -56,7 +56,7 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: "/" | "/journeys/$journeyId" | "/map/$serverId" | "/map"
+  fullPaths: "/" | "/journeys/$journeyId" | "/map/$serverId" | "/map/"
   fileRoutesByTo: FileRoutesByTo
   to: "/" | "/journeys/$journeyId" | "/map/$serverId" | "/map"
   id: "__root__" | "/" | "/journeys/$journeyId" | "/map/$serverId" | "/map/"
@@ -81,7 +81,7 @@ declare module "@tanstack/react-router" {
     "/map/": {
       id: "/map/"
       path: "/map"
-      fullPath: "/map"
+      fullPath: "/map/"
       preLoaderRoute: typeof MapIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
