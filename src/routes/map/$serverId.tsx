@@ -8,10 +8,12 @@ import {
   findServerByCodeOptions,
   findServerByIdOptions,
   listPointsOptions,
-} from "@/api/generated/@tanstack/react-query.gen.ts";
-import useEventWebsocket from "@/hooks/useEventWebsocket.ts";
+} from "@/api/rest/@tanstack/react-query.gen.ts";
+import { resolveNatsBackendUrl } from "@/api/util.ts";
+import { useLiveJourneyData } from "@/hooks/useLiveJourneyData.tsx";
+import { useLiveServerData } from "@/hooks/useLiveServerData.tsx";
+import { NatsContextProvider } from "@/hooks/useNats.tsx";
 import { safeExternalUrlTag } from "@/lib/urlFactory.ts";
-import { DispatchPostMarker } from "@/routes/map/-components/DispatchPostMarker.tsx";
 import { JourneyFocusHandler } from "@/routes/map/-components/JourneyFocusHandler.tsx";
 import { JourneyMarker } from "@/routes/map/-components/JourneyMarker.tsx";
 import { JourneyPolyline } from "@/routes/map/-components/JourneyPolyline.tsx";
@@ -21,7 +23,6 @@ import { MapEventHandler } from "@/routes/map/-components/MapEventHandler.tsx";
 import { PointMarker } from "@/routes/map/-components/PointMarker.tsx";
 import { ServerStatusPopup } from "@/routes/map/-components/ServerStatusPopup.tsx";
 import { useMapOptions } from "@/routes/map/-hooks/useMapOptions.ts";
-import { isJourneyWithPosition } from "@/routes/map/-lib/map.types.ts";
 import { SelectedJourneyProvider, useSelectedJourney } from "../../hooks/useSelectedJourney.tsx";
 
 export const Route = createFileRoute("/map/$serverId")({
@@ -47,40 +48,31 @@ function MapServerComponent() {
   return (
     <>
       <title>{`${server.code.toUpperCase()} Map - SIT`}</title>
-      <SelectedJourneyProvider>
-        <ServerMap serverId={server.id} />
-      </SelectedJourneyProvider>
+      <NatsContextProvider websocketUrl={resolveNatsBackendUrl()}>
+        <SelectedJourneyProvider>
+          <ServerMap serverId={server.id} />
+        </SelectedJourneyProvider>
+      </NatsContextProvider>
     </>
   );
 }
 
 const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
-  const { servers, journeys, dispatchPosts, connected, sendRequest } = useEventWebsocket();
-  const server = servers.find(updatedServer => updatedServer.serverId === serverId);
-
-  // subscribe to all data of the server when the connection to the backend was (re-) established
-  useEffect(() => {
-    if (connected) {
-      const baseRequest = { action: "subscribe", dataVersion: 1, serverId } as const;
-      sendRequest({ ...baseRequest, dataType: "servers", dataId: serverId });
-      sendRequest({ ...baseRequest, dataType: "dispatch-posts", dataId: "+" });
-      sendRequest({ ...baseRequest, dataType: "journey-positions", dataId: "+" });
-    }
-  }, [serverId, connected, sendRequest]);
+  const { map: serversById } = useLiveServerData(serverId);
+  const server = serversById.get(serverId);
 
   // update the selected journey or reset it to null if the journey was removed
   // only update if there is at least one known journey, an empty journeys array
   // (after a journey was selected) should only happen when the websocket has to
   // reconnect to the backend which shouldn't remove the focused journey
+  const { map: journeysById } = useLiveJourneyData(serverId);
   const { selectedJourney, setSelectedJourney } = useSelectedJourney();
   useEffect(() => {
-    if (selectedJourney && journeys.length > 0) {
-      const updatedJourney = journeys
-        .filter(isJourneyWithPosition)
-        .find(journey => journey.journeyId === selectedJourney.journeyId);
-      setSelectedJourney(updatedJourney ?? null);
+    if (selectedJourney && journeysById.size > 0) {
+      const journey = journeysById.get(selectedJourney.live.ids.dataId);
+      setSelectedJourney(journey ?? null);
     }
-  }, [journeys, selectedJourney, setSelectedJourney]);
+  }, [journeysById, selectedJourney, setSelectedJourney]);
 
   // fetch points located on the map, filter out points that have an associated dispatch post
   const { data: pointsListData } = useQuery({
@@ -88,9 +80,10 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
     refetchInterval: 5 * 60 * 1000, // 5 minutes
   });
   const points = useMemo(() => {
-    const dispatchPostPoints = new Set(dispatchPosts.map(post => post.pointId));
-    return pointsListData?.items.filter(point => !dispatchPostPoints.has(point.id));
-  }, [dispatchPosts, pointsListData]);
+    // const dispatchPostPoints = new Set(dispatchPosts.map(post => post.pointId));
+    // return pointsListData?.items.filter(point => !dispatchPostPoints.has(point.id));
+    return pointsListData?.items;
+  }, [pointsListData]);
 
   // map options handling
   const { mapOptions, updateMapOptions } = useMapOptions();
@@ -149,11 +142,12 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
           {/* Layers displaying information about the selected server */}
           <LayersControl.Overlay name={"Trains"} checked={mapOptions.enabledLayers.includes("trains")}>
             <LayerGroup>
-              {journeys.filter(isJourneyWithPosition).map(journey => (
-                <JourneyMarker key={journey.journeyId} journey={journey} />
+              {Array.from(journeysById.entries()).map(([journeyId, data]) => (
+                <JourneyMarker key={journeyId} journey={data} />
               ))}
             </LayerGroup>
           </LayersControl.Overlay>
+          {/*}
           <LayersControl.Overlay name={"Dispatch Posts"} checked={mapOptions.enabledLayers.includes("dispatch_posts")}>
             <LayerGroup>
               {dispatchPosts.map(dispatchPost => (
@@ -161,6 +155,7 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
               ))}
             </LayerGroup>
           </LayersControl.Overlay>
+          {*/}
           <LayersControl.Overlay name={"Other Points"} checked={mapOptions.enabledLayers.includes("other_points")}>
             <LayerGroup>
               {points?.map(point => (
@@ -172,7 +167,9 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
             name={"Journey Polyline"}
             checked={mapOptions.enabledLayers.includes("journey_polyline")}
           >
-            <LayerGroup>{selectedJourney && <JourneyPolyline journey={selectedJourney} />}</LayerGroup>
+            <LayerGroup>
+              {selectedJourney && <JourneyPolyline journeyId={selectedJourney.live.ids.dataId} />}
+            </LayerGroup>
           </LayersControl.Overlay>
 
           {/* Additional informative layers */}

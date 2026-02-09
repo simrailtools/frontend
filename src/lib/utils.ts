@@ -1,5 +1,10 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { tools } from "@/api/proto/bundle";
+import type { UserDto } from "@/api/rest";
+
+import UserPlatform = tools.simrail.backend.UserPlatform;
+import User = tools.simrail.backend.User;
 
 /**
  * Joins the inputs (conditionally) and deduplicates them using tailwind-merge.
@@ -10,9 +15,9 @@ export const cn = (...inputs: ClassValue[]) => {
 };
 
 /**
- * Returns the url to the medium steam avatar image associated with the given avatar hash.
- * @param avatarHash the hash of the avatar to get the url of.
+ *
+ * @param user
  */
-export const steamAvatarUrl = (avatarHash: string) => {
-  return `https://avatars.steamstatic.com/${avatarHash}_medium.jpg`;
+export const mapUserToDto = (user: User): UserDto => {
+  return { id: user.id, platform: USER_PLATFORM_MAPPING[user.platform] };
 };

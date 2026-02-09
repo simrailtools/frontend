@@ -11,7 +11,8 @@ export const JourneyFocusHandler: FC = () => {
   const map = useMap();
   useEffect(() => {
     if (selectedJourney && focusJourney) {
-      map.setView([selectedJourney.positionLat, selectedJourney.positionLng], undefined, {
+      const { latitude, longitude } = selectedJourney.live.journeyData.position;
+      map.setView([latitude, longitude], undefined, {
         animate: true,
         duration: 2,
         easeLinearity: 0.2,
@@ -49,7 +50,7 @@ export const JourneyFocusHandler: FC = () => {
         setFocusJourney(true);
       }}
       className={
-        "absolute bottom-4 left-1/2 transform -translate-x-1/2 z-[10000] flex items-center " +
+        "absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10000 flex items-center " +
         "space-x-2 p-2 cursor-pointer bg-blue-600 rounded-md shadow-lg hover:bg-blue-700 text-white"
       }
     >

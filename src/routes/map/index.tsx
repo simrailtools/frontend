@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import type { FC } from "react";
-import type { SimRailServerDto } from "@/api/generated";
-import { listServersOptions } from "@/api/generated/@tanstack/react-query.gen.ts";
+import type { SimRailServerDto } from "@/api/rest";
+import { listServersOptions } from "@/api/rest/@tanstack/react-query.gen.ts";
 import { BackgroundImage } from "@/components/BackgroundImage.tsx";
 import { cn } from "@/lib/utils.ts";
 import { ServerMapText } from "@/routes/map/-components/ServerMapText.tsx";

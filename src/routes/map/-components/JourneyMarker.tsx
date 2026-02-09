@@ -1,35 +1,29 @@
-import { useQuery } from "@tanstack/react-query";
 import type { BaseIconOptions, Icon } from "leaflet";
 import { type FC, memo } from "react";
 import { Tooltip } from "react-leaflet";
 import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
-import { findUsersBySteamIds } from "@/api/generated";
+import { tools } from "@/api/proto/bundle";
 import personOffIcon from "@/assets/icons/person_off.svg";
+import type { JourneyBaseData } from "@/hooks/useLiveJourneyData.tsx";
+import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
 import { useSelectedJourney } from "@/hooks/useSelectedJourney.tsx";
-import { steamAvatarUrl } from "@/lib/utils.ts";
+import { useUserData } from "@/hooks/useUserData.tsx";
 import { constructIcon } from "@/routes/map/-lib/iconFactory.ts";
-import type { JourneySnapshotWithRequiredPosition } from "@/routes/map/-lib/map.types.ts";
+
+import JourneyUpdateFrame = tools.simrail.backend.JourneyUpdateFrame;
 
 interface MarkerComponentProps {
-  journey: JourneySnapshotWithRequiredPosition;
+  journey: NatsSyncedEntry<JourneyBaseData, JourneyUpdateFrame>;
 }
 
 export const JourneyMarker: FC<MarkerComponentProps> = memo(({ journey }) => {
   const { setSelectedJourney } = useSelectedJourney();
-  const { isLoading, data } = useQuery({
-    enabled: !!journey.driverSteamId,
-    queryKey: ["steam_user", journey.driverSteamId],
-    queryFn: async ({ signal }) => {
-      // biome-ignore lint/style/noNonNullAssertion: must be present here, see enabled field
-      return await findUsersBySteamIds({ body: [journey.driverSteamId!], signal, throwOnError: true });
-    },
-  });
+  const { data: userInfo, isLoading } = useUserData(journey.live.journeyData.driver);
 
   let icon: Icon<BaseIconOptions>;
-  if (journey.driverSteamId) {
-    const userInfo = data?.find(user => user.id === journey.driverSteamId);
+  if (journey.live.journeyData.driver) {
     const userAvatarAlt = userInfo ? `${userInfo.name} Avatar` : undefined;
-    const userAvatarUrl = userInfo ? steamAvatarUrl(userInfo.avatarHash) : undefined;
+    const userAvatarUrl = userInfo?.avatarUrl;
     icon = constructIcon({
       isLoading,
       url: userAvatarUrl,
@@ -51,15 +45,15 @@ export const JourneyMarker: FC<MarkerComponentProps> = memo(({ journey }) => {
       icon={icon}
       duration={750}
       zIndexOffset={50}
-      alt={`${journey.category} ${journey.number}`}
-      position={[journey.positionLat, journey.positionLng]}
+      alt={`${journey.base.transport.category} ${journey.base.transport.number}`}
+      position={[journey.live.journeyData.position.latitude, journey.live.journeyData.position.longitude]}
       eventHandlers={{
         mouseup: () => setSelectedJourney(journey),
       }}
     >
-      <Tooltip permanent={true} direction={"bottom"} offset={[0, 20]} opacity={0.9} className={"!p-0.5"}>
+      <Tooltip permanent={true} direction={"bottom"} offset={[0, 20]} opacity={0.9} className={"p-0.5!"}>
         <span className={"text-[85%]"}>
-          {journey.category} {journey.number}
+          {journey.base.transport.category} {journey.base.transport.number}
         </span>
       </Tooltip>
     </ReactLeafletDriftMarker>

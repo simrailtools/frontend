@@ -1,20 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { type FC, memo } from "react";
 import { Polyline } from "react-leaflet";
-import type { JourneySnapshotFrame } from "@/api/eventbus.types.ts";
-import { findMapPolylineByJourney } from "@/api/generated";
+import { findMapPolylineByJourney } from "@/api/rest";
 
 interface PolylineComponentProps {
-  journey: JourneySnapshotFrame;
+  journeyId: string;
 }
 
-export const JourneyPolyline: FC<PolylineComponentProps> = memo(({ journey }) => {
+export const JourneyPolyline: FC<PolylineComponentProps> = memo(({ journeyId }) => {
   const { data } = useQuery({
-    queryKey: ["journey_polyline", journey.journeyId],
+    queryKey: ["journey_polyline", journeyId],
     queryFn: async ({ signal }) =>
       await findMapPolylineByJourney({
         path: {
-          id: journey.journeyId,
+          id: journeyId,
         },
         query: {
           includeCancelled: true,

@@ -15,7 +15,9 @@ export default defineConfig({
     target: "baseline-widely-available",
   },
   plugins: [
-    viteReact(),
+    devtools({
+      removeDevtoolsOnBuild: true,
+    }),
     viteTsConfigPaths({
       projects: ["./tsconfig.json"],
     }),
@@ -28,8 +30,6 @@ export default defineConfig({
       routesDirectory: "./src/routes",
       generatedRouteTree: "./src/routeTree.gen.ts",
     }),
-    devtools({
-      removeDevtoolsOnBuild: true,
-    }),
+    viteReact(),
   ],
 });

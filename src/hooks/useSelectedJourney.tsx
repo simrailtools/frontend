@@ -1,9 +1,15 @@
 import { createContext, type FC, type PropsWithChildren, useContext, useState } from "react";
-import type { JourneySnapshotWithRequiredPosition } from "@/routes/map/-lib/map.types.ts";
+import { tools } from "@/api/proto/bundle";
+import type { JourneyBaseData } from "@/hooks/useLiveJourneyData.tsx";
+import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
+
+import JourneyUpdateFrame = tools.simrail.backend.JourneyUpdateFrame;
+
+type SelectedJourney = NatsSyncedEntry<JourneyBaseData, JourneyUpdateFrame>;
 
 type SelectedJourneyContextType = {
-  selectedJourney: JourneySnapshotWithRequiredPosition | null;
-  setSelectedJourney: (selectedJourney: JourneySnapshotWithRequiredPosition | null) => void;
+  selectedJourney: SelectedJourney | null;
+  setSelectedJourney: (selectedJourney: SelectedJourney | null) => void;
 };
 
 const SelectedJourneyContext = createContext<SelectedJourneyContextType>({
@@ -18,7 +24,7 @@ const SelectedJourneyContext = createContext<SelectedJourneyContextType>({
 export const useSelectedJourney = () => useContext(SelectedJourneyContext);
 
 export const SelectedJourneyProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [selectedJourney, setSelectedJourney] = useState<JourneySnapshotWithRequiredPosition | null>(null);
+  const [selectedJourney, setSelectedJourney] = useState<SelectedJourney | null>(null);
   return (
     <SelectedJourneyContext.Provider value={{ selectedJourney, setSelectedJourney }}>
       {children}

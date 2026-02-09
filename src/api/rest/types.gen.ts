@@ -17,6 +17,10 @@ export type SimRailUserDto = {
      */
     id: string;
     /**
+     * The platform the user is playing on
+     */
+    platform: 'STEAM' | 'XBOX';
+    /**
      * The name of the user
      */
     name: string;

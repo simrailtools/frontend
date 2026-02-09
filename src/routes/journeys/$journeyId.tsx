@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { DateTime } from "luxon";
-import type { JourneyEventDto } from "@/api/generated";
+import type { JourneyEventDto } from "@/api/rest";
 import {
   findJourneyByIdOptions,
   findServerByIdOptions,
   findVehicleCompositionByJourneyIdOptions,
-} from "@/api/generated/@tanstack/react-query.gen.ts";
+} from "@/api/rest/@tanstack/react-query.gen.ts";
 import { JourneyBaseInfo } from "@/routes/journeys/-components/JourneyBaseInfo.tsx";
 import { JourneyStopItem } from "@/routes/journeys/-components/JourneyStopItem.tsx";
 
