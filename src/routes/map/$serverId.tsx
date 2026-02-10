@@ -144,9 +144,10 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
           </LayersControl.BaseLayer>
           <LayersControl.BaseLayer name={"ESRI Satellite"} checked={mapOptions.tileLayer === "esri_satellite"}>
             <TileLayer
-              minZoom={8}
-              url={`https://ibasemaps-api.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?token=${import.meta.env.VITE_ESRI_TILES_KEY}`}
-              attribution={`Powered by ${safeExternalUrlTag("Esri", "https://esri.com")} | WULS/SGGW, GUGiK, Esri, Earthstar Geographics, TomTom, Garmin, Foursquare, FAO, METI/NASA, USGS`}
+              minZoom={3}
+              maxZoom={18}
+              url={"https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"}
+              attribution={`Powered by ${safeExternalUrlTag("Esri", "https://esri.com")}`}
             />
           </LayersControl.BaseLayer>
 
