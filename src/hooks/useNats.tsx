@@ -24,7 +24,7 @@ type NatsContextOptions = {
 const NatsContext = createContext<NatsContextType>(null!);
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useNatsContext = () => useContext(NatsContext);
+export const useNats = () => useContext(NatsContext);
 
 export const NatsContextProvider: FC<PropsWithChildren<NatsContextOptions>> = ({ websocketUrl, children }) => {
   // Disconnect the websocket connection if the page is in the background

@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Long from "long";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNatsContext } from "@/hooks/useNats.tsx";
+import { useNats } from "@/hooks/useNats.tsx";
 
 /**
  * Represents a type which is decodable using an input Uint8Array.
@@ -64,7 +64,7 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
   baseDataLoader,
 }: UseNatsSyncedListOptions<TBase, TUpdateFrame, TRemoveFrame>) => {
   const queryClient = useQueryClient();
-  const { connected, subscribe } = useNatsContext();
+  const { connected, subscribe } = useNats();
 
   const pendingRef = useRef<Map<string, { frame: TUpdateFrame; ts: Long }>>(new Map());
   const dataRef = useRef<Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>>(new Map());
@@ -160,7 +160,6 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
     });
 
     return () => {
-      console.log("unsub");
       updateSubscription?.unsubscribe();
       removeSubscription?.unsubscribe();
     };
@@ -197,6 +196,7 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
       }
 
       updateMap(next);
+      console.debug("Retrieved fresh data snapshot from backend");
     }
   }, [connected, snapshotData, updateDataExtractor, updateMap]);
 
