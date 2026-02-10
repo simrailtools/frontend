@@ -23,7 +23,6 @@ type NatsContextOptions = {
 // biome-ignore lint/style/noNonNullAssertion: never called, hook is always initialized
 const NatsContext = createContext<NatsContextType>(null!);
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useNats = () => useContext(NatsContext);
 
 export const NatsContextProvider: FC<PropsWithChildren<NatsContextOptions>> = ({ websocketUrl, children }) => {

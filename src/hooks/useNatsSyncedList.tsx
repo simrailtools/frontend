@@ -68,7 +68,7 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
 
   const pendingRef = useRef<Map<string, { frame: TUpdateFrame; ts: Long }>>(new Map());
   const dataRef = useRef<Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>>(new Map());
-  const [map, setMap] = useState<Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>>(() => dataRef.current);
+  const [map, setMap] = useState<Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>>(new Map());
 
   // callback to update the current state of the backing map to the new one
   const updateMap = useCallback((next: Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>) => {

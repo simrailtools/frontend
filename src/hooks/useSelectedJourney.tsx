@@ -20,7 +20,6 @@ const SelectedJourneyContext = createContext<SelectedJourneyContextType>({
 /**
  * Hook for the journey that was selected by the user.
  */
-// eslint-disable-next-line react-refresh/only-export-components
 export const useSelectedJourney = () => useContext(SelectedJourneyContext);
 
 export const SelectedJourneyProvider: FC<PropsWithChildren> = ({ children }) => {
