@@ -75,6 +75,8 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
       const currLiveData = selectedJourney.live;
       const newJourneyData = journeysById.get(currLiveData.ids.dataId);
       if (!deepEqual(currLiveData, newJourneyData?.live)) {
+        // only update (and trigger a re-render) in case the live data of the selected
+        // journey changed - all other data associated with the journey is static
         setSelectedJourney(newJourneyData ?? null);
       }
     }

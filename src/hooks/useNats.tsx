@@ -27,7 +27,7 @@ export const useNats = () => useContext(NatsContext);
 
 export const NatsContextProvider: FC<PropsWithChildren<NatsContextOptions>> = ({ websocketUrl, children }) => {
   // Disconnect the websocket connection if the page is in the background
-  // for 60 seconds. This is due to the fact that modern browsers often have
+  // for 30 seconds. This is due to the fact that modern browsers often have
   // a "sleep" mode built-in for tabs, which prevents them from doing updates
   // when in the background. This leads to a huge amount of event frames getting
   // queued up (sometimes a few gigabytes), which makes the page greatly
@@ -43,8 +43,8 @@ export const NatsContextProvider: FC<PropsWithChildren<NatsContextOptions>> = ({
 
     const timeout = setTimeout(() => {
       setShouldConnect(false);
-      console.debug("Disabled connection to backend after window was invisible for 60 seconds");
-    }, 60_000);
+      console.debug("Disabled connection to backend after window was invisible for 30 seconds");
+    }, 30_000);
     return () => clearTimeout(timeout);
   }, [isDocumentVisible]);
 

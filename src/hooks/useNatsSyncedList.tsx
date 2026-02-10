@@ -68,7 +68,7 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
 
   const pendingRef = useRef<Map<string, { frame: TUpdateFrame; ts: Long }>>(new Map());
   const dataRef = useRef<Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>>(new Map());
-  const [map, setMap] = useState<Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>>(new Map());
+  const [map, setMap] = useState<Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>>(() => new Map());
 
   // callback to update the current state of the backing map to the new one
   const updateMap = useCallback((next: Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>) => {
@@ -179,13 +179,13 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
   ]);
 
   // queries the snapshot data from the backend rest api and applies unknown values into the backend map
-  const { data: snapshotData } = useQuery({
+  const { data: snapshotData, isFetching } = useQuery({
     enabled: connected,
     queryFn: snapshotLoader,
     queryKey: ["nats-synced-snapshot", updateTopic, removeTopic],
   });
   useEffect(() => {
-    if (connected && snapshotData) {
+    if (connected && snapshotData && !isFetching) {
       const data = dataRef.current;
       const next = new Map();
       for (const [base, frame] of snapshotData) {
@@ -198,7 +198,7 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
       updateMap(next);
       console.debug("Retrieved fresh data snapshot from backend");
     }
-  }, [connected, snapshotData, updateDataExtractor, updateMap]);
+  }, [connected, snapshotData, isFetching, updateDataExtractor, updateMap]);
 
   return { map, connected };
 };
