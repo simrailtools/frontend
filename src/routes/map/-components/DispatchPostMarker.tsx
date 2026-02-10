@@ -67,7 +67,7 @@ export const DispatchPostMarker: FC<{
   useEffect(() => {
     const element = markerRef.current?.getElement();
     if (element) {
-      L.DomEvent.disableClickPropagation(element).disableScrollPropagation(element);
+      L.DomEvent.disableClickPropagation(element);
     }
   }, []);
 

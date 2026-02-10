@@ -45,7 +45,7 @@ export const JourneyMarker: FC<MarkerComponentProps> = ({ journey }) => {
   useEffect(() => {
     const element = markerRef.current?.getElement();
     if (element) {
-      L.DomEvent.disableClickPropagation(element).disableScrollPropagation(element);
+      L.DomEvent.disableClickPropagation(element);
     }
   }, []);
 
