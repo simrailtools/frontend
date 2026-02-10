@@ -78,12 +78,8 @@ export const useLiveJourneyData = (serverId: string, journeyId?: string) => {
         return [baseData, liveData];
       });
   }, [journeyId, serverId]);
-  const baseDataLoader = useCallback(async (id: string): Promise<JourneyBaseData | undefined> => {
-    const journey = await findJourneyById({ path: { id } });
-    if (!journey) {
-      return undefined;
-    }
-
+  const baseDataLoader = useCallback(async (id: string): Promise<JourneyBaseData> => {
+    const journey = await findJourneyById({ throwOnError: true, path: { id } });
     const events = journey.events;
     return {
       origin: {

@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { JourneyEventDto, JourneyStopInfoDto } from "@/api/generated";
+import type { JourneyEventDto, JourneyStopInfoDto } from "@/api/rest";
 
 const formatPlatformInfo = (platformInfo: JourneyStopInfoDto) => {
   return `P: ${platformInfo.platform} T: ${platformInfo.track}`;

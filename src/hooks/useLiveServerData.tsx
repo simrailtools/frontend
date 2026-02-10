@@ -48,12 +48,8 @@ export const useLiveServerData = (serverId?: string) => {
         return [baseData, liveData];
       });
   }, [serverId]);
-  const baseDataLoader = useCallback(async (id: string): Promise<ServerBaseData | undefined> => {
-    const server = await findServerById({ path: { id } });
-    if (!server) {
-      return undefined;
-    }
-
+  const baseDataLoader = useCallback(async (id: string): Promise<ServerBaseData> => {
+    const server = await findServerById({ throwOnError: true, path: { id } });
     return {
       code: server.code,
       region: server.region,

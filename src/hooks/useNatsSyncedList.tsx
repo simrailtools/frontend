@@ -50,7 +50,7 @@ export type UseNatsSyncedListOptions<TBase, TUpdateFrame, TRemoveFrame> = {
    * Loader for base data of a given id. Invoked when an update frame is received for data
    * which has no base data stored locally yet.
    */
-  baseDataLoader: (id: string) => Promise<TBase | undefined>;
+  baseDataLoader: (id: string) => Promise<TBase>;
 };
 
 export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({

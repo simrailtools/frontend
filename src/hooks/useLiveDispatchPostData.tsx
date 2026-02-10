@@ -54,12 +54,8 @@ export const useLiveDispatchPostData = (serverId: string, postId?: string) => {
         return [baseData, liveData];
       });
   }, [serverId, postId]);
-  const baseDataLoader = useCallback(async (id: string): Promise<DispatchPostBaseData | undefined> => {
-    const post = await findDispatchPostById({ path: { id } });
-    if (!post) {
-      return undefined;
-    }
-
+  const baseDataLoader = useCallback(async (id: string): Promise<DispatchPostBaseData> => {
+    const post = await findDispatchPostById({ throwOnError: true, path: { id } });
     return {
       name: post.name,
       pointId: post.pointId,

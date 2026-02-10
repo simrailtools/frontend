@@ -4,7 +4,6 @@ import { DateTime } from "luxon";
 import type { JourneyEventDto } from "@/api/rest";
 import {
   findJourneyByIdOptions,
-  findServerByIdOptions,
   findVehicleCompositionByJourneyIdOptions,
 } from "@/api/rest/@tanstack/react-query.gen.ts";
 import { JourneyBaseInfo } from "@/routes/journeys/-components/JourneyBaseInfo.tsx";
@@ -17,21 +16,17 @@ export const Route = createFileRoute("/journeys/$journeyId")({
       throw new Error("The requested journey does not exist");
     }
 
-    const server = await queryClient.ensureQueryData(findServerByIdOptions({ path: { id: journey.serverId } }));
-    if (!server) {
-      throw new Error("The server the journey runs on does not exist");
-    }
-
-    return { journey, server };
+    return { journey };
   },
   component: JourneyDetailsComponent,
 });
 
 function JourneyDetailsComponent() {
   const { journeyId } = Route.useParams();
-  const { server } = Route.useLoaderData();
+  const { journey: initialData } = Route.useLoaderData();
   const { data: journey } = useQuery({
     ...findJourneyByIdOptions({ path: { id: journeyId } }),
+    initialData,
     refetchInterval: query => {
       return query.state.data?.lastSeenTime ? false : 30_000;
     },
@@ -79,11 +74,7 @@ function JourneyDetailsComponent() {
 
   // formats the given iso date/time in the server timezone using the optionally provided format
   const timeFormatter = (isoTime: string, format?: string) => {
-    const serverTz = server.timezoneId === "Z" ? "utc" : server.timezoneId;
-    const givenDt = DateTime.fromISO(isoTime);
-    const dtZoned = givenDt.setZone(serverTz);
-    const dt = dtZoned.isValid ? dtZoned : givenDt;
-    return dt.toFormat(format ?? "dd.MM HH:mm");
+    return DateTime.fromISO(isoTime).toFormat(format ?? "dd.MM HH:mm");
   };
 
   return (
@@ -93,7 +84,7 @@ function JourneyDetailsComponent() {
         <div className={"hidden lg:block"}>
           <JourneyBaseInfo journey={journey} composition={vehicleComposition} timeFormatter={timeFormatter} />
           <div className={"flex items-center p-4"}>
-            <div className="flex-grow border-t border-gray-400" />
+            <div className="grow border-t border-gray-400" />
           </div>
         </div>
         <div className="space-y-10">

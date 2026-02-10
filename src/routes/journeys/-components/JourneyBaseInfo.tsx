@@ -1,10 +1,10 @@
 import type { FC, PropsWithChildren } from "react";
-import type { JourneyDto, JourneyEventDto, VehicleCompositionDto } from "@/api/generated";
+import type { JourneyDto, JourneyEventDto, VehicleSequenceDto } from "@/api/rest";
 import { Heading } from "@/components/Heading.tsx";
 
 type JourneyBaseInfoProps = {
   journey: JourneyDto;
-  composition?: VehicleCompositionDto | null;
+  composition?: VehicleSequenceDto | null;
   timeFormatter: (isoTime: string) => string;
 };
 
@@ -47,7 +47,7 @@ export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition
   // find the maximum speed of the train long the events
   const vMax = Math.max(...journey.events.map(event => event.transport.maxSpeed));
 
-  //
+  // resolve information about vehicle composition
   const tractionUnit = composition?.vehicles.at(0);
   const compositionWeight = composition?.vehicles
     .map(vehicle => {
@@ -83,7 +83,10 @@ export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition
           <>
             <div className={"flex flex-row space-x-3"}>
               <InfoLine display={"Traction Unit"}>
-                <p>{tractionUnit?.railcar.name}</p>
+                <p>
+                  {tractionUnit?.railcar.displayName}
+                  {tractionUnit?.railcar.name && <> "{tractionUnit.railcar.name}"</>}
+                </p>
               </InfoLine>
               <InfoLine display={"Wagon Count"}>
                 <p>{composition.vehicles.length}</p>
