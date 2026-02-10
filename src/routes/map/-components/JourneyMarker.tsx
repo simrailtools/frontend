@@ -1,5 +1,5 @@
-import type { BaseIconOptions, Icon } from "leaflet";
-import { type FC, memo } from "react";
+import L from "leaflet";
+import { type ComponentRef, type FC, useEffect, useMemo, useRef } from "react";
 import { Tooltip } from "react-leaflet";
 import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
 import { tools } from "@/api/proto/bundle";
@@ -16,32 +16,44 @@ interface MarkerComponentProps {
   journey: NatsSyncedEntry<JourneyBaseData, JourneyUpdateFrame>;
 }
 
-export const JourneyMarker: FC<MarkerComponentProps> = memo(({ journey }) => {
-  const { setSelectedJourney } = useSelectedJourney();
-  const { data: userInfo, isLoading } = useUserData(journey.live.journeyData.driver);
+export const JourneyMarker: FC<MarkerComponentProps> = ({ journey }) => {
+  const driver = journey.live.journeyData.driver;
+  const hasDriver = !!driver;
+  const { data: userInfo, isLoading } = useUserData(driver);
+  const userIcon = useMemo(() => {
+    if (hasDriver) {
+      const userAvatarAlt = userInfo ? `${userInfo.name} Avatar` : undefined;
+      return constructIcon({
+        isLoading,
+        url: userInfo?.avatarUrl,
+        alt: userAvatarAlt,
+        className: "rounded-full h-8 w-8",
+        popupAnchor: [0, -14],
+      });
+    }
 
-  let icon: Icon<BaseIconOptions>;
-  if (journey.live.journeyData.driver) {
-    const userAvatarAlt = userInfo ? `${userInfo.name} Avatar` : undefined;
-    icon = constructIcon({
-      isLoading,
-      url: userInfo?.avatarUrl,
-      alt: userAvatarAlt,
-      className: "rounded-full h-8 w-8",
-      popupAnchor: [0, -14],
-    });
-  } else {
-    icon = constructIcon({
+    return constructIcon({
       url: personOffIcon,
       alt: "Bot Driver Icon",
       className: "rounded-full h-8 w-8 p-1",
       popupAnchor: [0, -14],
     });
-  }
+  }, [userInfo, isLoading, hasDriver]);
 
+  // handler to prevent clicks on the marker to propagate to the map they're rendered on
+  const markerRef = useRef<ComponentRef<typeof ReactLeafletDriftMarker>>(null);
+  useEffect(() => {
+    const element = markerRef.current?.getElement();
+    if (element) {
+      L.DomEvent.disableClickPropagation(element).disableScrollPropagation(element);
+    }
+  }, []);
+
+  const { setSelectedJourney } = useSelectedJourney();
   return (
     <ReactLeafletDriftMarker
-      icon={icon}
+      ref={markerRef}
+      icon={userIcon}
       duration={750}
       zIndexOffset={50}
       alt={`${journey.base.transport.category} ${journey.base.transport.number}`}
@@ -57,4 +69,4 @@ export const JourneyMarker: FC<MarkerComponentProps> = memo(({ journey }) => {
       </Tooltip>
     </ReactLeafletDriftMarker>
   );
-});
+};

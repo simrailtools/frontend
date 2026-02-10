@@ -1,5 +1,5 @@
-import type { BaseIconOptions, Icon } from "leaflet";
-import type { FC } from "react";
+import L from "leaflet";
+import { type FC, useEffect, useMemo, useRef } from "react";
 import { MdOutlineLocationOn, MdOutlinePsychology, MdPersonOutline } from "react-icons/md";
 import { Marker, Popup, Tooltip } from "react-leaflet";
 import { tools } from "@/api/proto/bundle";
@@ -38,30 +38,43 @@ export const DispatchPostMarker: FC<{
   post: NatsSyncedEntry<DispatchPostBaseData, DispatchPostUpdateFrame>;
 }> = ({ post }) => {
   const { name, position, difficulty } = post.base;
-  const { data: userInfo, isLoading } = useUserData(post.live.dispatchPostData.dispatcher);
 
-  let icon: Icon<BaseIconOptions>;
-  if (post.live.dispatchPostData.dispatcher) {
-    const userAvatarAlt = userInfo ? `${userInfo.name} Avatar` : undefined;
-    icon = constructIcon({
-      isLoading,
-      url: userInfo?.avatarUrl,
-      alt: userAvatarAlt,
-      className: "rounded-md h-9 w-9",
-      popupAnchor: [0, -14],
-    });
-  } else {
-    icon = constructIcon({
+  const dispatcher = post.live.dispatchPostData.dispatcher;
+  const hasDispatcher = !!dispatcher;
+  const { data: userInfo, isLoading } = useUserData(dispatcher);
+  const userIcon = useMemo(() => {
+    if (hasDispatcher) {
+      const userAvatarAlt = userInfo ? `${userInfo.name} Avatar` : undefined;
+      return constructIcon({
+        isLoading,
+        url: userInfo?.avatarUrl,
+        alt: userAvatarAlt,
+        className: "rounded-md h-9 w-9",
+        popupAnchor: [0, -14],
+      });
+    }
+
+    return constructIcon({
       url: personOffIcon,
-      alt: "Bot Driver Icon",
+      alt: "Bot Dispatcher Icon",
       className: "rounded-md h-9 w-9 p-1",
       popupAnchor: [0, -14],
     });
-  }
+  }, [userInfo, isLoading, hasDispatcher]);
+
+  // handler to prevent clicks on the marker to propagate to the map they're rendered on
+  const markerRef = useRef<L.Marker>(null);
+  useEffect(() => {
+    const element = markerRef.current?.getElement();
+    if (element) {
+      L.DomEvent.disableClickPropagation(element).disableScrollPropagation(element);
+    }
+  }, []);
 
   return (
     <Marker
-      icon={icon}
+      ref={markerRef}
+      icon={userIcon}
       zIndexOffset={100}
       alt={name}
       position={[position.latitude, position.longitude]}

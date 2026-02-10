@@ -2,6 +2,7 @@ import "leaflet/dist/leaflet.css";
 import "./map.css";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { deepEqual } from "fast-equals";
 import { type FC, useEffect, useMemo } from "react";
 import { LayerGroup, LayersControl, MapContainer, TileLayer } from "react-leaflet";
 import {
@@ -71,8 +72,11 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
   const { selectedJourney, setSelectedJourney } = useSelectedJourney();
   useEffect(() => {
     if (selectedJourney && journeysById.size > 0) {
-      const journey = journeysById.get(selectedJourney.live.ids.dataId);
-      setSelectedJourney(journey ?? null);
+      const currLiveData = selectedJourney.live;
+      const newJourneyData = journeysById.get(currLiveData.ids.dataId);
+      if (!deepEqual(currLiveData, newJourneyData?.live)) {
+        setSelectedJourney(newJourneyData ?? null);
+      }
     }
   }, [journeysById, selectedJourney, setSelectedJourney]);
 

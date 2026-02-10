@@ -1,4 +1,12 @@
-import { createContext, type FC, type PropsWithChildren, useContext, useState } from "react";
+import {
+  createContext,
+  type Dispatch,
+  type FC,
+  type PropsWithChildren,
+  type SetStateAction,
+  useContext,
+  useState,
+} from "react";
 import { tools } from "@/api/proto/bundle";
 import type { JourneyBaseData } from "@/hooks/useLiveJourneyData.tsx";
 import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
@@ -9,7 +17,7 @@ type SelectedJourney = NatsSyncedEntry<JourneyBaseData, JourneyUpdateFrame>;
 
 type SelectedJourneyContextType = {
   selectedJourney: SelectedJourney | null;
-  setSelectedJourney: (selectedJourney: SelectedJourney | null) => void;
+  setSelectedJourney: Dispatch<SetStateAction<SelectedJourney | null>>;
 };
 
 const SelectedJourneyContext = createContext<SelectedJourneyContextType>({

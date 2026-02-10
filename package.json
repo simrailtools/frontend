@@ -25,6 +25,7 @@
     "@tanstack/router-plugin": "^1.159.5",
     "@yornaath/batshit": "^0.14.0",
     "clsx": "^2.1.1",
+    "fast-equals": "^6.0.0",
     "leaflet": "^1.9.4",
     "long": "^5.3.2",
     "luxon": "^3.7.2",
