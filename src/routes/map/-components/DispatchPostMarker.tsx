@@ -1,42 +1,51 @@
-import { useQuery } from "@tanstack/react-query";
 import type { BaseIconOptions, Icon } from "leaflet";
 import type { FC } from "react";
 import { MdOutlineLocationOn, MdOutlinePsychology, MdPersonOutline } from "react-icons/md";
 import { Marker, Popup, Tooltip } from "react-leaflet";
+import { tools } from "@/api/proto/bundle";
+import type { SimRailUserDto } from "@/api/rest";
 import personOffIcon from "@/assets/icons/person_off.svg";
+import type { DispatchPostBaseData } from "@/hooks/useLiveDispatchPostData.tsx";
+import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
+import { useUserData } from "@/hooks/useUserData.tsx";
 import { cn } from "@/lib/utils.ts";
 import { constructIcon } from "@/routes/map/-lib/iconFactory.ts";
 
+import DispatchPostUpdateFrame = tools.simrail.backend.DispatchPostUpdateFrame;
+
+/**
+ * Zero-based difficulty name index.
+ */
+const difficultyNames = ["Very Easy", "Easy", "Intermediate", "Advanced", "Hard", "Expert"];
+
+/**
+ * Maps a difficulty number to a display name. If no name is available, the number in stringified form is returned.
+ * @param difficulty the difficulty display name for the given difficulty.
+ */
 const mapDifficultyName = (difficulty: number): string => {
-  const difficultyNames = ["Very Easy", "Easy", "Intermediate", "Advanced", "Hard", "Expert"];
   return difficultyNames.at(difficulty) ?? `${difficulty}`;
 };
 
+/**
+ * Formats the name of the given user. If no user is given, undefined is returned.
+ * @param user the user to format the display name of.
+ */
 const formatUserName = (user?: SimRailUserDto): string | undefined => {
-  // append the country code of the user to the username if known, only
-  // return the username on case the country is unknown. undefined is only
-  // returned in case the input user is undefined as well
-  return user?.countryCode ? `${user.name} (${user.countryCode})` : user?.name;
+  return user?.location ? `${user.name} (${user.location})` : user?.name;
 };
 
-export const DispatchPostMarker: FC<{ dispatchPost: DispatchPostSnapshotFrame }> = ({ dispatchPost }) => {
-  // currently dispatch posts can only be dispatched by one person at a time, if
-  // this ever changes this has to change as well, but for now we can just use the
-  // first element in the dispatcher list as the user dispatching the post
-  const relevantUser = dispatchPost.dispatcherSteamIds.at(0);
-  const { isLoading, data } = useQuery({
-    ...findUsersBySteamIdsOptions({ body: dispatchPost.dispatcherSteamIds }),
-    enabled: !!relevantUser,
-  });
-  const userInfo = data?.find(user => user.id === relevantUser);
+export const DispatchPostMarker: FC<{
+  post: NatsSyncedEntry<DispatchPostBaseData, DispatchPostUpdateFrame>;
+}> = ({ post }) => {
+  const { name, position, difficulty } = post.base;
+  const { data: userInfo, isLoading } = useUserData(post.live.dispatchPostData.dispatcher);
 
   let icon: Icon<BaseIconOptions>;
-  if (relevantUser) {
+  if (post.live.dispatchPostData.dispatcher) {
     const userAvatarAlt = userInfo ? `${userInfo.name} Avatar` : undefined;
-    const userAvatarUrl = userInfo ? steamAvatarUrl(userInfo.avatarHash) : undefined;
     icon = constructIcon({
       isLoading,
-      url: userAvatarUrl,
+      url: userInfo?.avatarUrl,
       alt: userAvatarAlt,
       className: "rounded-md h-9 w-9",
       popupAnchor: [0, -14],
@@ -54,8 +63,8 @@ export const DispatchPostMarker: FC<{ dispatchPost: DispatchPostSnapshotFrame }>
     <Marker
       icon={icon}
       zIndexOffset={100}
-      alt={dispatchPost.name}
-      position={[dispatchPost.latitude, dispatchPost.longitude]}
+      alt={name}
+      position={[position.latitude, position.longitude]}
       eventHandlers={{
         mouseout: event => event.target.closePopup(),
         mouseover: event => event.target.openPopup(),
@@ -69,19 +78,19 @@ export const DispatchPostMarker: FC<{ dispatchPost: DispatchPostSnapshotFrame }>
       <Popup closeButton={false}>
         <div className={"flex space-x-1 items-center"}>
           <MdOutlineLocationOn className={"w-5 h-5"} />
-          <span className={"text-sm font-semibold"}>{dispatchPost.name}</span>
+          <span className={"text-sm font-semibold"}>{name}</span>
         </div>
         <div className={"flex space-x-1 items-center"}>
           <MdOutlinePsychology className={"w-5 h-5"} />
-          <span className={"text-sm"}>{mapDifficultyName(dispatchPost.difficultyLevel)}</span>
+          <span className={"text-sm"}>{mapDifficultyName(difficulty)}</span>
         </div>
         <div className={"flex space-x-1 items-center"}>
           <MdPersonOutline className={"w-5 h-5"} />
           <span className={cn("text-sm", !userInfo && "italic")}>{formatUserName(userInfo) ?? "Bot"}</span>
         </div>
       </Popup>
-      <Tooltip permanent={true} direction={"top"} offset={[0, -20]} className={"!p-0.5"}>
-        <span className={"text-xs font-semibold"}>{dispatchPost.name}</span>
+      <Tooltip permanent={true} direction={"top"} offset={[0, -20]} className={"p-0.5!"}>
+        <span className={"text-xs font-semibold"}>{name}</span>
       </Tooltip>
     </Marker>
   );

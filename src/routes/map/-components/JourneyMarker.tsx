@@ -23,10 +23,9 @@ export const JourneyMarker: FC<MarkerComponentProps> = memo(({ journey }) => {
   let icon: Icon<BaseIconOptions>;
   if (journey.live.journeyData.driver) {
     const userAvatarAlt = userInfo ? `${userInfo.name} Avatar` : undefined;
-    const userAvatarUrl = userInfo?.avatarUrl;
     icon = constructIcon({
       isLoading,
-      url: userAvatarUrl,
+      url: userInfo?.avatarUrl,
       alt: userAvatarAlt,
       className: "rounded-full h-8 w-8",
       popupAnchor: [0, -14],

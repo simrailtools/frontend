@@ -10,10 +10,12 @@ import {
   listPointsOptions,
 } from "@/api/rest/@tanstack/react-query.gen.ts";
 import { resolveNatsBackendUrl } from "@/api/util.ts";
+import { useLiveDispatchPostData } from "@/hooks/useLiveDispatchPostData.tsx";
 import { useLiveJourneyData } from "@/hooks/useLiveJourneyData.tsx";
 import { useLiveServerData } from "@/hooks/useLiveServerData.tsx";
 import { NatsContextProvider } from "@/hooks/useNats.tsx";
 import { safeExternalUrlTag } from "@/lib/urlFactory.ts";
+import { DispatchPostMarker } from "@/routes/map/-components/DispatchPostMarker.tsx";
 import { JourneyFocusHandler } from "@/routes/map/-components/JourneyFocusHandler.tsx";
 import { JourneyMarker } from "@/routes/map/-components/JourneyMarker.tsx";
 import { JourneyPolyline } from "@/routes/map/-components/JourneyPolyline.tsx";
@@ -75,15 +77,16 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
   }, [journeysById, selectedJourney, setSelectedJourney]);
 
   // fetch points located on the map, filter out points that have an associated dispatch post
-  const { data: pointsListData } = useQuery({
+  const { map: dispatchPostsById } = useLiveDispatchPostData(serverId);
+  const { data: pointsList } = useQuery({
     ...listPointsOptions({ query: { limit: 10_000 } }),
     refetchInterval: 5 * 60 * 1000, // 5 minutes
   });
   const points = useMemo(() => {
-    // const dispatchPostPoints = new Set(dispatchPosts.map(post => post.pointId));
-    // return pointsListData?.items.filter(point => !dispatchPostPoints.has(point.id));
-    return pointsListData?.items;
-  }, [pointsListData]);
+    const points = pointsList?.items ?? [];
+    const pointsWithDispatchPost = new Set(Array.from(dispatchPostsById.values(), post => post.base.pointId));
+    return points.filter(point => !pointsWithDispatchPost.has(point.id));
+  }, [pointsList, dispatchPostsById]);
 
   // map options handling
   const { mapOptions, updateMapOptions } = useMapOptions();
@@ -104,10 +107,12 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
 
       <MapContainer
         zoom={9}
+        minZoom={3}
+        maxZoom={17}
         zoomControl={false}
         preferCanvas={true}
-        center={[51.331, 20.297]}
         scrollWheelZoom={true}
+        center={[51.331, 20.297]}
         className={"min-h-dvh w-full"}
       >
         <LayersControl position={"bottomright"} collapsed={true} sortLayers={false}>
@@ -147,15 +152,13 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
               ))}
             </LayerGroup>
           </LayersControl.Overlay>
-          {/*}
           <LayersControl.Overlay name={"Dispatch Posts"} checked={mapOptions.enabledLayers.includes("dispatch_posts")}>
             <LayerGroup>
-              {dispatchPosts.map(dispatchPost => (
-                <DispatchPostMarker key={dispatchPost.postId} dispatchPost={dispatchPost} />
+              {Array.from(dispatchPostsById.entries()).map(([postId, data]) => (
+                <DispatchPostMarker key={postId} post={data} />
               ))}
             </LayerGroup>
           </LayersControl.Overlay>
-          {*/}
           <LayersControl.Overlay name={"Other Points"} checked={mapOptions.enabledLayers.includes("other_points")}>
             <LayerGroup>
               {points?.map(point => (
