@@ -17,6 +17,9 @@ export default defineConfig({
   plugins: [
     devtools({
       removeDevtoolsOnBuild: true,
+      injectSource: {
+        enabled: false,
+      },
     }),
     viteTsConfigPaths({
       projects: ["./tsconfig.json"],

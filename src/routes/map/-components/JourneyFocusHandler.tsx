@@ -1,24 +1,23 @@
 import { type FC, useEffect, useState } from "react";
 import { MdAdjust } from "react-icons/md";
-import { useMap, useMapEvent } from "react-leaflet";
+import { useMap } from "react-map-gl/maplibre";
 import { useSelectedJourney } from "@/hooks/useSelectedJourney.tsx";
 
 export const JourneyFocusHandler: FC = () => {
+  const { current: map } = useMap();
   const { selectedJourney } = useSelectedJourney();
   const [focusJourney, setFocusJourney] = useState(true);
 
   // updates the map focus in case a journey is selected and focused
-  const map = useMap();
   useEffect(() => {
-    if (selectedJourney && focusJourney) {
+    if (selectedJourney && focusJourney && map) {
       const { latitude, longitude } = selectedJourney.live.journeyData.position;
-      map.setView([latitude, longitude], undefined, {
-        animate: true,
-        duration: 2,
-        easeLinearity: 0.2,
+      map.easeTo({
+        duration: 2000,
+        center: [longitude, latitude],
       });
     }
-  }, [map, focusJourney, selectedJourney]);
+  }, [selectedJourney, focusJourney, map]);
 
   // reset the focus state when no journey is selected anymore
   useEffect(() => {
@@ -28,12 +27,19 @@ export const JourneyFocusHandler: FC = () => {
   }, [selectedJourney]);
 
   // handler for starting a drag on the map, disable focus of the journey (unless no journey is selected)
-  const dragHandler = () => {
-    if (selectedJourney) {
-      setFocusJourney(false);
+  useEffect(() => {
+    if (map) {
+      const dragHandler = () => {
+        if (selectedJourney) {
+          setFocusJourney(false);
+        }
+      };
+      map.on("dragstart", dragHandler);
+      return () => {
+        map.off("dragstart", dragHandler);
+      };
     }
-  };
-  useMapEvent("dragstart", dragHandler);
+  }, [map, selectedJourney]);
 
   // if no journey is selected or the journey is currently focused
   // we don't need to render the focus button

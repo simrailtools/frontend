@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { type FC, memo } from "react";
-import { Polyline } from "react-leaflet";
+import type { GeoJSON, Position } from "geojson";
+import { type FC, memo, useMemo } from "react";
+import { Layer, Source } from "react-map-gl/maplibre";
 import { findMapPolylineByJourney } from "@/api/rest";
 
 interface PolylineComponentProps {
@@ -20,13 +21,40 @@ export const JourneyPolyline: FC<PolylineComponentProps> = memo(({ journeyId }) 
           includeAdditional: true,
           allowFallbackComputation: true,
         },
+        headers: {
+          Accept: "application/json",
+        },
         signal,
         throwOnError: true,
       }),
   });
-  if (!data) {
+  const geoJson = useMemo((): GeoJSON | undefined => {
+    if (data) {
+      return {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: data.polyline.map((position): Position => [position.longitude, position.latitude]),
+        },
+      };
+    }
+  }, [data]);
+
+  if (!geoJson) {
     return null;
   }
 
-  return <Polyline positions={data.polyline.map(pos => [pos.latitude, pos.longitude])} />;
+  return (
+    <Source id={`journey-polyline-${journeyId}`} type={"geojson"} data={geoJson}>
+      <Layer
+        id={`journey-polyline-layer-${journeyId}`}
+        type="line"
+        paint={{
+          "line-width": 3,
+          "line-color": "#2563eb",
+        }}
+      />
+    </Source>
+  );
 });
