@@ -19,7 +19,7 @@ export const useLiveServerData = (serverId?: string) => {
     [],
   );
   const snapshotLoader = useCallback(async (): Promise<[ServerBaseData, ServerUpdateFrame][]> => {
-    const servers = await listServers();
+    const servers = await listServers({ query: { includeOffline: true } });
     return (servers ?? [])
       .filter(server => !serverId || server.id === serverId)
       .map(server => {
