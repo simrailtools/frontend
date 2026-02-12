@@ -3,24 +3,24 @@ import { DateTime } from "luxon";
 import { type FC, useEffect, useState } from "react";
 import Clock from "react-clock";
 import { MdOutlineTimer, MdOutlineTimerOff } from "react-icons/md";
-import { tools } from "@/api/proto/bundle";
+import type { ServerUpdateFrame } from "@/api/proto/event_bus_pb.ts";
 import { Heading } from "@/components/Heading.tsx";
 import type { ServerBaseData } from "@/hooks/useLiveServerData.tsx";
 import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
 import { cn } from "@/lib/utils.ts";
 import { ServerMapText } from "@/routes/map/-components/ServerMapText.tsx";
 
-import ServerUpdateFrame = tools.simrail.backend.ServerUpdateFrame;
-
 export const ServerStatusPopup: FC<{ server: NatsSyncedEntry<ServerBaseData, ServerUpdateFrame> }> = ({ server }) => {
-  const { online, scenery, utcOffsetSeconds } = server.live.serverData;
+  const { online = false, scenery = "", utcOffsetSeconds = 0n } = server.live?.serverData ?? {};
 
   // holds the current server time in 'HH:mm:ss' format,
   // updated every second based on the server timezone id
   const [serverTime, setServerTime] = useState<string | null>(null);
   useEffect(() => {
     const interval = setInterval(() => {
-      const formattedServerTime = DateTime.utc().plus({ seconds: utcOffsetSeconds.toNumber() }).toFormat("HH:mm:ss");
+      const formattedServerTime = DateTime.utc()
+        .plus({ seconds: Number(utcOffsetSeconds) })
+        .toFormat("HH:mm:ss");
       setServerTime(formattedServerTime);
     }, 1000);
     return () => clearInterval(interval);

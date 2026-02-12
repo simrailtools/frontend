@@ -7,11 +7,9 @@ import {
   useContext,
   useState,
 } from "react";
-import { tools } from "@/api/proto/bundle";
+import type { JourneyUpdateFrame } from "@/api/proto/event_bus_pb.ts";
 import type { JourneyBaseData } from "@/hooks/useLiveJourneyData.tsx";
 import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
-
-import JourneyUpdateFrame = tools.simrail.backend.JourneyUpdateFrame;
 
 type SelectedJourney = NatsSyncedEntry<JourneyBaseData, JourneyUpdateFrame>;
 

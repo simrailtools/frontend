@@ -1,12 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-import Long from "long";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ErrorDisplay } from "@/components/ErrorDisplay.tsx";
 import { Throbber } from "@/components/Throbber.tsx";
 import "./index.css";
-import protobuf from "protobufjs";
 import { routeTree } from "./routeTree.gen.ts";
 
 /**
@@ -37,10 +35,6 @@ declare module "@tanstack/react-router" {
     router: typeof router;
   }
 }
-
-// configure the protobuf library
-protobuf.util.Long = Long;
-protobuf.configure();
 
 // biome-ignore lint/style/noNonNullAssertion: root element is present, trust me
 createRoot(document.getElementById("root")!).render(

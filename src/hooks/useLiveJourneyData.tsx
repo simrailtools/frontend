@@ -1,12 +1,14 @@
-import Long from "long";
+import { create, fromBinary } from "@bufbuild/protobuf";
 import { useCallback } from "react";
-import { tools } from "@/api/proto/bundle";
+import {
+  type JourneyRemoveFrame,
+  JourneyRemoveFrameSchema,
+  type JourneyUpdateFrame,
+  JourneyUpdateFrameSchema,
+  UserPlatform,
+} from "@/api/proto/event_bus_pb.ts";
 import { findJourneyById, type JourneyTransportSummaryDto, listActiveJourneys } from "@/api/rest";
 import { useNatsSyncedList } from "@/hooks/useNatsSyncedList";
-
-import JourneyRemoveFrame = tools.simrail.backend.JourneyRemoveFrame;
-import JourneyUpdateFrame = tools.simrail.backend.JourneyUpdateFrame;
-import UserPlatform = tools.simrail.backend.UserPlatform;
 
 /**
  * Terminal stop place data of a journey.
@@ -28,9 +30,10 @@ export type JourneyBaseData = {
 export const useLiveJourneyData = (serverId: string, journeyId?: string) => {
   const removeIdExtractor = useCallback((frame: JourneyRemoveFrame) => frame.journeyId, []);
   const updateDataExtractor = useCallback(
-    (frame: JourneyUpdateFrame): [string, Long] => [frame.ids.dataId, frame.baseData.timestamp],
+    (frame: JourneyUpdateFrame): [string, bigint] => [frame.ids?.dataId ?? "", frame.baseData?.timestamp ?? 0n],
     [],
   );
+
   const snapshotLoader = useCallback(async (): Promise<[JourneyBaseData, JourneyUpdateFrame][]> => {
     const journeys = await listActiveJourneys({ query: { serverId } });
     return (journeys ?? [])
@@ -47,9 +50,9 @@ export const useLiveJourneyData = (serverId: string, journeyId?: string) => {
           },
           transport: journey.originEvent.transport,
         };
-        const liveData = new JourneyUpdateFrame({
+        const liveData = create(JourneyUpdateFrameSchema, {
           baseData: {
-            timestamp: Long.MIN_VALUE,
+            timestamp: -1n,
           },
           ids: {
             dataId: journey.journeyId,
@@ -68,8 +71,8 @@ export const useLiveJourneyData = (serverId: string, journeyId?: string) => {
             },
             nextSignal: journey.liveData.nextSignal && {
               name: journey.liveData.nextSignal.id,
-              maxSpeedKmh: journey.liveData.nextSignal.maxSpeed,
               distanceMeters: journey.liveData.nextSignal.distance,
+              maxSpeedKmh: journey.liveData.nextSignal.maxSpeed ?? undefined,
             },
             currentPointId: undefined,
           },
@@ -94,12 +97,15 @@ export const useLiveJourneyData = (serverId: string, journeyId?: string) => {
     };
   }, []);
 
+  const updateFrameDecoder = useCallback((data: Uint8Array) => fromBinary(JourneyUpdateFrameSchema, data), []);
+  const removeFrameDecoder = useCallback((data: Uint8Array) => fromBinary(JourneyRemoveFrameSchema, data), []);
+
   return useNatsSyncedList<JourneyBaseData, JourneyUpdateFrame, JourneyRemoveFrame>({
     key: "journeys",
     updateTopic: `sit-events.journey-updates.v1.${serverId}.${journeyId ?? "*"}`,
     removeTopic: `sit-events.journey-removals.v1.${serverId}.${journeyId ?? "*"}`,
-    updateFrameDecoder: JourneyUpdateFrame,
-    removeFrameDecoder: JourneyRemoveFrame,
+    updateFrameDecoder,
+    removeFrameDecoder,
     removeIdExtractor,
     updateDataExtractor,
     snapshotLoader,

@@ -1,20 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import type { FC } from "react";
 import { MdDirectionsTransit, MdPerson, MdSpeed, MdTraffic } from "react-icons/md";
-import { tools } from "@/api/proto/bundle";
+import type { JourneyUpdateFrame } from "@/api/proto/event_bus_pb.ts";
 import type { JourneyBaseData } from "@/hooks/useLiveJourneyData.tsx";
 import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
 import { useUserData } from "@/hooks/useUserData.tsx";
 import { cn } from "@/lib/utils.ts";
 
-import JourneyUpdateFrame = tools.simrail.backend.JourneyUpdateFrame;
-
 const formatDistance = (distance: number): string => {
   return distance >= 1000 ? `${(distance / 1000).toFixed(2)}km` : `${distance}m`;
 };
 
-const formatSignalMaxSpeed = (maxSpeed: number | null) => {
-  if (maxSpeed === null) {
+const formatSignalMaxSpeed = (maxSpeed: number | undefined) => {
+  if (!maxSpeed) {
     return "CLEAR";
   }
   if (maxSpeed === 0) {
@@ -25,8 +23,8 @@ const formatSignalMaxSpeed = (maxSpeed: number | null) => {
 
 export const JourneyPopup: FC<{ journey: NatsSyncedEntry<JourneyBaseData, JourneyUpdateFrame> }> = ({ journey }) => {
   const { category, number, line, label } = journey.base.transport;
-  const nextSignal = journey.live.journeyData.nextSignal;
-  const { data: userInfo } = useUserData(journey.live.journeyData.driver);
+  const nextSignal = journey.live?.journeyData?.nextSignal;
+  const { data: userInfo } = useUserData(journey.live?.journeyData?.driver);
 
   return (
     <div className="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-6 max-w-md z-10000">
@@ -65,7 +63,7 @@ export const JourneyPopup: FC<{ journey: NatsSyncedEntry<JourneyBaseData, Journe
 
         <div className="flex items-center space-x-2 text-sm">
           <MdSpeed className="text-gray-700" size={24} />
-          <span className="font-medium">{journey.live.journeyData.speed} km/h</span>
+          <span className="font-medium">{journey.live?.journeyData?.speed ?? 0} km/h</span>
         </div>
 
         {nextSignal && (
@@ -77,7 +75,7 @@ export const JourneyPopup: FC<{ journey: NatsSyncedEntry<JourneyBaseData, Journe
               <span
                 className={cn(
                   "font-medium",
-                  nextSignal.maxSpeedKmh === null && "text-green-400",
+                  !nextSignal.maxSpeedKmh && "text-green-400",
                   nextSignal.maxSpeedKmh === 0 && "text-red-600",
                   nextSignal.maxSpeedKmh && nextSignal.maxSpeedKmh > 0 && "text-orange-400",
                 )}
@@ -92,7 +90,7 @@ export const JourneyPopup: FC<{ journey: NatsSyncedEntry<JourneyBaseData, Journe
           <Link
             target={"_blank"}
             to={"/journeys/$journeyId"}
-            params={{ journeyId: journey.live.ids.dataId }}
+            params={{ journeyId: journey.live?.ids?.dataId ?? "" }}
             className="w-full block text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg"
           >
             Journey Details

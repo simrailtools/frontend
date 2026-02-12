@@ -1,7 +1,7 @@
 import { deepEqual } from "fast-equals";
 import { type FC, memo, useEffect } from "react";
 import { Marker } from "react-map-gl/maplibre";
-import { tools } from "@/api/proto/bundle";
+import type { JourneyUpdateFrame } from "@/api/proto/event_bus_pb.ts";
 import type { JourneyBaseData } from "@/hooks/useLiveJourneyData.tsx";
 import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
 import { useSelectedJourney } from "@/hooks/useSelectedJourney.tsx";
@@ -10,19 +10,17 @@ import { MapTooltip } from "@/routes/map/-components/MapTooltip.tsx";
 import { UserIcon } from "@/routes/map/-components/UserIcon.tsx";
 import { useDriftPosition } from "@/routes/map/-hooks/useDriftPosition.tsx";
 
-import JourneyUpdateFrame = tools.simrail.backend.JourneyUpdateFrame;
-
 interface MarkerComponentProps {
   journey: NatsSyncedEntry<JourneyBaseData, JourneyUpdateFrame>;
 }
 
 export const JourneyMarker: FC<MarkerComponentProps> = memo(
   ({ journey }) => {
-    const driver = journey.live.journeyData.driver;
+    const driver = journey.live?.journeyData?.driver;
     const hasDriver = !!driver;
     const { data: userInfo, isLoading: userInfoLoading } = useUserData(driver);
 
-    const { latitude, longitude } = journey.live.journeyData.position;
+    const { latitude = 0, longitude = 0 } = journey.live?.journeyData?.position ?? {};
     const { pos, slideTo } = useDriftPosition({ latitude, longitude }, 2000);
     useEffect(() => slideTo({ latitude, longitude }), [latitude, longitude, slideTo]);
 

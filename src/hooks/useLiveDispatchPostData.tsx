@@ -1,12 +1,14 @@
-import Long from "long";
+import { create, fromBinary } from "@bufbuild/protobuf";
 import { useCallback } from "react";
-import { tools } from "@/api/proto/bundle";
+import {
+  type DispatchPostRemoveFrame,
+  DispatchPostRemoveFrameSchema,
+  type DispatchPostUpdateFrame,
+  DispatchPostUpdateFrameSchema,
+  UserPlatform,
+} from "@/api/proto/event_bus_pb.ts";
 import { findDispatchPostById, findDispatchPosts, type GeoPositionDto } from "@/api/rest";
 import { useNatsSyncedList } from "@/hooks/useNatsSyncedList.tsx";
-
-import DispatchPostRemoveFrame = tools.simrail.backend.DispatchPostRemoveFrame;
-import DispatchPostUpdateFrame = tools.simrail.backend.DispatchPostUpdateFrame;
-import UserPlatform = tools.simrail.backend.UserPlatform;
 
 export type DispatchPostBaseData = {
   name: string;
@@ -19,9 +21,10 @@ export type DispatchPostBaseData = {
 export const useLiveDispatchPostData = (serverId: string, postId?: string) => {
   const removeIdExtractor = useCallback((frame: DispatchPostRemoveFrame) => frame.postId, []);
   const updateDataExtractor = useCallback(
-    (frame: DispatchPostUpdateFrame): [string, Long] => [frame.ids.dataId, frame.baseData.timestamp],
+    (frame: DispatchPostUpdateFrame): [string, bigint] => [frame.ids?.dataId ?? "", frame.baseData?.timestamp ?? 0n],
     [],
   );
+
   const snapshotLoader = useCallback(async (): Promise<[DispatchPostBaseData, DispatchPostUpdateFrame][]> => {
     const dispatchPosts = await findDispatchPosts({ query: { serverId, limit: 250 } });
     return (dispatchPosts?.items ?? [])
@@ -34,9 +37,9 @@ export const useLiveDispatchPostData = (serverId: string, postId?: string) => {
           images: post.images,
           difficulty: post.difficulty,
         };
-        const liveData = new DispatchPostUpdateFrame({
+        const liveData = create(DispatchPostUpdateFrameSchema, {
           baseData: {
-            timestamp: Long.MIN_VALUE,
+            timestamp: -1n,
           },
           ids: {
             dataId: post.id,
@@ -65,12 +68,15 @@ export const useLiveDispatchPostData = (serverId: string, postId?: string) => {
     };
   }, []);
 
+  const updateFrameDecoder = useCallback((data: Uint8Array) => fromBinary(DispatchPostUpdateFrameSchema, data), []);
+  const removeFrameDecoder = useCallback((data: Uint8Array) => fromBinary(DispatchPostRemoveFrameSchema, data), []);
+
   return useNatsSyncedList<DispatchPostBaseData, DispatchPostUpdateFrame, DispatchPostRemoveFrame>({
     key: "dispatch_posts",
     updateTopic: `sit-events.dispatch-post-updates.v1.${serverId}.${postId ?? "*"}`,
     removeTopic: `sit-events.dispatch-post-removals.v1.${serverId}.${postId ?? "*"}`,
-    updateFrameDecoder: DispatchPostUpdateFrame,
-    removeFrameDecoder: DispatchPostRemoveFrame,
+    updateFrameDecoder,
+    removeFrameDecoder,
     removeIdExtractor,
     updateDataExtractor,
     snapshotLoader,

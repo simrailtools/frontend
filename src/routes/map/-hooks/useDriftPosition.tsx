@@ -10,10 +10,10 @@ type LatLng = {
 };
 
 /**
- *
- * @param a
- * @param b
- * @param t
+ * Executes a linear interpolation between the given start and end values.
+ * @param a interpolation start.
+ * @param b interpolation end.
+ * @param t interpolation factor.
  */
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 

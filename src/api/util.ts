@@ -15,7 +15,7 @@ const prodNatsUrl = "wss://nats.simrail.tools";
  */
 export function resolveNatsBackendUrl(): string {
   if (import.meta.env.PROD) {
-    return prodNatsUrl;
+    // return prodNatsUrl;
   }
 
   const restBaseUrl = client.getConfig().baseUrl ?? prodBackendUrl;

@@ -13,9 +13,10 @@
     "ci": "biome ci && eslint . --quiet --no-color && pnpm run build",
     "generate:api": "openapi-ts",
     "generate:api:local": "cross-env API_BASE_URL=http://localhost:8081 openapi-ts",
-    "generate:proto": "pbjs -t static-module -w es6 --force-long --no-create --no-service --null-semantics -o ./src/api/proto/bundle.js ./.proto/*.proto && pbts -o ./src/api/proto/bundle.d.ts ./src/api/proto/bundle.js"
+    "generate:proto": "buf generate"
   },
   "dependencies": {
+    "@bufbuild/protobuf": "^2.11.0",
     "@maplibre/maplibre-gl-style-spec": "^24.4.1",
     "@nats-io/nats-core": "^3.3.0",
     "@tanstack/react-devtools": "^0.9.5",
@@ -29,10 +30,8 @@
     "@yornaath/batshit": "^0.14.0",
     "clsx": "^2.1.1",
     "fast-equals": "^6.0.0",
-    "long": "^5.3.2",
     "luxon": "^3.7.2",
     "maplibre-gl": "^5.18.0",
-    "protobufjs": "^8.0.0",
     "react": "^19.2.4",
     "react-clock": "^6.0.0",
     "react-dom": "^19.2.4",
@@ -43,6 +42,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.14",
+    "@bufbuild/buf": "^1.65.0",
+    "@bufbuild/protoc-gen-es": "^2.11.0",
     "@eslint/js": "^9.39.2",
     "@hey-api/openapi-ts": "^0.92.3",
     "@tailwindcss/vite": "^4.1.18",
@@ -57,20 +58,9 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-refresh": "^0.5.0",
     "globals": "^17.3.0",
-    "protobufjs-cli": "^2.0.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.55.0",
     "vite": "^7.3.1",
     "vite-tsconfig-paths": "^6.1.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "glob": "^13.0.1"
-    },
-    "peerDependencyRules": {
-      "allowedVersions": {
-        "protobufjs": "8"
-      }
-    }
   }
 }

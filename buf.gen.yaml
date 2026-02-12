@@ -1,0 +1,10 @@
+version: v2
+inputs:
+  - directory: .proto
+plugins:
+  - local: protoc-gen-es
+    opt:
+      - target=ts
+      - js_import_style=module
+      - elide_plugin_version=true
+    out: src/api/proto

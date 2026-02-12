@@ -1,13 +1,12 @@
 import { useThrottledCallback } from "@tanstack/react-pacer";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Long from "long";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNats } from "@/hooks/useNats.tsx";
 
 /**
  * Represents a type which is decodable using an input Uint8Array.
  */
-type ProtoDecoder<T> = { decode: (reader: Uint8Array) => T };
+type ProtoDecoder<T> = (reader: Uint8Array) => T;
 
 /**
  * Entry for a locally stored element which is updatable by messages received from the NATS broker.
@@ -15,7 +14,7 @@ type ProtoDecoder<T> = { decode: (reader: Uint8Array) => T };
 export type NatsSyncedEntry<TBase, TLive> = {
   base: TBase;
   live: TLive;
-  ts: Long;
+  ts: bigint;
 };
 
 export type UseNatsSyncedListOptions<TBase, TUpdateFrame, TRemoveFrame> = {
@@ -46,7 +45,7 @@ export type UseNatsSyncedListOptions<TBase, TUpdateFrame, TRemoveFrame> = {
   /**
    * Extractor for required base data of an update frame, [data id; frame timestamp].
    */
-  updateDataExtractor: (frame: TUpdateFrame) => [id: string, timestamp: Long];
+  updateDataExtractor: (frame: TUpdateFrame) => [id: string, timestamp: bigint];
   /**
    * Loader for the full snapshot data, used when (re-) connecting to the NATS message broker.
    */
@@ -72,7 +71,7 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
   const queryClient = useQueryClient();
   const { connected, subscribe } = useNats();
 
-  const pendingRef = useRef<Map<string, { frame: TUpdateFrame; ts: Long }>>(new Map());
+  const pendingRef = useRef<Map<string, { frame: TUpdateFrame; ts: bigint }>>(new Map());
   const dataRef = useRef<Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>>(new Map());
   const [map, setMap] = useState<Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>>(() => new Map());
 
@@ -87,9 +86,9 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
   );
 
   // callback to mark data as pending, either if it's not pending already or if a new frame version was received
-  const markAsPending = useCallback((id: string, frame: TUpdateFrame, ts: Long) => {
+  const markAsPending = useCallback((id: string, frame: TUpdateFrame, ts: bigint) => {
     const pending = pendingRef.current.get(id);
-    if (!pending || ts.gt(pending.ts)) {
+    if (!pending || ts > pending.ts) {
       pendingRef.current.set(id, { frame, ts });
     }
   }, []);
@@ -110,12 +109,12 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
     }
 
     const updateSubscription = subscribe(updateTopic, (_, msg) => {
-      const frame = updateFrameDecoder.decode(msg.data);
+      const frame = updateFrameDecoder(msg.data);
       const [id, ts] = updateDataExtractor(frame);
 
       const data = dataRef.current;
       const existing = data.get(id);
-      if (existing?.ts.gte(ts)) {
+      if (existing && existing.ts > ts) {
         // a newer data version is cached locally already
         return;
       }
@@ -155,7 +154,7 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
     });
 
     const removeSubscription = subscribe(removeTopic, (_, msg) => {
-      const frame = removeFrameDecoder.decode(msg.data);
+      const frame = removeFrameDecoder(msg.data);
       const id = removeIdExtractor(frame);
       pendingRef.current.delete(id);
 
@@ -199,7 +198,7 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
       for (const [base, frame] of snapshotData) {
         const [id] = updateDataExtractor(frame);
         const knownData = data.get(id);
-        const newData = knownData ?? { base, live: frame, ts: Long.MIN_VALUE };
+        const newData = knownData ?? { base, live: frame, ts: -1 };
         next.set(id, newData);
       }
 

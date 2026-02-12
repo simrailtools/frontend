@@ -11,11 +11,13 @@ export const JourneyFocusHandler: FC = () => {
   // updates the map focus in case a journey is selected and focused
   useEffect(() => {
     if (selectedJourney && focusJourney && map) {
-      const { latitude, longitude } = selectedJourney.live.journeyData.position;
-      map.easeTo({
-        duration: 2000,
-        center: [longitude, latitude],
-      });
+      const position = selectedJourney.live?.journeyData?.position;
+      if (position) {
+        map.easeTo({
+          duration: 2000,
+          center: [position.longitude, position.latitude],
+        });
+      }
     }
   }, [selectedJourney, focusJourney, map]);
 

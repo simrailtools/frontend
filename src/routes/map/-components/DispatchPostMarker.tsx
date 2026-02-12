@@ -2,7 +2,7 @@ import { deepEqual } from "fast-equals";
 import { type FC, memo, useState } from "react";
 import { MdOutlineLocationOn, MdOutlinePsychology, MdPersonOutline } from "react-icons/md";
 import { Marker, Popup } from "react-map-gl/maplibre";
-import { tools } from "@/api/proto/bundle";
+import type { DispatchPostUpdateFrame } from "@/api/proto/event_bus_pb.ts";
 import type { SimRailUserDto } from "@/api/rest";
 import type { DispatchPostBaseData } from "@/hooks/useLiveDispatchPostData.tsx";
 import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
@@ -10,8 +10,6 @@ import { useUserData } from "@/hooks/useUserData.tsx";
 import { cn } from "@/lib/utils.ts";
 import { MapTooltip } from "@/routes/map/-components/MapTooltip.tsx";
 import { UserIcon } from "@/routes/map/-components/UserIcon.tsx";
-
-import DispatchPostUpdateFrame = tools.simrail.backend.DispatchPostUpdateFrame;
 
 /**
  * Zero-based difficulty name index.
@@ -41,7 +39,7 @@ export const DispatchPostMarker: FC<{
     const { name, position, difficulty } = post.base;
     const [popupVisible, setPopupVisible] = useState(false);
 
-    const dispatcher = post.live.dispatchPostData.dispatcher;
+    const dispatcher = post.live?.dispatchPostData?.dispatcher;
     const hasDispatcher = !!dispatcher;
     const { data: userInfo, isLoading: userInfoLoading } = useUserData(dispatcher);
 

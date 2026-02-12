@@ -1,10 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { create, windowedFiniteBatchScheduler } from "@yornaath/batshit";
-import { tools } from "@/api/proto/bundle";
+import { type User, UserPlatform } from "@/api/proto/event_bus_pb.ts";
 import { findUserDetails, type UserDto } from "@/api/rest";
-
-import User = tools.simrail.backend.User;
-import UserPlatform = tools.simrail.backend.UserPlatform;
 
 /**
  * Mapping between the user platforms returned by protobuf to their dto representation.

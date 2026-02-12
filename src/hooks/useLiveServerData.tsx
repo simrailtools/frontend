@@ -1,11 +1,13 @@
-import Long from "long";
+import { create, fromBinary } from "@bufbuild/protobuf";
 import { useCallback } from "react";
-import { tools } from "@/api/proto/bundle";
+import {
+  type ServerRemoveFrame,
+  ServerRemoveFrameSchema,
+  type ServerUpdateFrame,
+  ServerUpdateFrameSchema,
+} from "@/api/proto/event_bus_pb.ts";
 import { findServerById, listServers, type SimRailServerDto } from "@/api/rest";
 import { useNatsSyncedList } from "@/hooks/useNatsSyncedList.tsx";
-
-import ServerUpdateFrame = tools.simrail.backend.ServerUpdateFrame;
-import ServerRemoveFrame = tools.simrail.backend.ServerRemoveFrame;
 
 export type ServerBaseData = {
   code: string;
@@ -15,9 +17,10 @@ export type ServerBaseData = {
 export const useLiveServerData = (serverId?: string) => {
   const removeIdExtractor = useCallback((frame: ServerRemoveFrame) => frame.serverId, []);
   const updateDataExtractor = useCallback(
-    (frame: ServerUpdateFrame): [string, Long] => [frame.ids.dataId, frame.baseData.timestamp],
+    (frame: ServerUpdateFrame): [string, bigint] => [frame.ids?.dataId ?? "", frame.baseData?.timestamp ?? 0n],
     [],
   );
+
   const snapshotLoader = useCallback(async (): Promise<[ServerBaseData, ServerUpdateFrame][]> => {
     const servers = await listServers({ query: { includeOffline: true } });
     return (servers ?? [])
@@ -27,9 +30,9 @@ export const useLiveServerData = (serverId?: string) => {
           code: server.code,
           region: server.region,
         };
-        const liveData = new ServerUpdateFrame({
+        const liveData = create(ServerUpdateFrameSchema, {
           baseData: {
-            timestamp: Long.MIN_VALUE,
+            timestamp: -1n,
           },
           ids: {
             dataId: server.id,
@@ -40,8 +43,8 @@ export const useLiveServerData = (serverId?: string) => {
             tags: server.tags,
             online: server.online,
             scenery: server.scenery,
-            spokenLanguage: server.spokenLanguage,
-            utcOffsetSeconds: Long.fromNumber(server.utcOffsetHours).mul(3600),
+            spokenLanguage: server.spokenLanguage ?? undefined,
+            utcOffsetSeconds: BigInt(server.utcOffsetHours * 3600),
           },
         });
 
@@ -56,12 +59,15 @@ export const useLiveServerData = (serverId?: string) => {
     };
   }, []);
 
+  const updateFrameDecoder = useCallback((data: Uint8Array) => fromBinary(ServerUpdateFrameSchema, data), []);
+  const removeFrameDecoder = useCallback((data: Uint8Array) => fromBinary(ServerRemoveFrameSchema, data), []);
+
   return useNatsSyncedList<ServerBaseData, ServerUpdateFrame, ServerRemoveFrame>({
     key: "servers",
     updateTopic: `sit-events.server-updates.v1.${serverId ?? "*"}`,
     removeTopic: `sit-events.server-removals.v1.${serverId ?? "*"}`,
-    updateFrameDecoder: ServerUpdateFrame,
-    removeFrameDecoder: ServerRemoveFrame,
+    updateFrameDecoder,
+    removeFrameDecoder,
     removeIdExtractor,
     updateDataExtractor,
     snapshotLoader,

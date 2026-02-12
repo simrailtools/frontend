@@ -77,7 +77,7 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
   useEffect(() => {
     if (selectedJourney && journeysById.size > 0) {
       const currLiveData = selectedJourney.live;
-      const newJourneyData = journeysById.get(currLiveData.ids.dataId);
+      const newJourneyData = journeysById.get(currLiveData.ids?.dataId ?? "");
       if (!deepEqual(currLiveData, newJourneyData?.live)) {
         // only update (and trigger a re-render) in case the live data of the selected
         // journey changed - all other data associated with the journey is static
@@ -151,7 +151,7 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
           })}
 
         {mapOptions.enabledLayers.includes("journey_polyline") && selectedJourney && (
-          <JourneyPolyline journeyId={selectedJourney.live.ids.dataId} />
+          <JourneyPolyline journeyId={selectedJourney.live?.ids?.dataId ?? ""} />
         )}
 
         {mapOptions.enabledLayers.includes("trains") &&
