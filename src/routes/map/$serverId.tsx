@@ -1,7 +1,6 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { deepEqual } from "fast-equals";
 import { type FC, useEffect, useMemo } from "react";
 import { AttributionControl, Layer, Map as MapLibreMap, Source } from "react-map-gl/maplibre";
 import {
@@ -73,18 +72,14 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
   // (after a journey was selected) should only happen when the websocket has to
   // reconnect to the backend which shouldn't remove the focused journey
   const { map: journeysById } = useLiveJourneyData(serverId);
-  const { selectedJourney, setSelectedJourney } = useSelectedJourney();
+  const { selectedJourneyId, setSelectedJourney } = useSelectedJourney();
+  const selectedJourney = selectedJourneyId ? journeysById.get(selectedJourneyId) : undefined;
+  const selectedJourneyExists = journeysById.size === 0 || selectedJourney !== undefined;
   useEffect(() => {
-    if (selectedJourney && journeysById.size > 0) {
-      const currLiveData = selectedJourney.live;
-      const newJourneyData = journeysById.get(currLiveData.ids?.dataId ?? "");
-      if (!deepEqual(currLiveData, newJourneyData?.live)) {
-        // only update (and trigger a re-render) in case the live data of the selected
-        // journey changed - all other data associated with the journey is static
-        setSelectedJourney(newJourneyData ?? null);
-      }
+    if (!selectedJourneyExists) {
+      setSelectedJourney(undefined);
     }
-  }, [journeysById, selectedJourney, setSelectedJourney]);
+  }, [selectedJourneyExists, setSelectedJourney]);
 
   // fetch points located on the map, filter out points that have an associated dispatch post
   const { map: dispatchPostsById } = useLiveDispatchPostData(serverId);
@@ -131,7 +126,7 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
         attributionControl={false}
         refreshExpiredTiles={false}
         mapStyle={tileLayer.spec}
-        onClick={() => setSelectedJourney(null)}
+        onClick={() => setSelectedJourney(undefined)}
       >
         <AttributionControl
           compact={false}
@@ -167,7 +162,7 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
         {mapOptions.enabledLayers.includes("other_points") &&
           points?.map(point => <PointMarker key={point.id} point={point} />)}
 
-        <JourneyFocusHandler />
+        <JourneyFocusHandler position={selectedJourney?.live?.journeyData?.position} />
         <MapLayerControl mapOptions={mapOptions} onBaseLayerChange={changeTileLayer} onToggleLayer={toggleMapLayer} />
       </MapLibreMap>
     </>

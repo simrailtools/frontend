@@ -32,7 +32,7 @@ export const JourneyMarker: FC<MarkerComponentProps> = memo(
         latitude={pos.latitude}
         longitude={pos.longitude}
         onClick={event => {
-          setSelectedJourney(journey);
+          setSelectedJourney(journey.live?.ids?.dataId);
           event.originalEvent?.stopPropagation();
         }}
       >

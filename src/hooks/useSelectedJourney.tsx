@@ -7,21 +7,14 @@ import {
   useContext,
   useState,
 } from "react";
-import type { JourneyUpdateFrame } from "@/api/proto/event_bus_pb.ts";
-import type { JourneyBaseData } from "@/hooks/useLiveJourneyData.tsx";
-import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
-
-type SelectedJourney = NatsSyncedEntry<JourneyBaseData, JourneyUpdateFrame>;
 
 type SelectedJourneyContextType = {
-  selectedJourney: SelectedJourney | null;
-  setSelectedJourney: Dispatch<SetStateAction<SelectedJourney | null>>;
+  selectedJourneyId: string | undefined;
+  setSelectedJourney: Dispatch<SetStateAction<string | undefined>>;
 };
 
-const SelectedJourneyContext = createContext<SelectedJourneyContextType>({
-  selectedJourney: null,
-  setSelectedJourney: () => {},
-});
+// biome-ignore lint/style/noNonNullAssertion: never called, hook is always initialized
+const SelectedJourneyContext = createContext<SelectedJourneyContextType>(null!);
 
 /**
  * Hook for the journey that was selected by the user.
@@ -29,9 +22,9 @@ const SelectedJourneyContext = createContext<SelectedJourneyContextType>({
 export const useSelectedJourney = () => useContext(SelectedJourneyContext);
 
 export const SelectedJourneyProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [selectedJourney, setSelectedJourney] = useState<SelectedJourney | null>(null);
+  const [selectedJourneyId, setSelectedJourney] = useState<string | undefined>(undefined);
   return (
-    <SelectedJourneyContext.Provider value={{ selectedJourney, setSelectedJourney }}>
+    <SelectedJourneyContext.Provider value={{ selectedJourneyId, setSelectedJourney }}>
       {children}
     </SelectedJourneyContext.Provider>
   );
