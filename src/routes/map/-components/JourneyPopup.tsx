@@ -12,7 +12,7 @@ const formatDistance = (distance: number): string => {
 };
 
 const formatSignalMaxSpeed = (maxSpeed: number | undefined) => {
-  if (!maxSpeed) {
+  if (maxSpeed === undefined) {
     return "CLEAR";
   }
   if (maxSpeed === 0) {
@@ -75,7 +75,7 @@ export const JourneyPopup: FC<{ journey: NatsSyncedEntry<JourneyBaseData, Journe
               <span
                 className={cn(
                   "font-medium",
-                  !nextSignal.maxSpeedKmh && "text-green-400",
+                  nextSignal.maxSpeedKmh === undefined && "text-green-400",
                   nextSignal.maxSpeedKmh === 0 && "text-red-600",
                   nextSignal.maxSpeedKmh && nextSignal.maxSpeedKmh > 0 && "text-orange-400",
                 )}
