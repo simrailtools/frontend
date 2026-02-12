@@ -1,4 +1,5 @@
-import { type FC, useState } from "react";
+import { deepEqual } from "fast-equals";
+import { type FC, memo, useState } from "react";
 import { MdOutlineLocationOn, MdOutlinePsychology, MdPersonOutline } from "react-icons/md";
 import { Marker, Popup } from "react-map-gl/maplibre";
 import { tools } from "@/api/proto/bundle";
@@ -35,68 +36,74 @@ const formatUserName = (user?: SimRailUserDto): string | undefined => {
 
 export const DispatchPostMarker: FC<{
   post: NatsSyncedEntry<DispatchPostBaseData, DispatchPostUpdateFrame>;
-}> = ({ post }) => {
-  const { name, position, difficulty } = post.base;
-  const [popupVisible, setPopupVisible] = useState(false);
+}> = memo(
+  ({ post }) => {
+    const { name, position, difficulty } = post.base;
+    const [popupVisible, setPopupVisible] = useState(false);
 
-  const dispatcher = post.live.dispatchPostData.dispatcher;
-  const hasDispatcher = !!dispatcher;
-  const { data: userInfo, isLoading: userInfoLoading } = useUserData(dispatcher);
+    const dispatcher = post.live.dispatchPostData.dispatcher;
+    const hasDispatcher = !!dispatcher;
+    const { data: userInfo, isLoading: userInfoLoading } = useUserData(dispatcher);
 
-  return (
-    <>
-      <Marker longitude={position.longitude} latitude={position.latitude} anchor={"center"} style={{ zIndex: 100 }}>
-        <button
-          type={"button"}
-          className={cn("relative flex items-center justify-center", userInfo && "cursor-pointer")}
-          onMouseEnter={() => setPopupVisible(true)}
-          onMouseLeave={() => setPopupVisible(false)}
-          onPointerDown={event => event.stopPropagation()}
-          onClick={event => {
-            event.stopPropagation();
-            if (userInfo) {
-              window.open(userInfo.profileUrl, "_blank", "noopener, noreferrer");
-            }
-          }}
-        >
-          <UserIcon
-            hasUser={hasDispatcher}
-            userInfoLoading={userInfoLoading}
-            userInfo={userInfo}
-            className={"rounded-md h-9 w-9"}
-          />
-          {!popupVisible && (
-            <MapTooltip position={"top"} className={"text-xs font-semibold p-1.5"}>
-              {name}
-            </MapTooltip>
-          )}
-        </button>
-      </Marker>
-      {popupVisible && (
-        <Popup
-          offset={23}
-          anchor={"bottom"}
-          closeButton={false}
-          closeOnClick={false}
-          style={{ zIndex: 100 }}
-          latitude={position.latitude}
-          longitude={position.longitude}
-          onClose={() => setPopupVisible(false)}
-        >
-          <div className={"flex space-x-1 items-center"}>
-            <MdOutlineLocationOn className={"w-5 h-5"} />
-            <span className={"text-sm font-semibold"}>{name}</span>
-          </div>
-          <div className={"flex space-x-1 items-center"}>
-            <MdOutlinePsychology className={"w-5 h-5"} />
-            <span className={"text-sm"}>{mapDifficultyName(difficulty)}</span>
-          </div>
-          <div className={"flex space-x-1 items-center"}>
-            <MdPersonOutline className={"w-5 h-5"} />
-            <span className={cn("text-sm", !userInfo && "italic")}>{formatUserName(userInfo) ?? "Bot"}</span>
-          </div>
-        </Popup>
-      )}
-    </>
-  );
-};
+    return (
+      <>
+        <Marker longitude={position.longitude} latitude={position.latitude} anchor={"center"} style={{ zIndex: 100 }}>
+          <button
+            type={"button"}
+            className={cn("relative flex items-center justify-center", userInfo && "cursor-pointer")}
+            onMouseEnter={() => setPopupVisible(true)}
+            onMouseLeave={() => setPopupVisible(false)}
+            onPointerDown={event => event.stopPropagation()}
+            onClick={event => {
+              event.stopPropagation();
+              if (userInfo) {
+                window.open(userInfo.profileUrl, "_blank", "noopener, noreferrer");
+              }
+            }}
+          >
+            <UserIcon
+              hasUser={hasDispatcher}
+              userInfoLoading={userInfoLoading}
+              userInfo={userInfo}
+              className={"rounded-md h-9 w-9"}
+            />
+            {!popupVisible && (
+              <MapTooltip position={"top"} className={"text-xs font-semibold p-1.5"}>
+                {name}
+              </MapTooltip>
+            )}
+          </button>
+        </Marker>
+        {popupVisible && (
+          <Popup
+            offset={23}
+            anchor={"bottom"}
+            closeButton={false}
+            closeOnClick={false}
+            style={{ zIndex: 100 }}
+            latitude={position.latitude}
+            longitude={position.longitude}
+            onClose={() => setPopupVisible(false)}
+          >
+            <div className={"flex space-x-1 items-center"}>
+              <MdOutlineLocationOn className={"w-5 h-5"} />
+              <span className={"text-sm font-semibold"}>{name}</span>
+            </div>
+            <div className={"flex space-x-1 items-center"}>
+              <MdOutlinePsychology className={"w-5 h-5"} />
+              <span className={"text-sm"}>{mapDifficultyName(difficulty)}</span>
+            </div>
+            <div className={"flex space-x-1 items-center"}>
+              <MdPersonOutline className={"w-5 h-5"} />
+              <span className={cn("text-sm", !userInfo && "italic")}>{formatUserName(userInfo) ?? "Bot"}</span>
+            </div>
+          </Popup>
+        )}
+      </>
+    );
+  },
+  (prev, next) => {
+    // only update the component if the live data changed, the base data is fixed after initial render
+    return deepEqual(prev.post.live, next.post.live);
+  },
+);

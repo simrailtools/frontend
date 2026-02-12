@@ -6,8 +6,8 @@
   "packageManager": "pnpm@10.29.2",
   "scripts": {
     "dev": "vite",
-    "preview": "vite preview",
     "build": "openapi-ts && tsc -b && vite build",
+    "preview": "tsc -b && vite build && vite preview",
     "lint": "biome lint && eslint .",
     "format": "biome check --fix && eslint . --fix",
     "ci": "biome ci && eslint . --quiet --no-color && pnpm run build",

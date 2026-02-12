@@ -1,3 +1,4 @@
+import { useThrottledCallback } from "@tanstack/react-pacer";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Long from "long";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -70,11 +71,15 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
   const dataRef = useRef<Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>>(new Map());
   const [map, setMap] = useState<Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>>(() => new Map());
 
-  // callback to update the current state of the backing map to the new one
-  const updateMap = useCallback((next: Map<string, NatsSyncedEntry<TBase, TUpdateFrame>>) => {
-    dataRef.current = next;
-    setMap(next);
-  }, []);
+  // callback to queue an update of the map state after modifying it
+  // the update runs 'wait' ms or less after this function was called
+  const queueMapUpdate = useThrottledCallback(
+    () => {
+      const data = dataRef.current;
+      setMap(new Map(data));
+    },
+    { wait: 100, leading: false, trailing: true },
+  );
 
   // callback to mark data as pending, either if it's not pending already or if a new frame version was received
   const markAsPending = useCallback((id: string, frame: TUpdateFrame, ts: Long) => {
@@ -87,10 +92,11 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
   // hook to clear the data map in case the NATS connection is lost
   useEffect(() => {
     if (!connected) {
+      dataRef.current.clear();
       pendingRef.current.clear();
-      updateMap(new Map());
+      setMap(new Map());
     }
-  }, [connected, updateMap]);
+  }, [connected]);
 
   // hook that manages the data update subscriptions from the backend
   useEffect(() => {
@@ -111,9 +117,8 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
 
       if (existing) {
         // an entry already exists, just apply the new live data
-        const next = new Map(data);
-        next.set(id, { base: existing.base, live: frame, ts });
-        updateMap(next);
+        dataRef.current.set(id, { base: existing.base, live: frame, ts });
+        queueMapUpdate();
         return;
       }
 
@@ -138,10 +143,8 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
             return;
           }
 
-          const curr = dataRef.current;
-          const next = new Map(curr);
-          next.set(id, { base, live: pending.frame, ts: pending.ts });
-          updateMap(next);
+          dataRef.current.set(id, { base, live: pending.frame, ts: pending.ts });
+          queueMapUpdate();
         })
         .finally(() => pendingRef.current.delete(id));
     });
@@ -153,9 +156,8 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
 
       const data = dataRef.current;
       if (data.has(id)) {
-        const next = new Map(data);
-        next.delete(id);
-        updateMap(next);
+        data.delete(id);
+        queueMapUpdate();
       }
     });
 
@@ -174,7 +176,7 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
     updateFrameDecoder,
     updateTopic,
     removeFrameDecoder,
-    updateMap,
+    queueMapUpdate,
     markAsPending,
   ]);
 
@@ -195,10 +197,11 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
         next.set(id, newData);
       }
 
-      updateMap(next);
+      dataRef.current = next;
+      queueMapUpdate();
       console.debug("Retrieved fresh data snapshot from backend");
     }
-  }, [connected, snapshotData, isFetching, updateDataExtractor, updateMap]);
+  }, [connected, snapshotData, isFetching, updateDataExtractor, queueMapUpdate]);
 
   return { map, connected };
 };
