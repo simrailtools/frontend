@@ -66,6 +66,7 @@ export const useLiveDispatchPostData = (serverId: string, postId?: string) => {
   }, []);
 
   return useNatsSyncedList<DispatchPostBaseData, DispatchPostUpdateFrame, DispatchPostRemoveFrame>({
+    key: "dispatch_posts",
     updateTopic: `sit-events.dispatch-post-updates.v1.${serverId}.${postId ?? "*"}`,
     removeTopic: `sit-events.dispatch-post-removals.v1.${serverId}.${postId ?? "*"}`,
     updateFrameDecoder: DispatchPostUpdateFrame,

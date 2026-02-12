@@ -57,6 +57,7 @@ export const useLiveServerData = (serverId?: string) => {
   }, []);
 
   return useNatsSyncedList<ServerBaseData, ServerUpdateFrame, ServerRemoveFrame>({
+    key: "servers",
     updateTopic: `sit-events.server-updates.v1.${serverId ?? "*"}`,
     removeTopic: `sit-events.server-removals.v1.${serverId ?? "*"}`,
     updateFrameDecoder: ServerUpdateFrame,

@@ -95,6 +95,7 @@ export const useLiveJourneyData = (serverId: string, journeyId?: string) => {
   }, []);
 
   return useNatsSyncedList<JourneyBaseData, JourneyUpdateFrame, JourneyRemoveFrame>({
+    key: "journeys",
     updateTopic: `sit-events.journey-updates.v1.${serverId}.${journeyId ?? "*"}`,
     removeTopic: `sit-events.journey-removals.v1.${serverId}.${journeyId ?? "*"}`,
     updateFrameDecoder: JourneyUpdateFrame,

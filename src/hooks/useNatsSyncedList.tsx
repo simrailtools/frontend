@@ -20,6 +20,10 @@ export type NatsSyncedEntry<TBase, TLive> = {
 
 export type UseNatsSyncedListOptions<TBase, TUpdateFrame, TRemoveFrame> = {
   /**
+   * Key of the synced list, used for debugging / caching.
+   */
+  key: string;
+  /**
    * Update topic for the data to subscribe to.
    */
   updateTopic: string;
@@ -55,6 +59,7 @@ export type UseNatsSyncedListOptions<TBase, TUpdateFrame, TRemoveFrame> = {
 };
 
 export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
+  key,
   updateTopic,
   removeTopic,
   updateFrameDecoder,
@@ -78,7 +83,7 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
       const data = dataRef.current;
       setMap(new Map(data));
     },
-    { wait: 100, leading: false, trailing: true },
+    { key: `${key}_update_throttler`, wait: 100, leading: false, trailing: true },
   );
 
   // callback to mark data as pending, either if it's not pending already or if a new frame version was received
@@ -134,7 +139,7 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
       markAsPending(id, frame, ts);
       queryClient
         .fetchQuery({
-          queryKey: ["nats-synced-base", updateTopic, id],
+          queryKey: ["nats-synced-base", key, id],
           queryFn: () => baseDataLoader(id),
         })
         .then(base => {
@@ -166,6 +171,7 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
       removeSubscription?.unsubscribe();
     };
   }, [
+    key,
     baseDataLoader,
     connected,
     queryClient,
@@ -184,7 +190,7 @@ export const useNatsSyncedList = <TBase, TUpdateFrame, TRemoveFrame>({
   const { data: snapshotData, isFetching } = useQuery({
     enabled: connected,
     queryFn: snapshotLoader,
-    queryKey: ["nats-synced-snapshot", updateTopic, removeTopic],
+    queryKey: ["nats-synced-snapshot", key],
   });
   useEffect(() => {
     if (connected && snapshotData && !isFetching) {
