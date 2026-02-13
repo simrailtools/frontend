@@ -13,13 +13,16 @@ type SelectedJourneyContextType = {
   setSelectedJourney: Dispatch<SetStateAction<string | undefined>>;
 };
 
-// biome-ignore lint/style/noNonNullAssertion: never called, hook is always initialized
-const SelectedJourneyContext = createContext<SelectedJourneyContextType>(null!);
+const SelectedJourneyContext = createContext<SelectedJourneyContextType | undefined>(undefined);
 
-/**
- * Hook for the journey that was selected by the user.
- */
-export const useSelectedJourney = () => useContext(SelectedJourneyContext);
+export const useSelectedJourney = () => {
+  const context = useContext(SelectedJourneyContext);
+  if (!context) {
+    throw new Error("useSelectedJourney must be used with SelectedJourneyProvider");
+  }
+
+  return context;
+};
 
 export const SelectedJourneyProvider: FC<PropsWithChildren> = ({ children }) => {
   const [selectedJourneyId, setSelectedJourney] = useState<string | undefined>(undefined);

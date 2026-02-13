@@ -4,12 +4,17 @@ import { type User, UserPlatform } from "@/api/proto/event_bus_pb.ts";
 import { findUserDetails, type UserDto } from "@/api/rest";
 
 /**
- * Mapping between the user platforms returned by protobuf to their dto representation.
+ * Maps the given user platform to its corresponding DTO representation.
+ * @param platform the platform to map.
  */
-const userPlatformMapping: Record<UserPlatform, UserDto["platform"]> = {
-  [UserPlatform.STEAM]: "STEAM",
-  [UserPlatform.XBOX]: "XBOX",
-} as const;
+function mapUserPlatformToDto(platform: UserPlatform): UserDto["platform"] {
+  switch (platform) {
+    case UserPlatform.XBOX:
+      return "XBOX";
+    case UserPlatform.STEAM:
+      return "STEAM";
+  }
+}
 
 /**
  * Batcher for user details requests.
@@ -36,7 +41,7 @@ export const useUserData = (user: User | null | undefined) => {
     queryKey: ["user_data", user?.platform, user?.id],
     queryFn: async ({ queryKey }) => {
       const [, platform, id] = queryKey as [string, UserPlatform, string];
-      const userDto: UserDto = { id: id, platform: userPlatformMapping[platform] };
+      const userDto: UserDto = { id: id, platform: mapUserPlatformToDto(platform) };
       const userData = await userBatcher.fetch(userDto);
       if (!userData) {
         throw new Error(`Backend returned no data for user ${userDto}`);

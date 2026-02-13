@@ -20,10 +20,16 @@ type NatsContextOptions = {
   websocketUrl: string;
 };
 
-// biome-ignore lint/style/noNonNullAssertion: never called, hook is always initialized
-const NatsContext = createContext<NatsContextType>(null!);
+const NatsContext = createContext<NatsContextType | undefined>(undefined);
 
-export const useNats = () => useContext(NatsContext);
+export const useNats = () => {
+  const context = useContext(NatsContext);
+  if (!context) {
+    throw new Error("useNats must be must be used with NatsContextProvider");
+  }
+
+  return context;
+};
 
 export const NatsContextProvider: FC<PropsWithChildren<NatsContextOptions>> = ({ websocketUrl, children }) => {
   // Disconnect the websocket connection if the page is in the background

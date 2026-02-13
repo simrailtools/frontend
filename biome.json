@@ -43,7 +43,8 @@
         "useSelfClosingElements": "error",
         "useSingleVarDeclarator": "error",
         "useDefaultParameterLast": "error",
-        "noUnusedTemplateLiteral": "error"
+        "noUnusedTemplateLiteral": "error",
+        "useReactFunctionComponents": "error"
       },
       "complexity": {
         "noVoid": "error",
@@ -57,18 +58,26 @@
         "noUndeclaredVariables": "error",
         "noReactPropAssignments": "error",
         "noGlobalDirnameFilename": "error",
-        "noUndeclaredDependencies": "error"
+        "noUndeclaredDependencies": "error",
+        "noNestedComponentDefinitions": "error"
       },
       "nursery": {
         "noProto": "error",
         "noForIn": "error",
+        "useFind": "error",
         "noDivRegex": "error",
+        "useRegexpExec": "error",
         "noEqualsToNull": "error",
+        "noMisusedPromises": "error",
         "noReactForwardRef": "error",
+        "noUnknownAttribute": "error",
+        "useArraySortCompare": "error",
         "noDeprecatedImports": "error",
         "noAmbiguousAnchorText": "error",
         "noDuplicateEnumValues": "error",
-        "noDuplicatedSpreadProps": "error"
+        "noDuplicatedSpreadProps": "error",
+        "noUnnecessaryConditions": "error",
+        "useExhaustiveSwitchCases": "error"
       },
       "suspicious": {
         "noVar": "error",
@@ -82,6 +91,10 @@
         "noConstantBinaryExpressions": "error",
         "useNumberToFixedDigitsArgument": "error"
       }
+    },
+    "domains": {
+      "react": "recommended",
+      "project": "recommended"
     }
   },
   "javascript": {
