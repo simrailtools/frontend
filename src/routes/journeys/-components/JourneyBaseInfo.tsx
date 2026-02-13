@@ -8,7 +8,7 @@ type JourneyBaseInfoProps = {
   timeFormatter: (isoTime: string) => string;
 };
 
-const findLastPlayableEvent = (events: Array<JourneyEventDto>) => {
+const findLastPlayableEvent = (events: JourneyEventDto[]) => {
   for (let index = events.length - 1; index >= 0; index--) {
     const event = events[index];
     if (event.stopPlace.inPlayableBorder) {

@@ -21,7 +21,7 @@ function mapUserPlatformToDto(platform: UserPlatform): UserDto["platform"] {
  */
 const userBatcher = create({
   name: "user_load_batcher",
-  fetcher: async (users: Array<UserDto>) => {
+  fetcher: async (users: UserDto[]) => {
     const response = await findUserDetails({ body: users });
     return response ?? [];
   },

@@ -69,7 +69,7 @@ function JourneyDetailsComponent() {
 
       return acc;
     },
-    [] as Array<[JourneyEventDto | undefined, JourneyEventDto | undefined]>,
+    [] as [JourneyEventDto | undefined, JourneyEventDto | undefined][],
   );
 
   // formats the given iso date/time in the server timezone using the optionally provided format

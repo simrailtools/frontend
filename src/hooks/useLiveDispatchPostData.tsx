@@ -14,7 +14,7 @@ export type DispatchPostBaseData = {
   name: string;
   pointId: string;
   position: GeoPositionDto;
-  images: Array<string>;
+  images: string[];
   difficulty: number;
 };
 
