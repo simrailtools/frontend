@@ -46,9 +46,9 @@ export const JourneyPolyline: FC<PolylineComponentProps> = memo(({ journeyId }) 
   }
 
   return (
-    <Source id={`journey-polyline-${journeyId}`} type={"geojson"} data={geoJson}>
+    <Source key={`jpls-${journeyId}`} id={`jpls-${journeyId}`} type={"geojson"} data={geoJson}>
       <Layer
-        id={`journey-polyline-layer-${journeyId}`}
+        id={`jpll-${journeyId}`}
         type="line"
         paint={{
           "line-width": 3,
