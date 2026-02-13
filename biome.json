@@ -47,6 +47,7 @@
         "useReactFunctionComponents": "error"
       },
       "complexity": {
+        "noVoid": "error",
         "useWhile": "error",
         "noUselessStringConcat": "error"
       },

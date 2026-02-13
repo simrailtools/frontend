@@ -163,7 +163,9 @@ export const NatsContextProvider: FC<PropsWithChildren<NatsContextOptions>> = ({
   useEffect(() => {
     if (natsConnection) {
       const statusIterator = natsConnection.status()[Symbol.asyncIterator]();
-      void handleConnectionStatusEvents({ [Symbol.asyncIterator]: () => statusIterator });
+      handleConnectionStatusEvents({ [Symbol.asyncIterator]: () => statusIterator }).catch(error => {
+        console.warn("NATS connection status event handler failed", error);
+      });
       return () => {
         statusIterator.return?.();
       };
