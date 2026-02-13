@@ -67,8 +67,8 @@ export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition
           <p>
             {firstEvent.transport.category} {firstEvent.transport.number}
           </p>
-          {firstEvent.transport.line !== undefined && <p>({firstEvent.transport.line})</p>}
-          {firstEvent.transport.label !== undefined && <p>"{firstEvent.transport.label}"</p>}
+          {firstEvent.transport.line != null && <p>({firstEvent.transport.line})</p>}
+          {firstEvent.transport.label != null && <p>"{firstEvent.transport.label}"</p>}
         </div>
 
         {/* Journey Max Speed */}
