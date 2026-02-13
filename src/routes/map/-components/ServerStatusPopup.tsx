@@ -2,7 +2,7 @@ import "react-clock/dist/Clock.css";
 import { DateTime } from "luxon";
 import { type FC, useEffect, useState } from "react";
 import Clock from "react-clock";
-import { MdOutlineTimer, MdOutlineTimerOff } from "react-icons/md";
+import { MdOutlineAccessTime, MdOutlineAccessTimeFilled } from "react-icons/md";
 import type { ServerUpdateFrame } from "@/api/proto/event_bus_pb.ts";
 import { Heading } from "@/components/Heading.tsx";
 import type { ServerBaseData } from "@/hooks/useLiveServerData.tsx";
@@ -59,8 +59,8 @@ export const ServerStatusPopup: FC<{ server: NatsSyncedEntry<ServerBaseData, Ser
         <div className={"flex items-center"}>
           <button type={"button"} className={"cursor-pointer"} onClick={clockVisibilityToggle}>
             {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
-            {clockVisible && <MdOutlineTimer className={"w-5 h-5"} />}
-            {!clockVisible && <MdOutlineTimerOff className={"w-5 h-5"} />}
+            {clockVisible && <MdOutlineAccessTime className={"w-5 h-5"} />}
+            {!clockVisible && <MdOutlineAccessTimeFilled className={"w-5 h-5"} />}
           </button>
         </div>
       </div>
