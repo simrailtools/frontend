@@ -1,4 +1,11 @@
-import { type Msg, type MsgCallback, type NatsConnection, type Subscription, wsconnect } from "@nats-io/nats-core";
+import {
+  type Msg,
+  type MsgCallback,
+  type NatsConnection,
+  type Status,
+  type Subscription,
+  wsconnect,
+} from "@nats-io/nats-core";
 import {
   createContext,
   type FC,
@@ -69,6 +76,29 @@ export const NatsContextProvider: FC<PropsWithChildren<NatsContextOptions>> = ({
     }
   }, []);
 
+  // callback function to handle connection status events produced by a NATS connection
+  const handleConnectionStatusEvents = useCallback(
+    async (statusItr: AsyncIterable<Status>) => {
+      for await (const status of statusItr) {
+        switch (status.type) {
+          case "disconnect":
+            setConnected(false);
+            console.debug("Disconnected from NATS backend", status.server);
+            break;
+          case "reconnect":
+            setConnected(true);
+            console.debug("Successfully reconnected to NATS backend", status.server);
+            break;
+          case "close":
+            closeConnection();
+            console.debug("Connection to NATS backend closed");
+            return; // closeConnection() resets the connection to null, we can just break the loop immediately
+        }
+      }
+    },
+    [closeConnection],
+  );
+
   // callback to subscribe to messages published on a topic, returns undefined if no connection is currently open
   const subscribe = useCallback(
     (topic: string, callback: MsgCallback<Msg>) => {
@@ -132,36 +162,13 @@ export const NatsContextProvider: FC<PropsWithChildren<NatsContextOptions>> = ({
   // hook to handle NATS connection events
   useEffect(() => {
     if (natsConnection) {
-      let cancelled = false;
-      (async () => {
-        for await (const status of natsConnection.status()) {
-          if (cancelled) {
-            // this hook was canceled while awaiting, break
-            break;
-          }
-
-          switch (status.type) {
-            case "disconnect":
-              setConnected(false);
-              console.debug("Disconnected from NATS backend", status.server);
-              break;
-            case "reconnect":
-              setConnected(true);
-              console.debug("Successfully reconnected to NATS backend", status.server);
-              break;
-            case "close":
-              closeConnection();
-              console.debug("Connection to NATS backend closed");
-              return; // closeConnection() resets the connection to null, we can just break the loop immediately
-          }
-        }
-      })();
-
+      const statusIterator = natsConnection.status()[Symbol.asyncIterator]();
+      void handleConnectionStatusEvents({ [Symbol.asyncIterator]: () => statusIterator });
       return () => {
-        cancelled = true;
+        statusIterator.return?.();
       };
     }
-  }, [natsConnection, closeConnection]);
+  }, [natsConnection, handleConnectionStatusEvents]);
 
   const context: NatsContextType = { connected, subscribe };
   return <NatsContext.Provider value={context}>{children}</NatsContext.Provider>;

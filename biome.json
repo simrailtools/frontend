@@ -47,7 +47,6 @@
         "useReactFunctionComponents": "error"
       },
       "complexity": {
-        "noVoid": "error",
         "useWhile": "error",
         "noUselessStringConcat": "error"
       },
@@ -71,6 +70,7 @@
         "noMisusedPromises": "error",
         "noReactForwardRef": "error",
         "noUnknownAttribute": "error",
+        "noFloatingPromises": "error",
         "useArraySortCompare": "error",
         "noDeprecatedImports": "error",
         "noAmbiguousAnchorText": "error",
