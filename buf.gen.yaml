@@ -1,6 +1,5 @@
 version: v2
-inputs:
-  - directory: .proto
+clean: true
 plugins:
   - local: protoc-gen-es
     opt:
@@ -8,3 +7,10 @@ plugins:
       - js_import_style=module
       - elide_plugin_version=true
     out: src/api/proto
+inputs:
+  - git_repo: https://github.com/simrailtools/backend.git
+    depth: 1
+    branch: next
+    subdir: .proto
+    exclude_paths:
+      - cache.proto
