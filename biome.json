@@ -67,7 +67,7 @@
         "useFind": "error",
         "noDivRegex": "error",
         "useRegexpExec": "error",
-        "noEqualsToNull": "error",
+        "noLeakedRender": "error",
         "noMisusedPromises": "error",
         "noReactForwardRef": "error",
         "noUnknownAttribute": "error",

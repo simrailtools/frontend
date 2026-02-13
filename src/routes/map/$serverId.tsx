@@ -109,7 +109,7 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
   return (
     <>
       {server && <ServerStatusPopup server={server} />}
-      {selectedJourney && <JourneyPopup journey={selectedJourney} />}
+      {selectedJourney !== undefined && <JourneyPopup journey={selectedJourney} />}
 
       <MapLibreMap
         reuseMaps={true}

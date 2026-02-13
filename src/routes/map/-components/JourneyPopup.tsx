@@ -29,7 +29,7 @@ export const JourneyPopup: FC<{ journey: NatsSyncedEntry<JourneyBaseData, Journe
   return (
     <div className="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-6 max-w-md z-10000">
       <div className="space-y-0.5">
-        {userInfo && (
+        {userInfo !== undefined && (
           <div className={"flex justify-center items-center pb-4"}>
             <div className="w-16 h-16 rounded-full overflow-hidden border-solid border-2">
               <img src={userInfo.avatarUrl} alt={`${userInfo.name} Avatar`} className="w-full h-full object-cover" />
@@ -41,12 +41,12 @@ export const JourneyPopup: FC<{ journey: NatsSyncedEntry<JourneyBaseData, Journe
           <MdDirectionsTransit className="text-gray-700" size={24} />
           <span>
             {category} {number}
-            {line && ` (${line})`}
-            {label && ` "${label}"`}
+            {line != null && ` (${line})`}
+            {label != null && ` "${label}"`}
           </span>
         </div>
 
-        {userInfo && (
+        {userInfo !== undefined && (
           <div className="flex items-center space-x-2 text-sm text-gray-700">
             <MdPerson className="text-gray-700" size={24} />
             <a
@@ -57,7 +57,7 @@ export const JourneyPopup: FC<{ journey: NatsSyncedEntry<JourneyBaseData, Journe
             >
               {userInfo.name}
             </a>
-            {userInfo.location && <span>({userInfo.location})</span>}
+            {userInfo.location != null && <span>({userInfo.location})</span>}
           </div>
         )}
 
@@ -66,7 +66,7 @@ export const JourneyPopup: FC<{ journey: NatsSyncedEntry<JourneyBaseData, Journe
           <span className="font-medium">{journey.live?.journeyData?.speed ?? 0} km/h</span>
         </div>
 
-        {nextSignal && (
+        {nextSignal !== undefined && (
           <div className="flex items-center space-x-2 text-sm text-gray-700">
             <MdTraffic className="text-gray-700" size={24} />
             <span className={"flex space-x-1"}>

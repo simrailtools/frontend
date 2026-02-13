@@ -77,11 +77,11 @@ const ServerItem: FC<{ server: SimRailServerDto }> = ({ server }) => {
           />
         </span>
         <div className={"ml-2 font-bold"}>{server.code}</div>
-        {server.spokenLanguage && <div className={"ml-2"}>({server.spokenLanguage})</div>}
+        {server.spokenLanguage != null && <div className={"ml-2"}>({server.spokenLanguage})</div>}
         <span className={"ml-auto text-sm font-semibold"}>{formattedServerTime}</span>
       </div>
       <ServerMapText scenery={server.scenery} />
-      {server.tags && <span className={"text-gray-600 text-sm"}>{server.tags.join(", ")}</span>}
+      {server.tags.length > 0 && <span className={"text-gray-600 text-sm"}>{server.tags.join(", ")}</span>}
     </Link>
   );
 };

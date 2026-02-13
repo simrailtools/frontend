@@ -72,6 +72,7 @@ export const DispatchPostMarker: FC<{
             )}
           </button>
         </Marker>
+        {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
         {popupVisible && (
           <Popup
             offset={23}

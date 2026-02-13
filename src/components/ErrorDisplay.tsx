@@ -19,7 +19,7 @@ export const ErrorDisplay: FC<{ errorMessage?: string }> = ({ errorMessage }) =>
               "An error has occurred, check the error details for further information. If you're unsure how this happened, please try again later."
             }
           </Heading>
-          {errorMessage && (
+          {errorMessage !== undefined && (
             <div className="text-sm text-gray-500 text-center text-pretty mt-6">{`Error Details: ${errorMessage}`}</div>
           )}
         </div>
