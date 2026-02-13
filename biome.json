@@ -17,25 +17,70 @@
     "lineEnding": "lf",
     "lineWidth": 120
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "recommended": true
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
       "style": {
+        "noEnum": "error",
+        "noUselessElse": "error",
+        "noNestedTernary": "error",
+        "noYodaExpression": "error",
+        "noImplicitBoolean": "error",
         "noParameterAssign": "error",
+        "useThrowOnlyError": "error",
+        "noInferrableTypes": "error",
+        "useNumberNamespace": "error",
+        "useShorthandAssign": "error",
         "useAsConstAssertion": "error",
-        "useDefaultParameterLast": "error",
         "useEnumInitializers": "error",
         "useSelfClosingElements": "error",
         "useSingleVarDeclarator": "error",
-        "noUnusedTemplateLiteral": "error",
-        "useNumberNamespace": "error",
-        "noInferrableTypes": "error",
-        "noUselessElse": "error"
+        "useDefaultParameterLast": "error",
+        "noUnusedTemplateLiteral": "error"
       },
       "complexity": {
-        "noImportantStyles": "off"
+        "noVoid": "error",
+        "useWhile": "error",
+        "noUselessStringConcat": "error"
+      },
+      "correctness": {
+        "noProcessGlobal": "error",
+        "noNodejsModules": "error",
+        "useUniqueElementIds": "error",
+        "noUndeclaredVariables": "error",
+        "noReactPropAssignments": "error",
+        "noGlobalDirnameFilename": "error",
+        "noUndeclaredDependencies": "error"
+      },
+      "nursery": {
+        "noProto": "error",
+        "noForIn": "error",
+        "noDivRegex": "error",
+        "noEqualsToNull": "error",
+        "noReactForwardRef": "error",
+        "noDeprecatedImports": "error",
+        "noAmbiguousAnchorText": "error",
+        "noDuplicateEnumValues": "error",
+        "noDuplicatedSpreadProps": "error"
+      },
+      "suspicious": {
+        "noVar": "error",
+        "noAlert": "error",
+        "useAwait": "error",
+        "useErrorMessage": "error",
+        "noEvolvingTypes": "error",
+        "noMisplacedAssertion": "error",
+        "noUnassignedVariables": "error",
+        "noEmptyBlockStatements": "error",
+        "noConstantBinaryExpressions": "error",
+        "useNumberToFixedDigitsArgument": "error"
       }
     }
   },

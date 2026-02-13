@@ -1,3 +1,5 @@
+// biome-ignore lint/correctness/noNodejsModules: this file is not for the client side
+import process from "node:process";
 import { defineConfig } from "@hey-api/openapi-ts";
 
 const baseUrl = process.env.API_BASE_URL ?? "https://apis.simrail.tools";
