@@ -132,7 +132,10 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
           compact={false}
           position={"bottom-right"}
           style={{ background: "white" }}
-          customAttribution={safeExternalUrlTag("MapLibre", "https://maplibre.org")}
+          customAttribution={[
+            safeExternalUrlTag("MapLibre", "https://maplibre.org"),
+            safeExternalUrlTag("GitHub", "https://github.com/simrailtools"),
+          ]}
         />
         {mapOptions.enabledLayers
           .filter(layer => layer in mapRasterLayerSpecs)
