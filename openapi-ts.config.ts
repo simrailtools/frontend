@@ -7,7 +7,7 @@ export default defineConfig({
   input: `${baseUrl}/docs/openapi.yaml`,
   output: {
     path: "./src/api/rest",
-    postProcess: ["eslint", "biome:format", "biome:lint"],
+    postProcess: ["biome:format", "biome:lint"],
   },
   plugins: [
     "@hey-api/typescript",
