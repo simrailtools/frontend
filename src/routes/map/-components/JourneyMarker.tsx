@@ -1,14 +1,18 @@
 import { deepEqual } from "fast-equals";
-import { type FC, memo, useEffect } from "react";
-import { Marker } from "react-map-gl/maplibre";
+import { type CSSProperties, type FC, memo, useCallback, useEffect, useRef } from "react";
+import { Marker, type MarkerEvent, type MarkerInstance } from "react-map-gl/maplibre";
 import type { JourneyUpdateFrame } from "@/api/proto/event_bus_pb.ts";
 import type { JourneyBaseData } from "@/hooks/useLiveJourneyData.tsx";
 import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
 import { useSelectedJourney } from "@/hooks/useSelectedJourney.tsx";
 import { useUserData } from "@/hooks/useUserData.tsx";
-import { MapTooltip } from "@/routes/map/-components/MapTooltip.tsx";
-import { UserIcon } from "@/routes/map/-components/UserIcon.tsx";
+import { JourneyMarkerContent } from "@/routes/map/-components/JourneyMarkerContent.tsx";
 import { useDriftPosition } from "@/routes/map/-hooks/useDriftPosition.tsx";
+
+// style to apply to all rendered markers. defined here to circumvent memoization issues
+const markerStyle: CSSProperties = {
+  zIndex: 50,
+} as const;
 
 interface MarkerComponentProps {
   journey: NatsSyncedEntry<JourneyBaseData, JourneyUpdateFrame>;
@@ -17,36 +21,45 @@ interface MarkerComponentProps {
 export const JourneyMarker: FC<MarkerComponentProps> = memo(
   ({ journey }) => {
     const driver = journey.live?.journeyData?.driver;
-    const hasDriver = !!driver;
     const { data: userInfo, isLoading: userInfoLoading } = useUserData(driver);
 
+    const markerRef = useRef<MarkerInstance>(null);
+    const updatePosition = useCallback((lat: number, lon: number) => {
+      const marker = markerRef.current;
+      if (marker) {
+        marker.setLngLat([lon, lat]);
+      }
+    }, []);
+
     const { latitude = 0, longitude = 0 } = journey.live?.journeyData?.position ?? {};
-    const { pos, slideTo } = useDriftPosition({ latitude, longitude }, 2000);
-    useEffect(() => slideTo({ latitude, longitude }), [latitude, longitude, slideTo]);
+    const { slideTo, currentPosRef } = useDriftPosition({ latitude, longitude }, 2000, updatePosition);
+    useEffect(() => slideTo(latitude, longitude), [latitude, longitude, slideTo]);
 
     const { setSelectedJourney } = useSelectedJourney();
+    const handleMarkerClick = useCallback(
+      (event: MarkerEvent<MouseEvent>) => {
+        setSelectedJourney(journey.live?.ids?.dataId);
+        event.originalEvent?.stopPropagation();
+      },
+      [setSelectedJourney, journey.live?.ids?.dataId],
+    );
+
     return (
       <Marker
+        ref={markerRef}
         anchor={"center"}
-        style={{ zIndex: 50 }}
-        latitude={pos.latitude}
-        longitude={pos.longitude}
-        onClick={event => {
-          setSelectedJourney(journey.live?.ids?.dataId);
-          event.originalEvent?.stopPropagation();
-        }}
+        style={markerStyle}
+        onClick={handleMarkerClick}
+        latitude={currentPosRef.current.latitude}
+        longitude={currentPosRef.current.longitude}
       >
-        <div className="relative flex items-center justify-center cursor-pointer">
-          <UserIcon
-            hasUser={hasDriver}
-            userInfoLoading={userInfoLoading}
-            userInfo={userInfo}
-            className={"rounded-full h-8 w-8"}
-          />
-          <MapTooltip position={"bottom"} className={"text-[85%] p-1"}>
-            {journey.base.transport.category} {journey.base.transport.number}
-          </MapTooltip>
-        </div>
+        <JourneyMarkerContent
+          hasUser={!!driver}
+          userInfoLoading={userInfoLoading}
+          userInfo={userInfo}
+          transportCategory={journey.base.transport.category}
+          transportNumber={journey.base.transport.number}
+        />
       </Marker>
     );
   },

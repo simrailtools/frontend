@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useMap } from "react-map-gl/maplibre";
 
 /**
@@ -17,88 +17,86 @@ type LatLng = {
  */
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
-export const useDriftPosition = (initial: LatLng, slideDurationMs: number) => {
+export const useDriftPosition = (
+  initial: LatLng,
+  slideDurationMs: number,
+  setPosition: (lat: number, lon: number) => void,
+) => {
   const { current: map } = useMap();
-  const [pos, setPos] = useState<LatLng>(initial);
 
   const startPosRef = useRef<LatLng>(initial);
   const destPosRef = useRef<LatLng>(initial);
   const currentPosRef = useRef<LatLng>(initial);
 
   const untilTimestampRef = useRef(0);
-  const lastPaintTimestampRef = useRef(0);
-  const animationFrameRequestHandleRef = useRef<number | null>(null);
+  const timerIdRef = useRef<number | undefined>(undefined);
 
   // callback to update the current position
-  const updatePosition = useCallback((pos: LatLng) => {
-    setPos(pos);
-    currentPosRef.current = pos;
-  }, []);
+  const updatePosition = useCallback(
+    (lat: number, lon: number) => {
+      setPosition(lat, lon);
+      currentPosRef.current = { latitude: lat, longitude: lon };
+    },
+    [setPosition],
+  );
 
-  // callback to cancel the current animation frame request
-  const cancelAnimationFrameRequest = useCallback(() => {
-    const frameHandle = animationFrameRequestHandleRef.current;
-    animationFrameRequestHandleRef.current = null;
-    if (frameHandle) {
-      cancelAnimationFrame(frameHandle);
+  // callback to cancel the current running timer
+  const cancelTimer = useCallback(() => {
+    if (timerIdRef.current !== undefined) {
+      window.clearTimeout(timerIdRef.current);
+      timerIdRef.current = undefined;
     }
   }, []);
 
   // function to request stepping the current running marker animation
-  const stepMarkerAnimation = useCallback(() => {
+  const tickMarker = useCallback(() => {
     const now = performance.now();
     const remaining = untilTimestampRef.current - now;
     if (remaining <= 0) {
-      updatePosition(destPosRef.current);
-      cancelAnimationFrameRequest();
+      const { latitude, longitude } = destPosRef.current;
+      updatePosition(latitude, longitude);
+      cancelTimer();
       return;
     }
 
     const startPos = startPosRef.current;
     const destPos = destPosRef.current;
     const percentDone = (slideDurationMs - remaining) / slideDurationMs;
-    const framePoint: LatLng = {
-      latitude: lerp(startPos.latitude, destPos.latitude, percentDone),
-      longitude: lerp(startPos.longitude, destPos.longitude, percentDone),
-    };
+    updatePosition(
+      lerp(startPos.latitude, destPos.latitude, percentDone),
+      lerp(startPos.longitude, destPos.longitude, percentDone),
+    );
 
-    const lastPaintTimestamp = lastPaintTimestampRef.current;
-    const elapsedTimeSinceLastPaint = now - lastPaintTimestamp;
-    if (elapsedTimeSinceLastPaint >= 50) {
-      // only trigger re-render once every 50ms
-      updatePosition(framePoint);
-      lastPaintTimestampRef.current = now;
-    }
-
-    animationFrameRequestHandleRef.current = requestAnimationFrame(stepMarkerAnimation);
-  }, [cancelAnimationFrameRequest, slideDurationMs, updatePosition]);
+    // step the marker again in 50ms (to get ~20fps)
+    timerIdRef.current = window.setTimeout(tickMarker, 50);
+  }, [cancelTimer, slideDurationMs, updatePosition]);
 
   // function to request sliding the marker to a given position
   const slideTo = useCallback(
-    (target: LatLng) => {
-      // stop previous animation frame request, will be overridden now
-      cancelAnimationFrameRequest();
+    (lat: number, lon: number) => {
+      // cancel the current running marker step request
+      cancelTimer();
 
       // if the map is not yet (or no longer) present, just set the target position (nothing to animate on)
       if (!map) {
-        updatePosition(target);
+        updatePosition(lat, lon);
         return;
       }
 
-      destPosRef.current = target;
       startPosRef.current = currentPosRef.current;
+      destPosRef.current = { latitude: lat, longitude: lon };
       untilTimestampRef.current = performance.now() + slideDurationMs;
-      animationFrameRequestHandleRef.current = requestAnimationFrame(stepMarkerAnimation);
+      timerIdRef.current = window.setTimeout(tickMarker, 0);
     },
-    [map, slideDurationMs, cancelAnimationFrameRequest, stepMarkerAnimation, updatePosition],
+    [map, slideDurationMs, cancelTimer, tickMarker, updatePosition],
   );
 
-  // effect to cancel any pending animation frame request when unmounting
+  // effect to cancel any pending step request when unmounting
   useEffect(() => {
     return () => {
-      cancelAnimationFrameRequest();
+      cancelTimer();
     };
-  }, [cancelAnimationFrameRequest]);
+  }, [cancelTimer]);
 
-  return { pos, slideTo };
+  return { slideTo, currentPosRef };
 };
