@@ -14,9 +14,9 @@ const markerStyle: CSSProperties = {
   zIndex: 50,
 } as const;
 
-interface MarkerComponentProps {
+type MarkerComponentProps = {
   journey: NatsSyncedEntry<JourneyBaseData, JourneyUpdateFrame>;
-}
+};
 
 export const JourneyMarker: FC<MarkerComponentProps> = memo(
   ({ journey }) => {

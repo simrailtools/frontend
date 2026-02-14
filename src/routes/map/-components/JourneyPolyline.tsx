@@ -4,11 +4,7 @@ import { type FC, memo, useMemo } from "react";
 import { Layer, Source } from "react-map-gl/maplibre";
 import { findMapPolylineByJourney } from "@/api/rest";
 
-interface PolylineComponentProps {
-  journeyId: string;
-}
-
-export const JourneyPolyline: FC<PolylineComponentProps> = memo(({ journeyId }) => {
+export const JourneyPolyline: FC<{ journeyId: string }> = memo(({ journeyId }) => {
   const { data } = useQuery({
     queryKey: ["journey_polyline", journeyId],
     queryFn: async ({ signal }) =>
