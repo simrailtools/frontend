@@ -14,7 +14,7 @@ import { UserIcon } from "@/routes/map/-components/UserIcon.tsx";
 /**
  * Zero-based difficulty name index.
  */
-const difficultyNames = ["Very Easy", "Easy", "Intermediate", "Advanced", "Hard", "Expert"];
+const difficultyNames = ["Very Easy", "Easy", "Intermediate", "Advanced", "Hard", "Expert"] as const;
 
 /**
  * Maps a difficulty number to a display name. If no name is available, the number in stringified form is returned.
@@ -40,7 +40,6 @@ export const DispatchPostMarker: FC<{
     const [popupVisible, setPopupVisible] = useState(false);
 
     const dispatcher = post.live?.dispatchPostData?.dispatcher;
-    const hasDispatcher = !!dispatcher;
     const { data: userInfo, isLoading: userInfoLoading } = useUserData(dispatcher);
 
     return (
@@ -60,7 +59,7 @@ export const DispatchPostMarker: FC<{
             }}
           >
             <UserIcon
-              hasUser={hasDispatcher}
+              hasUser={!!dispatcher}
               userInfoLoading={userInfoLoading}
               userInfo={userInfo}
               className={"rounded-md h-9 w-9"}
