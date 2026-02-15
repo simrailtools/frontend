@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.15/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.0/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -12,15 +12,20 @@
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "space",
     "indentWidth": 2,
+    "indentStyle": "space",
+    "lineWidth": 120,
     "lineEnding": "lf",
-    "lineWidth": 120
+    "trailingNewline": true
   },
   "assist": {
     "enabled": true,
     "actions": {
-      "recommended": true
+      "recommended": true,
+      "source": {
+        "organizeImports": "on",
+        "noDuplicateClasses": "on"
+      }
     }
   },
   "linter": {
@@ -47,11 +52,14 @@
         "useSingleVarDeclarator": "error",
         "useDefaultParameterLast": "error",
         "noUnusedTemplateLiteral": "error",
+        "useUnifiedTypeSignatures": "error",
+        "useConsistentArrowReturn": "error",
         "useReactFunctionComponents": "error"
       },
       "complexity": {
         "noVoid": "error",
         "useWhile": "error",
+        "noUselessUndefined": "error",
         "noUselessStringConcat": "error"
       },
       "correctness": {
@@ -72,11 +80,9 @@
         "useRegexpExec": "error",
         "noLeakedRender": "error",
         "noMisusedPromises": "error",
-        "noReactForwardRef": "error",
         "noUnknownAttribute": "error",
         "noFloatingPromises": "error",
         "useArraySortCompare": "error",
-        "noDeprecatedImports": "error",
         "noAmbiguousAnchorText": "error",
         "noDuplicateEnumValues": "error",
         "noDuplicatedSpreadProps": "error",
@@ -89,6 +95,9 @@
         "useAwait": "error",
         "useErrorMessage": "error",
         "noEvolvingTypes": "error",
+        "noReactForwardRef": "error",
+        "noDeprecatedImports": "error",
+        "noUnusedExpressions": "error",
         "noMisplacedAssertion": "error",
         "noUnassignedVariables": "error",
         "noEmptyBlockStatements": "error",

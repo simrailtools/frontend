@@ -27,9 +27,7 @@ function JourneyDetailsComponent() {
   const { data: journey } = useQuery({
     ...findJourneyByIdOptions({ path: { id: journeyId } }),
     initialData,
-    refetchInterval: query => {
-      return query.state.data?.lastSeenTime ? false : 30_000;
-    },
+    refetchInterval: query => (query.state.data?.lastSeenTime ? false : 30_000),
   });
   const { data: vehicleComposition } = useQuery({
     ...findVehicleCompositionByJourneyIdOptions({ path: { id: journeyId } }),
@@ -73,9 +71,8 @@ function JourneyDetailsComponent() {
   );
 
   // formats the given iso date/time in the server timezone using the optionally provided format
-  const timeFormatter = (isoTime: string, format?: string) => {
-    return DateTime.fromISO(isoTime).toFormat(format ?? "dd.MM HH:mm");
-  };
+  const timeFormatter = (isoTime: string, format?: string) =>
+    DateTime.fromISO(isoTime).toFormat(format ?? "dd.MM HH:mm");
 
   return (
     <>

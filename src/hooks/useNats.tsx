@@ -103,14 +103,14 @@ export const NatsContextProvider: FC<PropsWithChildren<NatsContextOptions>> = ({
   const subscribe = useCallback(
     (topic: string, callback: MsgCallback<Msg>) => {
       if (!connected) {
-        return undefined;
+        return;
       }
 
       try {
         return natsConnection?.subscribe(topic, { callback });
       } catch (error) {
         console.error("Caught exception while trying to subscribe to topic", topic, error);
-        return undefined;
+        return;
       }
     },
     [connected, natsConnection],

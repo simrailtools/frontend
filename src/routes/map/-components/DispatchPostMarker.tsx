@@ -20,17 +20,14 @@ const difficultyNames = ["Very Easy", "Easy", "Intermediate", "Advanced", "Hard"
  * Maps a difficulty number to a display name. If no name is available, the number in stringified form is returned.
  * @param difficulty the difficulty display name for the given difficulty.
  */
-const mapDifficultyName = (difficulty: number): string => {
-  return difficultyNames.at(difficulty) ?? `${difficulty}`;
-};
+const mapDifficultyName = (difficulty: number): string => difficultyNames.at(difficulty) ?? `${difficulty}`;
 
 /**
  * Formats the name of the given user. If no user is given, undefined is returned.
  * @param user the user to format the display name of.
  */
-const formatUserName = (user?: SimRailUserDto): string | undefined => {
-  return user?.location ? `${user.name} (${user.location})` : user?.name;
-};
+const formatUserName = (user?: SimRailUserDto): string | undefined =>
+  user?.location ? `${user.name} (${user.location})` : user?.name;
 
 export const DispatchPostMarker: FC<{
   post: NatsSyncedEntry<DispatchPostBaseData, DispatchPostUpdateFrame>;

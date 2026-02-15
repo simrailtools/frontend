@@ -92,11 +92,12 @@ export const useDriftPosition = (
   );
 
   // effect to cancel any pending step request when unmounting
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       cancelTimer();
-    };
-  }, [cancelTimer]);
+    },
+    [cancelTimer],
+  );
 
   return { slideTo, currentPosRef };
 };

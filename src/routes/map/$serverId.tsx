@@ -33,11 +33,10 @@ import { SelectedJourneyProvider, useSelectedJourney } from "../../hooks/useSele
 
 export const Route = createFileRoute("/map/$serverId")({
   loader: async ({ context: { queryClient }, params: { serverId } }) => {
-    const getServer = () => {
-      return serverId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)?.length
+    const getServer = () =>
+      serverId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)?.length
         ? queryClient.ensureQueryData(findServerByIdOptions({ path: { id: serverId } }))
         : queryClient.ensureQueryData(findServerByCodeOptions({ path: { code: serverId } }));
-    };
 
     const server = await getServer();
     if (!server) {

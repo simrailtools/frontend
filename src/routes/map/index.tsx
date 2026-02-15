@@ -9,9 +9,8 @@ import { cn } from "@/lib/utils.ts";
 import { ServerMapText } from "@/routes/map/-components/ServerMapText.tsx";
 
 export const Route = createFileRoute("/map/")({
-  loader: ({ context: { queryClient } }) => {
-    return queryClient.ensureQueryData(listServersOptions({ query: { includeOffline: true } }));
-  },
+  loader: ({ context: { queryClient } }) =>
+    queryClient.ensureQueryData(listServersOptions({ query: { includeOffline: true } })),
   component: MapIndexComponent,
 });
 
@@ -19,9 +18,7 @@ export const Route = createFileRoute("/map/")({
  * Function to resolve the current date and time on a server.
  * @param server the server to resolve the time of.
  */
-const resolveServerTime = (server: SimRailServerDto) => {
-  return DateTime.utc().plus({ hours: server.utcOffsetHours });
-};
+const resolveServerTime = (server: SimRailServerDto) => DateTime.utc().plus({ hours: server.utcOffsetHours });
 
 function MapIndexComponent() {
   const { data } = useQuery({

@@ -17,23 +17,19 @@ const findLastPlayableEvent = (events: JourneyEventDto[]) => {
   }
 };
 
-const InfoText: FC<{ heading: string } & PropsWithChildren> = ({ heading, children }) => {
-  return (
-    <div>
-      <Heading level={2}>{heading}</Heading>
-      {children}
-    </div>
-  );
-};
+const InfoText: FC<{ heading: string } & PropsWithChildren> = ({ heading, children }) => (
+  <div>
+    <Heading level={2}>{heading}</Heading>
+    {children}
+  </div>
+);
 
-const InfoLine: FC<{ display?: string } & PropsWithChildren> = ({ display, children }) => {
-  return (
-    <div className={"flex flex-row space-x-1"}>
-      {display !== undefined && <p className={"font-semibold"}>{display}:</p>}
-      {children}
-    </div>
-  );
-};
+const InfoLine: FC<{ display?: string } & PropsWithChildren> = ({ display, children }) => (
+  <div className={"flex flex-row space-x-1"}>
+    {display !== undefined && <p className={"font-semibold"}>{display}:</p>}
+    {children}
+  </div>
+);
 
 export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition, timeFormatter }) => {
   // first and last event of journey

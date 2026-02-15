@@ -33,8 +33,8 @@ const userBatcher = create({
  * Returns a query hook that fetches the user data within a batch request frame.
  * @param user the user to request information of.
  */
-export const useUserData = (user: User | null | undefined) => {
-  return useQuery({
+export const useUserData = (user: User | null | undefined) =>
+  useQuery({
     enabled: !!user,
     refetchOnWindowFocus: false,
     staleTime: Number.POSITIVE_INFINITY,
@@ -50,4 +50,3 @@ export const useUserData = (user: User | null | undefined) => {
       return userData;
     },
   });
-};

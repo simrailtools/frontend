@@ -7,9 +7,8 @@ import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
 import { useUserData } from "@/hooks/useUserData.tsx";
 import { cn } from "@/lib/utils.ts";
 
-const formatDistance = (distance: number): string => {
-  return distance >= 1000 ? `${(distance / 1000).toFixed(2)}km` : `${distance}m`;
-};
+const formatDistance = (distance: number): string =>
+  distance >= 1000 ? `${(distance / 1000).toFixed(2)}km` : `${distance}m`;
 
 const formatSignalMaxSpeed = (maxSpeed: number | undefined) => {
   if (maxSpeed === undefined) {

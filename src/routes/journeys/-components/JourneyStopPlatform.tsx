@@ -1,9 +1,7 @@
 import type { FC } from "react";
 import type { JourneyEventDto, JourneyStopInfoDto } from "@/api/rest";
 
-const formatPlatformInfo = (platformInfo: JourneyStopInfoDto) => {
-  return `P: ${platformInfo.platform} T: ${platformInfo.track}`;
-};
+const formatPlatformInfo = (platformInfo: JourneyStopInfoDto) => `P: ${platformInfo.platform} T: ${platformInfo.track}`;
 
 export const JourneyStopPlatform: FC<{ event: JourneyEventDto }> = ({ event }) => {
   const scheduledPlatformInfo = event.scheduledPassengerStop && formatPlatformInfo(event.scheduledPassengerStop);
