@@ -1,4 +1,7 @@
 /* container that holds the map attribution */
-.maplibregl-control-container {
+.maplibregl-ctrl-top-left,
+.maplibregl-ctrl-top-right,
+.maplibregl-ctrl-bottom-left,
+.maplibregl-ctrl-bottom-right {
   z-index: 250;
 }
