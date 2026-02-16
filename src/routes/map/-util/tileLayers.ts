@@ -58,15 +58,11 @@ export type MapRasterLayerId = keyof typeof mapRasterLayerSpecs;
 export const mapBaseLayerSpecs = {
   "vt-colorful": {
     displayName: "VersaTiles Colorful",
-    spec: "https://vector.openstreetmap.org/styles/shortbread/colorful.json",
+    spec: "https://tiles.versatiles.org/assets/styles/colorful/style.json",
   },
-  "vt-eclipse": {
-    displayName: "VersaTiles Eclipse",
-    spec: "https://vector.openstreetmap.org/styles/shortbread/eclipse.json",
-  },
-  "vt-graybeard": {
-    displayName: "VersaTiles Graybeard",
-    spec: "https://vector.openstreetmap.org/styles/shortbread/graybeard.json",
+  "vt-shadow": {
+    displayName: "VersaTiles Shadow",
+    spec: "https://tiles.versatiles.org/assets/styles/shadow/style.json",
   },
   "ofm-liberty": {
     displayName: "OFM Liberty",
