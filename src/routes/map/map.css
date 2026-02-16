@@ -1,0 +1,4 @@
+/* container that holds the map attribution */
+.maplibregl-control-container {
+  z-index: 250;
+}
