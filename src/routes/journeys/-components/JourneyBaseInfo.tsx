@@ -1,14 +1,14 @@
 import type { FC, PropsWithChildren } from "react";
-import type { JourneyDto, JourneyEventDto, VehicleCompositionDto } from "@/api/generated";
+import type { JourneyDto, JourneyEventDto, VehicleSequenceDto } from "@/api/rest";
 import { Heading } from "@/components/Heading.tsx";
 
 type JourneyBaseInfoProps = {
   journey: JourneyDto;
-  composition?: VehicleCompositionDto | null;
+  composition: VehicleSequenceDto | undefined;
   timeFormatter: (isoTime: string) => string;
 };
 
-const findLastPlayableEvent = (events: Array<JourneyEventDto>) => {
+const findLastPlayableEvent = (events: JourneyEventDto[]) => {
   for (let index = events.length - 1; index >= 0; index--) {
     const event = events[index];
     if (event.stopPlace.inPlayableBorder) {
@@ -17,23 +17,19 @@ const findLastPlayableEvent = (events: Array<JourneyEventDto>) => {
   }
 };
 
-const InfoText: FC<{ heading: string } & PropsWithChildren> = ({ heading, children }) => {
-  return (
-    <div>
-      <Heading level={2}>{heading}</Heading>
-      {children}
-    </div>
-  );
-};
+const InfoText: FC<{ heading: string } & PropsWithChildren> = ({ heading, children }) => (
+  <div>
+    <Heading level={2}>{heading}</Heading>
+    {children}
+  </div>
+);
 
-const InfoLine: FC<{ display?: string } & PropsWithChildren> = ({ display, children }) => {
-  return (
-    <div className={"flex flex-row space-x-1"}>
-      {display && <p className={"font-semibold"}>{display}:</p>}
-      {children}
-    </div>
-  );
-};
+const InfoLine: FC<{ display?: string } & PropsWithChildren> = ({ display, children }) => (
+  <div className={"flex flex-row space-x-1"}>
+    {display !== undefined && <p className={"font-semibold"}>{display}:</p>}
+    {children}
+  </div>
+);
 
 export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition, timeFormatter }) => {
   // first and last event of journey
@@ -47,7 +43,7 @@ export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition
   // find the maximum speed of the train long the events
   const vMax = Math.max(...journey.events.map(event => event.transport.maxSpeed));
 
-  //
+  // resolve information about vehicle composition
   const tractionUnit = composition?.vehicles.at(0);
   const compositionWeight = composition?.vehicles
     .map(vehicle => {
@@ -67,8 +63,8 @@ export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition
           <p>
             {firstEvent.transport.category} {firstEvent.transport.number}
           </p>
-          {firstEvent.transport.line && <p>({firstEvent.transport.line})</p>}
-          {firstEvent.transport.label && <p>"{firstEvent.transport.label}"</p>}
+          {firstEvent.transport.line != null && <p>({firstEvent.transport.line})</p>}
+          {firstEvent.transport.label != null && <p>"{firstEvent.transport.label}"</p>}
         </div>
 
         {/* Journey Max Speed */}
@@ -79,11 +75,14 @@ export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition
         )}
 
         {/* Traction Unit, Wagon Count, Length/Weight */}
-        {composition && (
+        {composition !== undefined && (
           <>
             <div className={"flex flex-row space-x-3"}>
               <InfoLine display={"Traction Unit"}>
-                <p>{tractionUnit?.railcar.name}</p>
+                <p>
+                  {tractionUnit?.railcar.displayName}
+                  {tractionUnit?.railcar.name != null && <> "{tractionUnit.railcar.name}"</>}
+                </p>
               </InfoLine>
               <InfoLine display={"Wagon Count"}>
                 <p>{composition.vehicles.length}</p>
@@ -108,7 +107,7 @@ export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition
             {firstEvent.stopPlace.name} &#8614; {lastEvent.stopPlace.name}
           </p>
         </InfoLine>
-        {firstPlayableEvent && lastPlayableEvent && (
+        {firstPlayableEvent !== undefined && lastPlayableEvent !== undefined && (
           <InfoLine display={"Playable"}>
             <p>
               {firstPlayableEvent.stopPlace.name} &#8614; {lastPlayableEvent.stopPlace.name}
@@ -119,7 +118,7 @@ export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition
         {/* Display Scheduled/Actual Arrival/Departure Time */}
         <div className={"flex flex-row space-x-3"}>
           {/* Actual or Scheduled Departure Time */}
-          {journey.firstSeenTime && (
+          {journey.firstSeenTime != null && (
             <InfoLine display={"Departed"}>
               <p>{timeFormatter(journey.firstSeenTime)}</p>
             </InfoLine>
@@ -130,7 +129,7 @@ export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition
             </InfoLine>
           )}
 
-          {journey.lastSeenTime && (
+          {journey.lastSeenTime != null && (
             <InfoLine display={"Arrived"}>
               <p>{timeFormatter(journey.lastSeenTime)}</p>
             </InfoLine>

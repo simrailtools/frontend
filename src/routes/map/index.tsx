@@ -1,18 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import type { FC } from "react";
-import type { SimRailServerDto } from "@/api/generated";
-import { listServersOptions } from "@/api/generated/@tanstack/react-query.gen.ts";
+import { DateTime } from "luxon";
+import { type FC, useEffect, useState } from "react";
+import type { SimRailServerDto } from "@/api/rest";
+import { listServersOptions } from "@/api/rest/@tanstack/react-query.gen.ts";
 import { BackgroundImage } from "@/components/BackgroundImage.tsx";
 import { cn } from "@/lib/utils.ts";
 import { ServerMapText } from "@/routes/map/-components/ServerMapText.tsx";
 
 export const Route = createFileRoute("/map/")({
-  loader: ({ context: { queryClient } }) => {
-    return queryClient.ensureQueryData(listServersOptions({ query: { includeOffline: true } }));
-  },
+  loader: ({ context: { queryClient } }) =>
+    queryClient.ensureQueryData(listServersOptions({ query: { includeOffline: true } })),
   component: MapIndexComponent,
 });
+
+/**
+ * Function to resolve the current date and time on a server.
+ * @param server the server to resolve the time of.
+ */
+const resolveServerTime = (server: SimRailServerDto) => DateTime.utc().plus({ hours: server.utcOffsetHours });
 
 function MapIndexComponent() {
   const { data } = useQuery({
@@ -33,6 +39,17 @@ function MapIndexComponent() {
 }
 
 const ServerItem: FC<{ server: SimRailServerDto }> = ({ server }) => {
+  const [serverTime, setServerTime] = useState(() => resolveServerTime(server));
+  useEffect(() => {
+    const interval = setInterval(() => setServerTime(resolveServerTime(server)), 1000);
+    return () => clearInterval(interval);
+  }, [server]);
+
+  // format the date and time on the server, removes the ':' from the time to create an optical "time is updating" effect
+  const isEvenTime = serverTime.second % 2 === 0;
+  const targetDateTimeFormat = isEvenTime ? "dd.MM.yy HH:mm" : "dd.MM.yy HH\u2008mm";
+  const formattedServerTime = serverTime.toFormat(targetDateTimeFormat);
+
   return (
     <Link
       to={"/map/$serverId"}
@@ -57,13 +74,11 @@ const ServerItem: FC<{ server: SimRailServerDto }> = ({ server }) => {
           />
         </span>
         <div className={"ml-2 font-bold"}>{server.code}</div>
-        {server.spokenLanguage && <div className={"ml-2"}>({server.spokenLanguage})</div>}
-        <span className={"ml-auto text-sm font-semibold"}>
-          {server.timezoneId === "Z" ? "UTC" : `UTC${server.timezoneId}`}
-        </span>
+        {server.spokenLanguage != null && <div className={"ml-2"}>({server.spokenLanguage})</div>}
+        <span className={"ml-auto text-sm font-semibold"}>{formattedServerTime}</span>
       </div>
       <ServerMapText scenery={server.scenery} />
-      {server.tags && <span className={"text-gray-600 text-sm"}>{server.tags.join(", ")}</span>}
+      {server.tags.length > 0 && <span className={"text-gray-600 text-sm"}>{server.tags.join(", ")}</span>}
     </Link>
   );
 };

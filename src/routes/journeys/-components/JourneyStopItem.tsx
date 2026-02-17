@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { JourneyEventDto } from "@/api/generated";
+import type { JourneyEventDto } from "@/api/rest";
 import { cn } from "@/lib/utils.ts";
 import { JourneyEventTime } from "@/routes/journeys/-components/JourneyEventTime.tsx";
 import { JourneyStopPlatform } from "@/routes/journeys/-components/JourneyStopPlatform.tsx";
@@ -19,8 +19,8 @@ export const JourneyStopItem: FC<StopItemProps> = ({ arrival, departure, timeFor
       <JourneyTimelineMarker arrival={arrival} departure={departure} />
 
       <div className={"flex flex-col"}>
-        {arrival && <JourneyEventTime event={arrival} timeFormatter={timeFormatter} />}
-        {departure && <JourneyEventTime event={departure} timeFormatter={timeFormatter} />}
+        {arrival !== undefined && <JourneyEventTime event={arrival} timeFormatter={timeFormatter} />}
+        {departure !== undefined && <JourneyEventTime event={departure} timeFormatter={timeFormatter} />}
       </div>
 
       <div className={"flex items-center space-x-1.5 basis-0 grow"}>
@@ -33,8 +33,8 @@ export const JourneyStopItem: FC<StopItemProps> = ({ arrival, departure, timeFor
       </div>
 
       <div className={"flex flex-col justify-end ml-auto"}>
-        {arrival && <JourneyStopPlatform event={arrival} />}
-        {departure && <JourneyStopPlatform event={departure} />}
+        {arrival !== undefined && <JourneyStopPlatform event={arrival} />}
+        {departure !== undefined && <JourneyStopPlatform event={departure} />}
       </div>
     </div>
   );

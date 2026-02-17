@@ -1,6 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", "schedule:earlyMondays", ":combinePatchMinorReleases", "group:allNonMajor"],
+  "extends": [
+    "config:recommended",
+    "schedule:earlyMondays",
+    "group:allNonMajor",
+    ":combinePatchMinorReleases",
+    "customManagers:biomeVersions"
+  ],
   "labels": ["t: dependencies"],
   "reviewers": ["derklaro"],
   "timezone": "UTC",

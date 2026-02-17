@@ -1,26 +1,33 @@
-import { createContext, type FC, type PropsWithChildren, useContext, useState } from "react";
-import type { JourneySnapshotWithRequiredPosition } from "@/routes/map/-lib/map.types.ts";
+import {
+  createContext,
+  type Dispatch,
+  type FC,
+  type PropsWithChildren,
+  type SetStateAction,
+  useContext,
+  useState,
+} from "react";
 
 type SelectedJourneyContextType = {
-  selectedJourney: JourneySnapshotWithRequiredPosition | null;
-  setSelectedJourney: (selectedJourney: JourneySnapshotWithRequiredPosition | null) => void;
+  selectedJourneyId: string | undefined;
+  setSelectedJourney: Dispatch<SetStateAction<string | undefined>>;
 };
 
-const SelectedJourneyContext = createContext<SelectedJourneyContextType>({
-  selectedJourney: null,
-  setSelectedJourney: () => {},
-});
+const SelectedJourneyContext = createContext<SelectedJourneyContextType | undefined>(undefined);
 
-/**
- * Hook for the journey that was selected by the user.
- */
-// eslint-disable-next-line react-refresh/only-export-components
-export const useSelectedJourney = () => useContext(SelectedJourneyContext);
+export const useSelectedJourney = () => {
+  const context = useContext(SelectedJourneyContext);
+  if (!context) {
+    throw new Error("useSelectedJourney must be used with SelectedJourneyProvider");
+  }
+
+  return context;
+};
 
 export const SelectedJourneyProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [selectedJourney, setSelectedJourney] = useState<JourneySnapshotWithRequiredPosition | null>(null);
+  const [selectedJourneyId, setSelectedJourney] = useState<string | undefined>(undefined);
   return (
-    <SelectedJourneyContext.Provider value={{ selectedJourney, setSelectedJourney }}>
+    <SelectedJourneyContext.Provider value={{ selectedJourneyId, setSelectedJourney }}>
       {children}
     </SelectedJourneyContext.Provider>
   );

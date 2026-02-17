@@ -1,33 +1,56 @@
 import { useQuery } from "@tanstack/react-query";
-import { type FC, memo } from "react";
-import { Polyline } from "react-leaflet";
-import type { JourneySnapshotFrame } from "@/api/eventbus.types.ts";
-import { findMapPolylineByJourney } from "@/api/generated";
+import type { GeoJSON, Position } from "geojson";
+import { type FC, memo, useMemo } from "react";
+import { Layer, Source } from "react-map-gl/maplibre";
+import { findMapPolylineByJourney } from "@/api/rest";
 
-interface PolylineComponentProps {
-  journey: JourneySnapshotFrame;
-}
-
-export const JourneyPolyline: FC<PolylineComponentProps> = memo(({ journey }) => {
+export const JourneyPolyline: FC<{ journeyId: string }> = memo(({ journeyId }) => {
   const { data } = useQuery({
-    queryKey: ["journey_polyline", journey.journeyId],
+    queryKey: ["journey_polyline", journeyId],
     queryFn: async ({ signal }) =>
       await findMapPolylineByJourney({
         path: {
-          id: journey.journeyId,
+          id: journeyId,
         },
         query: {
           includeCancelled: true,
           includeAdditional: true,
           allowFallbackComputation: true,
         },
+        headers: {
+          Accept: "application/json",
+        },
         signal,
         throwOnError: true,
       }),
   });
-  if (!data) {
+  const geoJson = useMemo((): GeoJSON | undefined => {
+    if (data) {
+      return {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: data.polyline.map((position): Position => [position.longitude, position.latitude]),
+        },
+      };
+    }
+  }, [data]);
+
+  if (!geoJson) {
     return null;
   }
 
-  return <Polyline positions={data.polyline.map(pos => [pos.latitude, pos.longitude])} />;
+  return (
+    <Source key={`jpls-${journeyId}`} id={`jpls-${journeyId}`} type={"geojson"} data={geoJson}>
+      <Layer
+        id={`jpll-${journeyId}`}
+        type="line"
+        paint={{
+          "line-width": 3,
+          "line-color": "#2563eb",
+        }}
+      />
+    </Source>
+  );
 });

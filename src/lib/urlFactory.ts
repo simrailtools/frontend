@@ -4,6 +4,5 @@
  * @param url the url to link to.
  * @param target the target where to open the page, defaults to a new tab.
  */
-export const safeExternalUrlTag = (display: string, url: string, target?: string) => {
-  return `<a href="${url}" target="${target ?? "_blank"}" rel="noopener, noreferrer, external">${display}</a>`;
-};
+export const safeExternalUrlTag = (display: string, url: string, target?: string) =>
+  `<a href="${url}" target="${target ?? "_blank"}" rel="noopener, noreferrer, external">${display}</a>`;

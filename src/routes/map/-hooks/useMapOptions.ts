@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { defaultTileLayer, type MapBaseLayerId, mapBaseLayerSpecs } from "@/routes/map/-util/tileLayers.ts";
 
 /**
  * The key used to store the map options in the local storage.
@@ -8,27 +9,27 @@ const MAP_OPTIONS_KEY = "map_options";
 /**
  * The available tile layers for selection.
  */
-const tileLayers = Object.freeze(["standard", "wmts_topplusopen", "esri_satellite"]);
+const baseLayers = Object.freeze(["trains", "dispatch_posts", "journey_polyline"]);
 
 /**
  * The default map options when the user hasn't selected some before.
  */
 const defaultMapOptions: MapOptions = Object.freeze({
-  tileLayer: tileLayers[0],
-  enabledLayers: ["trains", "dispatch_posts", "journey_polyline"],
+  tileLayer: defaultTileLayer,
+  enabledLayers: baseLayers,
 });
 
 /**
  * The options selected by the user for the map.
  */
 export type MapOptions = {
-  tileLayer: string;
-  enabledLayers: Array<string>;
+  tileLayer: MapBaseLayerId;
+  enabledLayers: readonly string[];
 };
 
 /**
  * Reads the map options from the local storage, returns the default options if
- * no options were stored previously or if the json data is corrupted.
+ * no options were stored previously or if the JSON data is corrupted.
  */
 const getMapOptions = (): MapOptions => {
   try {
@@ -69,8 +70,8 @@ const storeMapOptions = (options: MapOptions) => {
  */
 const validateMapOptions = (options: MapOptions) => {
   let fixedOptions = options;
-  if (!tileLayers.includes(options.tileLayer)) {
-    fixedOptions = { ...fixedOptions, tileLayer: tileLayers[0] };
+  if (!(options.tileLayer in mapBaseLayerSpecs)) {
+    fixedOptions = { ...fixedOptions, tileLayer: defaultTileLayer };
   }
 
   return fixedOptions;

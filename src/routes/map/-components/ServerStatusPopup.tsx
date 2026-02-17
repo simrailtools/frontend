@@ -1,24 +1,30 @@
 import "react-clock/dist/Clock.css";
-import { type FC, memo, useEffect, useState } from "react";
+import { DateTime } from "luxon";
+import { type FC, useEffect, useState } from "react";
 import Clock from "react-clock";
-import { MdOutlineTimer, MdOutlineTimerOff } from "react-icons/md";
-import type { ServerSnapshotFrame } from "@/api/eventbus.types.ts";
+import { MdOutlineAccessTime, MdOutlineAccessTimeFilled } from "react-icons/md";
+import type { ServerUpdateFrame } from "@/api/proto/event_bus_pb.ts";
 import { Heading } from "@/components/Heading.tsx";
-import { formatLocalTimezoneDifference, timeStringAtIsoZoneOffset } from "@/lib/timeHelper.ts";
+import type { ServerBaseData } from "@/hooks/useLiveServerData.tsx";
+import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
 import { cn } from "@/lib/utils.ts";
 import { ServerMapText } from "@/routes/map/-components/ServerMapText.tsx";
 
-export const ServerStatusPopup: FC<{ server: ServerSnapshotFrame }> = memo(({ server }) => {
+export const ServerStatusPopup: FC<{ server: NatsSyncedEntry<ServerBaseData, ServerUpdateFrame> }> = ({ server }) => {
+  const { online = false, scenery = "", utcOffsetSeconds = 0n } = server.live?.serverData ?? {};
+
   // holds the current server time in 'HH:mm:ss' format,
   // updated every second based on the server timezone id
   const [serverTime, setServerTime] = useState<string | null>(null);
   useEffect(() => {
     const interval = setInterval(() => {
-      const formattedServerTime = timeStringAtIsoZoneOffset(server.timezoneId);
+      const formattedServerTime = DateTime.utc()
+        .plus({ seconds: Number(utcOffsetSeconds) })
+        .toFormat("HH:mm:ss");
       setServerTime(formattedServerTime);
     }, 1000);
     return () => clearInterval(interval);
-  }, [server]);
+  }, [utcOffsetSeconds]);
 
   // if the clock should be displayed or not
   const [clockVisible, setClockVisible] = useState(true);
@@ -26,43 +32,40 @@ export const ServerStatusPopup: FC<{ server: ServerSnapshotFrame }> = memo(({ se
     setClockVisible(prevState => !prevState);
   };
 
-  // get the formatted timezone diff from the local user timezone to the server timezone
-  // it's null in case there is no difference between the timezones
-  const serverTimezoneDiff = formatLocalTimezoneDifference(server.timezoneId);
-
   return (
-    <div className="fixed top-4 left-4 p-4 bg-white shadow-lg rounded-lg min-w-36 max-w-48 z-[10000]">
+    <div className="fixed top-4 left-4 p-4 bg-white shadow-lg rounded-lg min-w-36 max-w-48 z-10000">
       <div className="flex justify-between">
         <div className={"flex items-center space-x-2"}>
           <span className={"relative flex h-3 w-3"}>
             <span
               className={cn(
                 "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
-                server.online && "bg-green-400",
-                !server.online && "bg-red-400",
+                online && "bg-green-400",
+                !online && "bg-red-400",
               )}
             />
             <span
               className={cn(
                 "relative inline-flex rounded-full h-3 w-3",
-                server.online && "bg-green-500",
-                !server.online && "bg-red-500",
+                online && "bg-green-500",
+                !online && "bg-red-500",
               )}
             />
           </span>
           <Heading level={3} className="text-gray-800">
-            {server.code}
+            {server.base.code}
           </Heading>
         </div>
         <div className={"flex items-center"}>
           <button type={"button"} className={"cursor-pointer"} onClick={clockVisibilityToggle}>
-            {clockVisible && <MdOutlineTimer className={"w-5 h-5"} />}
-            {!clockVisible && <MdOutlineTimerOff className={"w-5 h-5"} />}
+            {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
+            {clockVisible && <MdOutlineAccessTime className={"w-5 h-5"} />}
+            {!clockVisible && <MdOutlineAccessTimeFilled className={"w-5 h-5"} />}
           </button>
         </div>
       </div>
-      <ServerMapText scenery={server.scenery} className={"leading-tight tracking-tight text-xs"} />
-      {serverTimezoneDiff && clockVisible && <span className={"text-sm"}>{serverTimezoneDiff}</span>}
+      <ServerMapText scenery={scenery} className={"leading-tight tracking-tight text-xs"} />
+      {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
       {clockVisible && (
         <div className={"mt-2"}>
           <Clock
@@ -85,4 +88,4 @@ export const ServerStatusPopup: FC<{ server: ServerSnapshotFrame }> = memo(({ se
       )}
     </div>
   );
-});
+};

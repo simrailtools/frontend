@@ -1,6 +1,7 @@
-/* hack for setting a "settings" icon as the layer control button icon */
-.leaflet-control-layers-toggle {
-  margin: 0.125rem;
-  background-size: contain !important;
-  background-image: url("/src/assets/icons/settings.svg") !important;
+/* container that holds the map attribution */
+.maplibregl-ctrl-top-left,
+.maplibregl-ctrl-top-right,
+.maplibregl-ctrl-bottom-left,
+.maplibregl-ctrl-bottom-right {
+  z-index: 250;
 }

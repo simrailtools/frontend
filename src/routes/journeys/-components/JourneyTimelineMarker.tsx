@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { JourneyEventDto } from "@/api/generated";
+import type { JourneyEventDto } from "@/api/rest";
 import { cn } from "@/lib/utils.ts";
 
 type JourneyTimelineMarkerProps = {
@@ -20,7 +20,7 @@ const eventTimeStatus = (arrival?: JourneyEventDto, departure?: JourneyEventDto)
   }
 
   // check if the event will be in the future based on the arrival event time if present
-  // this prevents display issues due to missing delay information in case the departure event got cancelled
+  // this prevents display issues due to missing delay information in case the departure event got canceled
   if (arrival && arrival.realtimeTimeType === "REAL") {
     return -1;
   }

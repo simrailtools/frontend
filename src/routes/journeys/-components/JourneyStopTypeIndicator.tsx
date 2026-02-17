@@ -1,7 +1,8 @@
 import type { FC } from "react";
+import type { JourneyEventDto } from "@/api/rest";
 import { cn } from "@/lib/utils.ts";
 
-export const JourneyStopTypeIndicator: FC<{ stopType: "NONE" | "TECHNICAL" | "PASSENGER" }> = ({ stopType }) => {
+export const JourneyStopTypeIndicator: FC<{ stopType: JourneyEventDto["stopType"] }> = ({ stopType }) => {
   // don't display anything if there is no stop scheduled
   if (stopType === "NONE") {
     return null;

@@ -1,16 +1,21 @@
+// biome-ignore lint/correctness/noNodejsModules: this file is not for the client side
+import process from "node:process";
 import { defineConfig } from "@hey-api/openapi-ts";
 
+const baseUrl = process.env.API_BASE_URL ?? "https://apis.simrail.tools";
 export default defineConfig({
-  input: "https://apis.simrail.tools/docs/openapi.yaml",
+  input: `${baseUrl}/docs/openapi.yaml`,
   output: {
-    path: "src/api/generated",
-    lint: "biome",
-    format: "biome",
+    path: "./src/api/rest",
+    postProcess: ["biome:format", "biome:lint"],
   },
   plugins: [
     "@hey-api/typescript",
-    "@hey-api/client-fetch",
     "@tanstack/react-query",
+    {
+      name: "@hey-api/client-fetch",
+      baseUrl,
+    },
     {
       name: "@hey-api/sdk",
       responseStyle: "data",

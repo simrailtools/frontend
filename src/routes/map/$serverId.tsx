@@ -1,36 +1,43 @@
-import "leaflet/dist/leaflet.css";
+import "maplibre-gl/dist/maplibre-gl.css";
 import "./map.css";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { type FC, useEffect, useMemo } from "react";
-import { LayerGroup, LayersControl, MapContainer, TileLayer } from "react-leaflet";
+import { AttributionControl, Layer, Map as MapLibreMap, Source } from "react-map-gl/maplibre";
 import {
   findServerByCodeOptions,
   findServerByIdOptions,
   listPointsOptions,
-} from "@/api/generated/@tanstack/react-query.gen.ts";
-import useEventWebsocket from "@/hooks/useEventWebsocket.ts";
+} from "@/api/rest/@tanstack/react-query.gen.ts";
+import { resolveNatsBackendUrl } from "@/api/util.ts";
+import { useLiveDispatchPostData } from "@/hooks/useLiveDispatchPostData.tsx";
+import { useLiveJourneyData } from "@/hooks/useLiveJourneyData.tsx";
+import { useLiveServerData } from "@/hooks/useLiveServerData.tsx";
+import { NatsContextProvider } from "@/hooks/useNats.tsx";
 import { safeExternalUrlTag } from "@/lib/urlFactory.ts";
 import { DispatchPostMarker } from "@/routes/map/-components/DispatchPostMarker.tsx";
 import { JourneyFocusHandler } from "@/routes/map/-components/JourneyFocusHandler.tsx";
 import { JourneyMarker } from "@/routes/map/-components/JourneyMarker.tsx";
 import { JourneyPolyline } from "@/routes/map/-components/JourneyPolyline.tsx";
 import { JourneyPopup } from "@/routes/map/-components/JourneyPopup.tsx";
-import { MapElementWithoutEventPropagation } from "@/routes/map/-components/MapElementWithoutEventPropagation.tsx";
-import { MapEventHandler } from "@/routes/map/-components/MapEventHandler.tsx";
+import { MapLayerControl } from "@/routes/map/-components/MapLayerControl.tsx";
 import { PointMarker } from "@/routes/map/-components/PointMarker.tsx";
 import { ServerStatusPopup } from "@/routes/map/-components/ServerStatusPopup.tsx";
 import { useMapOptions } from "@/routes/map/-hooks/useMapOptions.ts";
-import { isJourneyWithPosition } from "@/routes/map/-lib/map.types.ts";
+import {
+  type MapBaseLayerId,
+  type MapRasterLayerId,
+  mapBaseLayerSpecs,
+  mapRasterLayerSpecs,
+} from "@/routes/map/-util/tileLayers.ts";
 import { SelectedJourneyProvider, useSelectedJourney } from "../../hooks/useSelectedJourney.tsx";
 
 export const Route = createFileRoute("/map/$serverId")({
   loader: async ({ context: { queryClient }, params: { serverId } }) => {
-    const getServer = () => {
-      return serverId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)?.length
+    const getServer = () =>
+      serverId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)?.length
         ? queryClient.ensureQueryData(findServerByIdOptions({ path: { id: serverId } }))
         : queryClient.ensureQueryData(findServerByCodeOptions({ path: { code: serverId } }));
-    };
 
     const server = await getServer();
     if (!server) {
@@ -47,54 +54,48 @@ function MapServerComponent() {
   return (
     <>
       <title>{`${server.code.toUpperCase()} Map - SIT`}</title>
-      <SelectedJourneyProvider>
-        <ServerMap serverId={server.id} />
-      </SelectedJourneyProvider>
+      <NatsContextProvider websocketUrl={resolveNatsBackendUrl()}>
+        <SelectedJourneyProvider>
+          <ServerMap serverId={server.id} />
+        </SelectedJourneyProvider>
+      </NatsContextProvider>
     </>
   );
 }
 
 const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
-  const { servers, journeys, dispatchPosts, connected, sendRequest } = useEventWebsocket();
-  const server = servers.find(updatedServer => updatedServer.serverId === serverId);
-
-  // subscribe to all data of the server when the connection to the backend was (re-) established
-  useEffect(() => {
-    if (connected) {
-      const baseRequest = { action: "subscribe", dataVersion: 1, serverId } as const;
-      sendRequest({ ...baseRequest, dataType: "servers", dataId: serverId });
-      sendRequest({ ...baseRequest, dataType: "dispatch-posts", dataId: "+" });
-      sendRequest({ ...baseRequest, dataType: "journey-positions", dataId: "+" });
-    }
-  }, [serverId, connected, sendRequest]);
+  const { map: serversById } = useLiveServerData(serverId);
+  const server = serversById.get(serverId);
 
   // update the selected journey or reset it to null if the journey was removed
   // only update if there is at least one known journey, an empty journeys array
   // (after a journey was selected) should only happen when the websocket has to
   // reconnect to the backend which shouldn't remove the focused journey
-  const { selectedJourney, setSelectedJourney } = useSelectedJourney();
+  const { map: journeysById } = useLiveJourneyData(serverId);
+  const { selectedJourneyId, setSelectedJourney } = useSelectedJourney();
+  const selectedJourney = selectedJourneyId ? journeysById.get(selectedJourneyId) : undefined;
+  const selectedJourneyExists = journeysById.size === 0 || selectedJourney !== undefined;
   useEffect(() => {
-    if (selectedJourney && journeys.length > 0) {
-      const updatedJourney = journeys
-        .filter(isJourneyWithPosition)
-        .find(journey => journey.journeyId === selectedJourney.journeyId);
-      setSelectedJourney(updatedJourney ?? null);
+    if (!selectedJourneyExists) {
+      setSelectedJourney(undefined);
     }
-  }, [journeys, selectedJourney, setSelectedJourney]);
+  }, [selectedJourneyExists, setSelectedJourney]);
 
   // fetch points located on the map, filter out points that have an associated dispatch post
-  const { data: pointsListData } = useQuery({
+  const { map: dispatchPostsById } = useLiveDispatchPostData(serverId);
+  const { data: pointsList } = useQuery({
     ...listPointsOptions({ query: { limit: 10_000 } }),
     refetchInterval: 5 * 60 * 1000, // 5 minutes
   });
   const points = useMemo(() => {
-    const dispatchPostPoints = new Set(dispatchPosts.map(post => post.pointId));
-    return pointsListData?.items.filter(point => !dispatchPostPoints.has(point.id));
-  }, [dispatchPosts, pointsListData]);
+    const points = pointsList?.items ?? [];
+    const pointsWithDispatchPost = new Set(Array.from(dispatchPostsById.values(), post => post.base.pointId));
+    return points.filter(point => !pointsWithDispatchPost.has(point.id));
+  }, [pointsList, dispatchPostsById]);
 
   // map options handling
   const { mapOptions, updateMapOptions } = useMapOptions();
-  const changeTileLayer = (layer: string) => updateMapOptions({ tileLayer: layer });
+  const changeTileLayer = (layer: MapBaseLayerId) => updateMapOptions({ tileLayer: layer });
   const toggleMapLayer = (layer: string, enabled: boolean) => {
     updateMapOptions(currentOptions => {
       const updatedLayers = enabled
@@ -103,92 +104,70 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
       return { enabledLayers: updatedLayers };
     });
   };
+  const tileLayer = useMemo(() => mapBaseLayerSpecs[mapOptions.tileLayer], [mapOptions.tileLayer]);
 
   return (
     <>
       {server && <ServerStatusPopup server={server} />}
-      {selectedJourney && <JourneyPopup journey={selectedJourney} />}
+      {selectedJourney !== undefined && <JourneyPopup journey={selectedJourney} />}
 
-      <MapContainer
-        zoom={9}
-        zoomControl={false}
-        preferCanvas={true}
-        center={[51.331, 20.297]}
-        scrollWheelZoom={true}
-        className={"min-h-dvh w-full"}
+      <MapLibreMap
+        reuseMaps={true}
+        style={{ width: "100%", minHeight: "100dvh" }}
+        initialViewState={{ latitude: 51.331, longitude: 20.297, zoom: 9 }}
+        minZoom={3}
+        maxZoom={17}
+        dragPan={true}
+        dragRotate={false}
+        keyboard={false}
+        scrollZoom={true}
+        maplibreLogo={false}
+        doubleClickZoom={false}
+        attributionControl={false}
+        refreshExpiredTiles={false}
+        mapStyle={tileLayer.spec}
+        onClick={() => setSelectedJourney(undefined)}
       >
-        <LayersControl position={"bottomright"} collapsed={true} sortLayers={false}>
-          {/* Selectable base layers for the map */}
-          <LayersControl.BaseLayer name={"Standard"} checked={mapOptions.tileLayer === "standard"}>
-            <TileLayer
-              minZoom={3}
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution={`Map data &copy; ${safeExternalUrlTag("OpenStreetMap", "https://openstreetmap.org/copyright")} contributors`}
-            />
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name={"WMTS TopPlusOpen"} checked={mapOptions.tileLayer === "wmts_topplusopen"}>
-            <TileLayer
-              minZoom={3}
-              maxZoom={17}
-              minNativeZoom={1}
-              maxNativeZoom={16}
-              url={
-                "https://sgx.geodatenzentrum.de/wmts_topplus_open/tile/1.0.0/web/default/WEBMERCATOR/{z}/{y}/{x}.png"
-              }
-              attribution={`Map data &copy; ${safeExternalUrlTag("Federal Agency for Cartography and Geodesy (BKG)", "https://bkg.bund.de")}`}
-            />
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name={"ESRI Satellite"} checked={mapOptions.tileLayer === "esri_satellite"}>
-            <TileLayer
-              minZoom={8}
-              url={`https://ibasemaps-api.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?token=${import.meta.env.VITE_ESRI_TILES_KEY}`}
-              attribution={`Powered by ${safeExternalUrlTag("Esri", "https://esri.com")} | WULS/SGGW, GUGiK, Esri, Earthstar Geographics, TomTom, Garmin, Foursquare, FAO, METI/NASA, USGS`}
-            />
-          </LayersControl.BaseLayer>
+        <AttributionControl
+          compact={false}
+          position={"bottom-right"}
+          style={{ background: "white" }}
+          customAttribution={[
+            safeExternalUrlTag("MapLibre", "https://maplibre.org"),
+            safeExternalUrlTag("GitHub", "https://github.com/simrailtools"),
+          ]}
+        />
+        {mapOptions.enabledLayers
+          .filter(layer => layer in mapRasterLayerSpecs)
+          .map(layer => {
+            const rasterSpec = mapRasterLayerSpecs[layer as MapRasterLayerId].spec;
+            return (
+              <Source key={layer} id={layer} {...rasterSpec}>
+                <Layer id={`${layer}-layer`} type={"raster"} source={layer} paint={{ "raster-opacity": 0.8 }} />
+              </Source>
+            );
+          })}
 
-          {/* Layers displaying information about the selected server */}
-          <LayersControl.Overlay name={"Trains"} checked={mapOptions.enabledLayers.includes("trains")}>
-            <LayerGroup>
-              {journeys.filter(isJourneyWithPosition).map(journey => (
-                <JourneyMarker key={journey.journeyId} journey={journey} />
-              ))}
-            </LayerGroup>
-          </LayersControl.Overlay>
-          <LayersControl.Overlay name={"Dispatch Posts"} checked={mapOptions.enabledLayers.includes("dispatch_posts")}>
-            <LayerGroup>
-              {dispatchPosts.map(dispatchPost => (
-                <DispatchPostMarker key={dispatchPost.postId} dispatchPost={dispatchPost} />
-              ))}
-            </LayerGroup>
-          </LayersControl.Overlay>
-          <LayersControl.Overlay name={"Other Points"} checked={mapOptions.enabledLayers.includes("other_points")}>
-            <LayerGroup>
-              {points?.map(point => (
-                <PointMarker key={point.id} point={point} />
-              ))}
-            </LayerGroup>
-          </LayersControl.Overlay>
-          <LayersControl.Overlay
-            name={"Journey Polyline"}
-            checked={mapOptions.enabledLayers.includes("journey_polyline")}
-          >
-            <LayerGroup>{selectedJourney && <JourneyPolyline journey={selectedJourney} />}</LayerGroup>
-          </LayersControl.Overlay>
+        {mapOptions.enabledLayers.includes("journey_polyline") && selectedJourney && (
+          <JourneyPolyline journeyId={selectedJourney.live?.ids?.dataId ?? ""} />
+        )}
 
-          {/* Additional informative layers */}
-          <LayersControl.Overlay name={"OpenRailWayMap"} checked={mapOptions.enabledLayers.includes("openrailwaymap")}>
-            <TileLayer
-              url={"https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png"}
-              attribution={`Rendering: ${safeExternalUrlTag("OpenRailWayMap", "https://openrailwaymap.org/")}`}
-            />
-          </LayersControl.Overlay>
-        </LayersControl>
+        {mapOptions.enabledLayers.includes("trains") &&
+          Array.from(journeysById.entries()).map(([journeyId, data]) => (
+            <JourneyMarker key={journeyId} journey={data} />
+          ))}
 
-        <MapElementWithoutEventPropagation>
-          <JourneyFocusHandler />
-          <MapEventHandler changeTileLayer={changeTileLayer} toggleMapLayer={toggleMapLayer} />
-        </MapElementWithoutEventPropagation>
-      </MapContainer>
+        {mapOptions.enabledLayers.includes("dispatch_posts") &&
+          Array.from(dispatchPostsById.entries()).map(([postId, data]) => (
+            <DispatchPostMarker key={postId} post={data} />
+          ))}
+
+        {mapOptions.enabledLayers.includes("other_points") &&
+          points?.map(point => <PointMarker key={point.id} point={point} />)}
+
+        <JourneyFocusHandler position={selectedJourney?.live?.journeyData?.position} />
+        <MapLayerControl mapOptions={mapOptions} onBaseLayerChange={changeTileLayer} onToggleLayer={toggleMapLayer} />
+      </MapLibreMap>
     </>
   );
 };

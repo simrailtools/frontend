@@ -1,17 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { FC } from "react";
 import { MdDirectionsTransit, MdPerson, MdSpeed, MdTraffic } from "react-icons/md";
-import type { JourneySnapshotFrame } from "@/api/eventbus.types.ts";
-import { findUsersBySteamIds } from "@/api/generated";
-import { cn, steamAvatarUrl } from "@/lib/utils.ts";
+import type { JourneyUpdateFrame } from "@/api/proto/event_bus_pb.ts";
+import type { JourneyBaseData } from "@/hooks/useLiveJourneyData.tsx";
+import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
+import { useUserData } from "@/hooks/useUserData.tsx";
+import { cn } from "@/lib/utils.ts";
 
-const formatDistance = (distance: number): string => {
-  return distance >= 1000 ? `${(distance / 1000).toFixed(2)}km` : `${distance}m`;
-};
+const formatDistance = (distance: number): string =>
+  distance >= 1000 ? `${(distance / 1000).toFixed(2)}km` : `${distance}m`;
 
-const formatSignalMaxSpeed = (maxSpeed?: number | null) => {
-  if (maxSpeed === undefined || maxSpeed === null) {
+const formatSignalMaxSpeed = (maxSpeed: number | undefined) => {
+  if (maxSpeed === undefined) {
     return "CLEAR";
   }
   if (maxSpeed === 0) {
@@ -20,42 +20,18 @@ const formatSignalMaxSpeed = (maxSpeed?: number | null) => {
   return `${maxSpeed}km/h`;
 };
 
-export const JourneyPopup: FC<{ journey: JourneySnapshotFrame }> = ({ journey }) => {
-  const {
-    journeyId,
-    category,
-    number,
-    line,
-    label,
-    driverSteamId,
-    speed,
-    nextSignalId,
-    nextSignalDistance,
-    nextSignalMaxSpeed,
-  } = journey;
-
-  // fetch the user details in case the journey is controlled by a player
-  const { data } = useQuery({
-    enabled: !!driverSteamId,
-    queryKey: ["steam_user", driverSteamId],
-    queryFn: async ({ signal }) => {
-      // biome-ignore lint/style/noNonNullAssertion: must be present here, see enabled field
-      return await findUsersBySteamIds({ body: [journey.driverSteamId!], signal, throwOnError: true });
-    },
-  });
-  const userInfo = data?.find(user => user.id === journey.driverSteamId);
+export const JourneyPopup: FC<{ journey: NatsSyncedEntry<JourneyBaseData, JourneyUpdateFrame> }> = ({ journey }) => {
+  const { category, number, line, label } = journey.base.transport;
+  const nextSignal = journey.live?.journeyData?.nextSignal;
+  const { data: userInfo } = useUserData(journey.live?.journeyData?.driver);
 
   return (
-    <div className="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-6 max-w-md z-[10000]">
+    <div className="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-6 max-w-md z-10000">
       <div className="space-y-0.5">
-        {userInfo && (
+        {userInfo !== undefined && (
           <div className={"flex justify-center items-center pb-4"}>
             <div className="w-16 h-16 rounded-full overflow-hidden border-solid border-2">
-              <img
-                src={steamAvatarUrl(userInfo.avatarHash)}
-                alt={`${userInfo.name} Avatar`}
-                className="w-full h-full object-cover"
-              />
+              <img src={userInfo.avatarUrl} alt={`${userInfo.name} Avatar`} className="w-full h-full object-cover" />
             </div>
           </div>
         )}
@@ -64,12 +40,12 @@ export const JourneyPopup: FC<{ journey: JourneySnapshotFrame }> = ({ journey })
           <MdDirectionsTransit className="text-gray-700" size={24} />
           <span>
             {category} {number}
-            {line && ` (${line})`}
-            {label && ` "${label}"`}
+            {line != null && ` (${line})`}
+            {label != null && ` "${label}"`}
           </span>
         </div>
 
-        {userInfo && (
+        {userInfo !== undefined && (
           <div className="flex items-center space-x-2 text-sm text-gray-700">
             <MdPerson className="text-gray-700" size={24} />
             <a
@@ -80,34 +56,30 @@ export const JourneyPopup: FC<{ journey: JourneySnapshotFrame }> = ({ journey })
             >
               {userInfo.name}
             </a>
-            {userInfo.countryCode && <span>({userInfo.countryCode})</span>}
+            {userInfo.location != null && <span>({userInfo.location})</span>}
           </div>
         )}
 
-        {speed !== undefined && (
-          <div className="flex items-center space-x-2 text-sm">
-            <MdSpeed className="text-gray-700" size={24} />
-            <span className="font-medium">{speed} km/h</span>
-          </div>
-        )}
+        <div className="flex items-center space-x-2 text-sm">
+          <MdSpeed className="text-gray-700" size={24} />
+          <span className="font-medium">{journey.live?.journeyData?.speed ?? 0} km/h</span>
+        </div>
 
-        {nextSignalId && (
+        {nextSignal !== undefined && (
           <div className="flex items-center space-x-2 text-sm text-gray-700">
             <MdTraffic className="text-gray-700" size={24} />
             <span className={"flex space-x-1"}>
-              <span className={"font-medium"}>{nextSignalId}</span>
-              {nextSignalDistance !== undefined && nextSignalDistance !== null && (
-                <span>in {formatDistance(nextSignalDistance)}</span>
-              )}
+              <span className={"font-medium"}>{nextSignal.name}</span>
+              <span>in {formatDistance(nextSignal.distanceMeters)}</span>
               <span
                 className={cn(
                   "font-medium",
-                  nextSignalMaxSpeed === null && "text-green-400",
-                  nextSignalMaxSpeed === 0 && "text-red-600",
-                  nextSignalMaxSpeed && nextSignalMaxSpeed > 0 && "text-orange-400",
+                  nextSignal.maxSpeedKmh === undefined && "text-green-400",
+                  nextSignal.maxSpeedKmh === 0 && "text-red-600",
+                  nextSignal.maxSpeedKmh && nextSignal.maxSpeedKmh > 0 && "text-orange-400",
                 )}
               >
-                ({formatSignalMaxSpeed(nextSignalMaxSpeed)})
+                ({formatSignalMaxSpeed(nextSignal.maxSpeedKmh)})
               </span>
             </span>
           </div>
@@ -117,7 +89,7 @@ export const JourneyPopup: FC<{ journey: JourneySnapshotFrame }> = ({ journey })
           <Link
             target={"_blank"}
             to={"/journeys/$journeyId"}
-            params={{ journeyId }}
+            params={{ journeyId: journey.live?.ids?.dataId ?? "" }}
             className="w-full block text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg"
           >
             Journey Details

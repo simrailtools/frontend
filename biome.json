@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.2/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -8,32 +8,112 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!**/src/**/routeTree.gen.ts", "!**/src/api/generated/**"]
+    "includes": ["**", "!src/routeTree.gen.ts", "!src/api"]
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "space",
     "indentWidth": 2,
+    "indentStyle": "space",
+    "lineWidth": 120,
     "lineEnding": "lf",
-    "lineWidth": 120
+    "trailingNewline": true
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "recommended": true,
+      "source": {
+        "organizeImports": "on",
+        "noDuplicateClasses": "on"
+      }
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
       "style": {
+        "noEnum": "error",
+        "noCommonJs": "error",
+        "noNamespace": "error",
+        "noUselessElse": "error",
+        "noNestedTernary": "error",
+        "noYodaExpression": "error",
+        "noImplicitBoolean": "error",
         "noParameterAssign": "error",
+        "useThrowOnlyError": "error",
+        "noInferrableTypes": "error",
+        "useNumberNamespace": "error",
+        "useShorthandAssign": "error",
         "useAsConstAssertion": "error",
-        "useDefaultParameterLast": "error",
         "useEnumInitializers": "error",
+        "useConsistentArrayType": "error",
         "useSelfClosingElements": "error",
         "useSingleVarDeclarator": "error",
+        "useDefaultParameterLast": "error",
         "noUnusedTemplateLiteral": "error",
-        "useNumberNamespace": "error",
-        "noInferrableTypes": "error",
-        "noUselessElse": "error"
+        "useUnifiedTypeSignatures": "error",
+        "useConsistentArrowReturn": "error",
+        "useReactFunctionComponents": "error"
+      },
+      "complexity": {
+        "noVoid": "error",
+        "useWhile": "error",
+        "noUselessUndefined": "error",
+        "noUselessStringConcat": "error"
+      },
+      "correctness": {
+        "noProcessGlobal": "error",
+        "noNodejsModules": "error",
+        "useUniqueElementIds": "error",
+        "noUndeclaredVariables": "error",
+        "noReactPropAssignments": "error",
+        "noGlobalDirnameFilename": "error",
+        "noUndeclaredDependencies": "error",
+        "noNestedComponentDefinitions": "error"
+      },
+      "nursery": {
+        "noProto": "error",
+        "noForIn": "error",
+        "useFind": "error",
+        "noDivRegex": "error",
+        "useRegexpExec": "error",
+        "noLeakedRender": "error",
+        "noMisusedPromises": "error",
+        "noUnknownAttribute": "error",
+        "noFloatingPromises": "error",
+        "useArraySortCompare": "error",
+        "noAmbiguousAnchorText": "error",
+        "noDuplicateEnumValues": "error",
+        "noDuplicatedSpreadProps": "error",
+        "noUnnecessaryConditions": "error",
+        "useExhaustiveSwitchCases": "error"
+      },
+      "suspicious": {
+        "noVar": "error",
+        "noAlert": "error",
+        "useAwait": "error",
+        "useErrorMessage": "error",
+        "noEvolvingTypes": "error",
+        "noReactForwardRef": "error",
+        "noDeprecatedImports": "error",
+        "noUnusedExpressions": "error",
+        "noMisplacedAssertion": "error",
+        "noUnassignedVariables": "error",
+        "noEmptyBlockStatements": "error",
+        "noConstantBinaryExpressions": "error",
+        "useNumberToFixedDigitsArgument": "error"
+      },
+      "performance": {
+        "noDelete": "error",
+        "noBarrelFile": "error",
+        "noReExportAll": "error",
+        "noNamespaceImport": "error"
       }
+    },
+    "domains": {
+      "react": "recommended",
+      "project": "recommended"
     }
   },
   "javascript": {
@@ -42,6 +122,11 @@
       "quoteStyle": "double",
       "jsxQuoteStyle": "double",
       "arrowParentheses": "asNeeded"
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   }
 }

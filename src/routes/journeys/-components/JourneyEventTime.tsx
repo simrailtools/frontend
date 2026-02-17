@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { JourneyEventDto } from "@/api/generated";
+import type { JourneyEventDto } from "@/api/rest";
 import { cn } from "@/lib/utils.ts";
 
 type JourneyEventTimeProps = {

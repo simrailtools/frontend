@@ -1,91 +1,104 @@
-import { useQuery } from "@tanstack/react-query";
-import type { BaseIconOptions, Icon } from "leaflet";
-import type { FC } from "react";
+import { deepEqual } from "fast-equals";
+import { type FC, memo, useState } from "react";
 import { MdOutlineLocationOn, MdOutlinePsychology, MdPersonOutline } from "react-icons/md";
-import { Marker, Popup, Tooltip } from "react-leaflet";
-import type { DispatchPostSnapshotFrame } from "@/api/eventbus.types.ts";
-import type { SimRailUserDto } from "@/api/generated";
-import { findUsersBySteamIdsOptions } from "@/api/generated/@tanstack/react-query.gen.ts";
-import personOffIcon from "@/assets/icons/person_off.svg";
-import { cn, steamAvatarUrl } from "@/lib/utils.ts";
-import { constructIcon } from "@/routes/map/-lib/iconFactory.ts";
+import { Marker, Popup } from "react-map-gl/maplibre";
+import type { DispatchPostUpdateFrame } from "@/api/proto/event_bus_pb.ts";
+import type { SimRailUserDto } from "@/api/rest";
+import type { DispatchPostBaseData } from "@/hooks/useLiveDispatchPostData.tsx";
+import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
+import { useUserData } from "@/hooks/useUserData.tsx";
+import { cn } from "@/lib/utils.ts";
+import { MapTooltip } from "@/routes/map/-components/MapTooltip.tsx";
+import { UserIcon } from "@/routes/map/-components/UserIcon.tsx";
 
-const mapDifficultyName = (difficulty: number): string => {
-  const difficultyNames = ["Very Easy", "Easy", "Intermediate", "Advanced", "Hard", "Expert"];
-  return difficultyNames.at(difficulty) ?? `${difficulty}`;
-};
+/**
+ * Zero-based difficulty name index.
+ */
+const difficultyNames = ["Very Easy", "Easy", "Intermediate", "Advanced", "Hard", "Expert"] as const;
 
-const formatUserName = (user?: SimRailUserDto): string | undefined => {
-  // append the country code of the user to the username if known, only
-  // return the username on case the country is unknown. undefined is only
-  // returned in case the input user is undefined as well
-  return user?.countryCode ? `${user.name} (${user.countryCode})` : user?.name;
-};
+/**
+ * Maps a difficulty number to a display name. If no name is available, the number in stringified form is returned.
+ * @param difficulty the difficulty display name for the given difficulty.
+ */
+const mapDifficultyName = (difficulty: number): string => difficultyNames.at(difficulty) ?? `${difficulty}`;
 
-export const DispatchPostMarker: FC<{ dispatchPost: DispatchPostSnapshotFrame }> = ({ dispatchPost }) => {
-  // currently dispatch posts can only be dispatched by one person at a time, if
-  // this ever changes this has to change as well, but for now we can just use the
-  // first element in the dispatcher list as the user dispatching the post
-  const relevantUser = dispatchPost.dispatcherSteamIds.at(0);
-  const { isLoading, data } = useQuery({
-    ...findUsersBySteamIdsOptions({ body: dispatchPost.dispatcherSteamIds }),
-    enabled: !!relevantUser,
-  });
-  const userInfo = data?.find(user => user.id === relevantUser);
+/**
+ * Formats the name of the given user. If no user is given, undefined is returned.
+ * @param user the user to format the display name of.
+ */
+const formatUserName = (user?: SimRailUserDto): string | undefined =>
+  user?.location ? `${user.name} (${user.location})` : user?.name;
 
-  let icon: Icon<BaseIconOptions>;
-  if (relevantUser) {
-    const userAvatarAlt = userInfo ? `${userInfo.name} Avatar` : undefined;
-    const userAvatarUrl = userInfo ? steamAvatarUrl(userInfo.avatarHash) : undefined;
-    icon = constructIcon({
-      isLoading,
-      url: userAvatarUrl,
-      alt: userAvatarAlt,
-      className: "rounded-md h-9 w-9",
-      popupAnchor: [0, -14],
-    });
-  } else {
-    icon = constructIcon({
-      url: personOffIcon,
-      alt: "Bot Driver Icon",
-      className: "rounded-md h-9 w-9 p-1",
-      popupAnchor: [0, -14],
-    });
-  }
+export const DispatchPostMarker: FC<{
+  post: NatsSyncedEntry<DispatchPostBaseData, DispatchPostUpdateFrame>;
+}> = memo(
+  ({ post }) => {
+    const { name, position, difficulty } = post.base;
+    const [popupVisible, setPopupVisible] = useState(false);
 
-  return (
-    <Marker
-      icon={icon}
-      zIndexOffset={100}
-      alt={dispatchPost.name}
-      position={[dispatchPost.latitude, dispatchPost.longitude]}
-      eventHandlers={{
-        mouseout: event => event.target.closePopup(),
-        mouseover: event => event.target.openPopup(),
-        click: () => {
-          if (userInfo) {
-            window.open(userInfo.profileUrl, "_blank", "noopener, noreferrer");
-          }
-        },
-      }}
-    >
-      <Popup closeButton={false}>
-        <div className={"flex space-x-1 items-center"}>
-          <MdOutlineLocationOn className={"w-5 h-5"} />
-          <span className={"text-sm font-semibold"}>{dispatchPost.name}</span>
-        </div>
-        <div className={"flex space-x-1 items-center"}>
-          <MdOutlinePsychology className={"w-5 h-5"} />
-          <span className={"text-sm"}>{mapDifficultyName(dispatchPost.difficultyLevel)}</span>
-        </div>
-        <div className={"flex space-x-1 items-center"}>
-          <MdPersonOutline className={"w-5 h-5"} />
-          <span className={cn("text-sm", !userInfo && "italic")}>{formatUserName(userInfo) ?? "Bot"}</span>
-        </div>
-      </Popup>
-      <Tooltip permanent={true} direction={"top"} offset={[0, -20]} className={"!p-0.5"}>
-        <span className={"text-xs font-semibold"}>{dispatchPost.name}</span>
-      </Tooltip>
-    </Marker>
-  );
-};
+    const dispatcher = post.live?.dispatchPostData?.dispatcher;
+    const { data: userInfo, isLoading: userInfoLoading } = useUserData(dispatcher);
+
+    return (
+      <>
+        <Marker longitude={position.longitude} latitude={position.latitude} anchor={"center"} style={{ zIndex: 100 }}>
+          <button
+            type={"button"}
+            className={cn("relative flex items-center justify-center", userInfo && "cursor-pointer")}
+            onMouseEnter={() => setPopupVisible(true)}
+            onMouseLeave={() => setPopupVisible(false)}
+            onPointerDown={event => event.stopPropagation()}
+            onClick={event => {
+              event.stopPropagation();
+              if (userInfo) {
+                window.open(userInfo.profileUrl, "_blank", "noopener, noreferrer");
+              }
+            }}
+          >
+            <UserIcon
+              hasUser={!!dispatcher}
+              userInfoLoading={userInfoLoading}
+              userInfo={userInfo}
+              className={"rounded-md h-9 w-9"}
+            />
+            {!popupVisible && (
+              <MapTooltip position={"top"} className={"text-xs font-semibold p-1.5"}>
+                {name}
+              </MapTooltip>
+            )}
+          </button>
+        </Marker>
+        {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
+        {popupVisible && (
+          <Popup
+            offset={23}
+            anchor={"bottom"}
+            closeButton={false}
+            closeOnClick={false}
+            style={{ zIndex: 100 }}
+            latitude={position.latitude}
+            longitude={position.longitude}
+            onClose={() => setPopupVisible(false)}
+          >
+            <div className={"flex space-x-1 items-center"}>
+              <MdOutlineLocationOn className={"w-5 h-5"} />
+              <span className={"text-sm font-semibold"}>{name}</span>
+            </div>
+            <div className={"flex space-x-1 items-center"}>
+              <MdOutlinePsychology className={"w-5 h-5"} />
+              <span className={"text-sm"}>{mapDifficultyName(difficulty)}</span>
+            </div>
+            <div className={"flex space-x-1 items-center"}>
+              <MdPersonOutline className={"w-5 h-5"} />
+              <span className={cn("text-sm", !userInfo && "italic")}>{formatUserName(userInfo) ?? "Bot"}</span>
+            </div>
+          </Popup>
+        )}
+      </>
+    );
+  },
+  (prev, next) => {
+    // only update the component if the live data changed, the base data is fixed after initial render
+    return deepEqual(prev.post.live, next.post.live);
+  },
+);

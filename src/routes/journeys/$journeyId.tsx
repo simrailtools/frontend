@@ -1,12 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { DateTime } from "luxon";
-import type { JourneyEventDto } from "@/api/generated";
+import type { JourneyEventDto } from "@/api/rest";
 import {
   findJourneyByIdOptions,
-  findServerByIdOptions,
   findVehicleCompositionByJourneyIdOptions,
-} from "@/api/generated/@tanstack/react-query.gen.ts";
+} from "@/api/rest/@tanstack/react-query.gen.ts";
 import { JourneyBaseInfo } from "@/routes/journeys/-components/JourneyBaseInfo.tsx";
 import { JourneyStopItem } from "@/routes/journeys/-components/JourneyStopItem.tsx";
 
@@ -17,24 +16,18 @@ export const Route = createFileRoute("/journeys/$journeyId")({
       throw new Error("The requested journey does not exist");
     }
 
-    const server = await queryClient.ensureQueryData(findServerByIdOptions({ path: { id: journey.serverId } }));
-    if (!server) {
-      throw new Error("The server the journey runs on does not exist");
-    }
-
-    return { journey, server };
+    return { journey };
   },
   component: JourneyDetailsComponent,
 });
 
 function JourneyDetailsComponent() {
   const { journeyId } = Route.useParams();
-  const { server } = Route.useLoaderData();
+  const { journey: initialData } = Route.useLoaderData();
   const { data: journey } = useQuery({
     ...findJourneyByIdOptions({ path: { id: journeyId } }),
-    refetchInterval: query => {
-      return query.state.data?.lastSeenTime ? false : 30_000;
-    },
+    initialData,
+    refetchInterval: query => (query.state.data?.lastSeenTime ? false : 30_000),
   });
   const { data: vehicleComposition } = useQuery({
     ...findVehicleCompositionByJourneyIdOptions({ path: { id: journeyId } }),
@@ -74,17 +67,12 @@ function JourneyDetailsComponent() {
 
       return acc;
     },
-    [] as Array<[JourneyEventDto | undefined, JourneyEventDto | undefined]>,
+    [] as [JourneyEventDto | undefined, JourneyEventDto | undefined][],
   );
 
   // formats the given iso date/time in the server timezone using the optionally provided format
-  const timeFormatter = (isoTime: string, format?: string) => {
-    const serverTz = server.timezoneId === "Z" ? "utc" : server.timezoneId;
-    const givenDt = DateTime.fromISO(isoTime);
-    const dtZoned = givenDt.setZone(serverTz);
-    const dt = dtZoned.isValid ? dtZoned : givenDt;
-    return dt.toFormat(format ?? "dd.MM HH:mm");
-  };
+  const timeFormatter = (isoTime: string, format?: string) =>
+    DateTime.fromISO(isoTime).toFormat(format ?? "dd.MM HH:mm");
 
   return (
     <>
@@ -93,7 +81,7 @@ function JourneyDetailsComponent() {
         <div className={"hidden lg:block"}>
           <JourneyBaseInfo journey={journey} composition={vehicleComposition} timeFormatter={timeFormatter} />
           <div className={"flex items-center p-4"}>
-            <div className="flex-grow border-t border-gray-400" />
+            <div className="grow border-t border-gray-400" />
           </div>
         </div>
         <div className="space-y-10">
