@@ -10,7 +10,7 @@ plugins:
 inputs:
   - git_repo: https://github.com/simrailtools/backend.git
     depth: 1
-    branch: next
+    branch: main
     subdir: .proto
     exclude_paths:
       - cache.proto
