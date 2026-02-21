@@ -6,6 +6,7 @@ import type { JourneyBaseData } from "@/hooks/useLiveJourneyData.tsx";
 import type { NatsSyncedEntry } from "@/hooks/useNatsSyncedList.tsx";
 import { useUserData } from "@/hooks/useUserData.tsx";
 import { cn } from "@/lib/utils.ts";
+import { JourneyTrackingLinkButton } from "@/routes/map/-components/JourneyTrackingLinkButton.tsx";
 
 const formatDistance = (distance: number): string =>
   distance >= 1000 ? `${(distance / 1000).toFixed(2)}km` : `${distance}m`;
@@ -26,7 +27,7 @@ export const JourneyPopup: FC<{ journey: NatsSyncedEntry<JourneyBaseData, Journe
   const { data: userInfo } = useUserData(journey.live?.journeyData?.driver);
 
   return (
-    <div className="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-6 max-w-md z-10000">
+    <div className="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-5 max-w-md z-10000">
       <div className="space-y-0.5">
         {userInfo !== undefined && (
           <div className={"flex justify-center items-center pb-4"}>
@@ -85,15 +86,16 @@ export const JourneyPopup: FC<{ journey: NatsSyncedEntry<JourneyBaseData, Journe
           </div>
         )}
 
-        <div className="mt-4">
+        <div className="mt-3 flex gap-2">
           <Link
             target={"_blank"}
             to={"/journeys/$journeyId"}
             params={{ journeyId: journey.live?.ids?.dataId ?? "" }}
-            className="w-full block text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg"
+            className="flex-1 text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg"
           >
-            Journey Details
+            Details
           </Link>
+          <JourneyTrackingLinkButton journeyId={journey.live?.ids?.dataId ?? ""} />
         </div>
       </div>
     </div>

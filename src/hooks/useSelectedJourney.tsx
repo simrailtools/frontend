@@ -24,8 +24,11 @@ export const useSelectedJourney = () => {
   return context;
 };
 
-export const SelectedJourneyProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [selectedJourneyId, setSelectedJourney] = useState<string | undefined>(undefined);
+export const SelectedJourneyProvider: FC<PropsWithChildren<Pick<SelectedJourneyContextType, "selectedJourneyId">>> = ({
+  children,
+  selectedJourneyId: initialSelectedJourney,
+}) => {
+  const [selectedJourneyId, setSelectedJourney] = useState<string | undefined>(initialSelectedJourney);
   return (
     <SelectedJourneyContext.Provider value={{ selectedJourneyId, setSelectedJourney }}>
       {children}

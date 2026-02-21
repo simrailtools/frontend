@@ -1,9 +1,10 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./map.css";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, type SearchSchemaInput } from "@tanstack/react-router";
 import { type FC, useEffect, useMemo } from "react";
 import { AttributionControl, Layer, Map as MapLibreMap, Source } from "react-map-gl/maplibre";
+import { z } from "zod";
 import {
   findServerByCodeOptions,
   findServerByIdOptions,
@@ -33,11 +34,19 @@ import {
 import { SelectedJourneyProvider, useSelectedJourney } from "../../hooks/useSelectedJourney.tsx";
 
 export const Route = createFileRoute("/map/$serverId")({
+  validateSearch: (input: { selectedJourneyId?: string } & SearchSchemaInput) =>
+    z
+      .object({
+        selectedJourneyId: z.uuid({ version: "v5" }).optional().catch(undefined),
+      })
+      .parse(input),
   loader: async ({ context: { queryClient }, params: { serverId } }) => {
-    const getServer = () =>
-      serverId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)?.length
+    const getServer = () => {
+      const isServerUniqueId = z.uuid({ version: "v5" }).safeParse(serverId).success;
+      return isServerUniqueId
         ? queryClient.ensureQueryData(findServerByIdOptions({ path: { id: serverId } }))
         : queryClient.ensureQueryData(findServerByCodeOptions({ path: { code: serverId } }));
+    };
 
     const server = await getServer();
     if (!server) {
@@ -51,11 +60,12 @@ export const Route = createFileRoute("/map/$serverId")({
 
 function MapServerComponent() {
   const server = Route.useLoaderData();
+  const { selectedJourneyId: initialSelectedJourney } = Route.useSearch();
   return (
     <>
       <title>{`${server.code.toUpperCase()} Map - SIT`}</title>
       <NatsContextProvider websocketUrl={resolveNatsBackendUrl()}>
-        <SelectedJourneyProvider>
+        <SelectedJourneyProvider selectedJourneyId={initialSelectedJourney}>
           <ServerMap serverId={server.id} />
         </SelectedJourneyProvider>
       </NatsContextProvider>
