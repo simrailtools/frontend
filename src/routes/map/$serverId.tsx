@@ -1,7 +1,7 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./map.css";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, type SearchSchemaInput } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { type FC, useEffect, useMemo } from "react";
 import { AttributionControl, Layer, Map as MapLibreMap, Source } from "react-map-gl/maplibre";
 import { z } from "zod";
@@ -34,12 +34,9 @@ import {
 import { SelectedJourneyProvider, useSelectedJourney } from "../../hooks/useSelectedJourney.tsx";
 
 export const Route = createFileRoute("/map/$serverId")({
-  validateSearch: (input: { selectedJourneyId?: string } & SearchSchemaInput) =>
-    z
-      .object({
-        selectedJourneyId: z.uuid({ version: "v5" }).optional().catch(undefined),
-      })
-      .parse(input),
+  validateSearch: z.object({
+    selectedJourneyId: z.uuid({ version: "v5" }).optional().catch(undefined),
+  }),
   loader: async ({ context: { queryClient }, params: { serverId } }) => {
     const getServer = () => {
       const isServerUniqueId = z.uuid({ version: "v5" }).safeParse(serverId).success;

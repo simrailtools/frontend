@@ -1,52 +1,51 @@
-import type { BoardViaEventDto } from "@/api/generated";
+import { type FC, Fragment, type JSX, useEffect, useMemo, useRef, useState } from "react";
+import type { BoardViaEventDto } from "@/api/rest";
 import { cn } from "@/lib/utils.ts";
-import { type FC, Fragment, type JSX, useEffect, useRef, useState } from "react";
 
 type BoardViaInfoProps = {
-  via: Array<BoardViaEventDto>;
+  via: BoardViaEventDto[];
 };
 
 export const BoardViaInfo: FC<BoardViaInfoProps> = ({ via }) => {
-  // code that checks if the via text is overflowing the width of the screen
-  const measureRef = useRef<HTMLDivElement>(null);
+  const viaPoints = useMemo(() => createViaElements(via), [via]);
+
+  // handling of overflow on the screen
   const containerRef = useRef<HTMLDivElement>(null);
+  const animatedDivRef = useRef<HTMLDivElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
   useEffect(() => {
     const container = containerRef.current;
-    const textMeasureDiv = measureRef.current;
-    if (container && textMeasureDiv) {
-      const checkOverflow = () => setIsOverflowing(textMeasureDiv.scrollWidth > container.clientWidth);
-      checkOverflow(); // initial check
-
-      window.addEventListener("resize", checkOverflow);
-      return () => window.removeEventListener("resize", checkOverflow);
+    const animated = animatedDivRef.current;
+    if (!container || !animated) {
+      return;
     }
+
+    const recalc = () => {
+      // update the overflow state
+      const isOverflowing = animated.scrollWidth > container.clientWidth + 1;
+      setIsOverflowing(isOverflowing);
+
+      // update the animation duration
+      if (isOverflowing) {
+        const textWidth = animated.scrollWidth;
+        const containerWidth = container.getBoundingClientRect().width;
+        const duration = (textWidth + containerWidth) / 75; // 75px/s
+        animated.style.animationDuration = `${duration.toFixed(0)}s`;
+      } else {
+        animated.style.animationDuration = "";
+      }
+    };
+    recalc(); // initial recalculation
+
+    // resize observer to trigger recalculation for future layout changes
+    const resizeObserver = new ResizeObserver(recalc);
+    resizeObserver.observe(container);
+    resizeObserver.observe(animated);
+    return () => resizeObserver.disconnect();
   }, []);
 
-  // code that calculates the duration of the via text animation, so that all texts are
-  // running at the same speed, regardless of the text length
-  const animatedDivRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const container = containerRef.current;
-    const textMeasureDiv = measureRef.current;
-    const animatedDiv = animatedDivRef.current;
-    if (container && textMeasureDiv && animatedDiv && isOverflowing) {
-      const clientWidth = container.clientWidth;
-      const scrollWidth = textMeasureDiv.scrollWidth;
-      const animationDuration = (scrollWidth + clientWidth) / 50;
-      animatedDiv.style.animationDuration = `${animationDuration}s`;
-    }
-  }, [isOverflowing]);
-
-  const viaPoints = createViaElements(via);
   return (
     <div ref={containerRef} className={"ml-7 pt-2 overflow-hidden h-max text-start w-3/4"}>
-      <div
-        ref={measureRef}
-        className="tracking-tight text-2xl invisible whitespace-nowrap pointer-events-none select-none h-0"
-      >
-        {...viaPoints}
-      </div>
       <div
         ref={animatedDivRef}
         className={cn(
@@ -55,9 +54,13 @@ export const BoardViaInfo: FC<BoardViaInfoProps> = ({ via }) => {
         )}
       >
         <span className={"mt-4"}>{...viaPoints}</span>
+        {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
         {isOverflowing && <span> +++&nbsp;</span>}
+        {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
         {isOverflowing && <span className={"mt-4"}>{...viaPoints} +++&nbsp;</span>}
+        {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
         {isOverflowing && <span className={"mt-4"}>{...viaPoints} +++&nbsp;</span>}
+        {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
         {isOverflowing && <span className={"mt-4"}>{...viaPoints} +++&nbsp;</span>}
       </div>
     </div>
@@ -68,7 +71,7 @@ export const BoardViaInfo: FC<BoardViaInfoProps> = ({ via }) => {
  * Creates an element array for the via stops to display.
  * @param via all via stops for the board entry.
  */
-const createViaElements = (via: Array<BoardViaEventDto>): Array<JSX.Element> => {
+const createViaElements = (via: BoardViaEventDto[]): JSX.Element[] => {
   const viaWithPassengerChange = via.filter(entry => entry.passengerChange);
   const relevantVia = viaWithPassengerChange.length ? viaWithPassengerChange : via;
 

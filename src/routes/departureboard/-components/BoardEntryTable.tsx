@@ -1,10 +1,10 @@
-import { type BoardEntryDto, type PointInfoDto, type SimRailServerDto, listBoardDepartures } from "@/api/generated";
-import { Throbber } from "@/components/Throbber.tsx";
-import { BoardEntry } from "@/routes/departureboard/-components/BoardEntry.tsx";
-import { BoardTableHeading } from "@/routes/departureboard/-components/BoardTableHeading.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import type { FC } from "react";
+import { type BoardEntryDto, listBoardDepartures, type PointInfoDto, type SimRailServerDto } from "@/api/rest";
+import { Throbber } from "@/components/Throbber.tsx";
+import { BoardEntry } from "@/routes/departureboard/-components/BoardEntry.tsx";
+import { BoardTableHeading } from "@/routes/departureboard/-components/BoardTableHeading.tsx";
 
 type BoardEntryTableProps = {
   server: SimRailServerDto;
@@ -24,7 +24,7 @@ export const BoardEntryTable: FC<BoardEntryTableProps> = ({
   const { data: boardEntries, isLoading } = useQuery({
     queryFn: async ({ signal }) => {
       const [timeStart, timeEnd] = getBoardFetchTimeRange(server, timeSpan);
-      const { data } = await listBoardDepartures({
+      return await listBoardDepartures({
         query: {
           serverId: server.id,
           pointId: point.id,
@@ -35,7 +35,6 @@ export const BoardEntryTable: FC<BoardEntryTableProps> = ({
         signal,
         throwOnError: true,
       });
-      return data;
     },
     queryKey: [],
     refetchInterval: 15_000,
@@ -47,16 +46,8 @@ export const BoardEntryTable: FC<BoardEntryTableProps> = ({
     throw new Error("Unable to load board entries");
   }
 
-  // formats the given iso date/time in the server timezone using the optionally provided format
-  const timeParser = (isoTime: string) => {
-    const serverTz = server.timezoneId === "Z" ? "utc" : server.timezoneId;
-    const givenDt = DateTime.fromISO(isoTime);
-    const dtZoned = givenDt.setZone(serverTz);
-    return dtZoned.isValid ? dtZoned : givenDt;
-  };
-
   return (
-    <div className="w-full max-w-full">
+    <div className={"w-full max-w-full"}>
       <BoardTableHeading />
       <ul>
         {boardEntries
@@ -67,7 +58,7 @@ export const BoardEntryTable: FC<BoardEntryTableProps> = ({
           })
           .filter(train => !onlyPassengerTrains || !train.isFreight)
           .map(train => (
-            <BoardEntry key={train.entry.journeyId} {...train} currentPoint={point} timeParser={timeParser} />
+            <BoardEntry key={train.entry.journeyId} {...train} currentPoint={point} />
           ))}
       </ul>
     </div>
@@ -95,12 +86,11 @@ const isFreightTrain = (entry: BoardEntryDto) => {
  * @param timeSpan the time span (in minutes) that should be requested.
  */
 const getBoardFetchTimeRange = (server: SimRailServerDto, timeSpan: number): [string, string] => {
-  const serverTz = server.timezoneId === "Z" ? "utc" : server.timezoneId;
-  const cdt = DateTime.now();
-  const sdt = cdt.setZone(serverTz);
-  const dt = sdt.isValid ? sdt : cdt;
-
-  const timeStart = dt.minus(5 * 60 * 1000); // current time - 5 minutes
-  const timeEnd = dt.plus(timeSpan * 60 * 1000); // current time + timeSpan minutes
-  return [timeStart.toISO(), timeEnd.toISO()];
+  const currentServerTime = DateTime.utc().plus({ hours: server.utcOffsetHours });
+  const timeStart = currentServerTime.minus({ minutes: 5 });
+  const timeEnd = currentServerTime.plus({ minutes: timeSpan });
+  return [
+    timeStart.toISO({ includeOffset: false, precision: "minutes" }),
+    timeEnd.toISO({ includeOffset: false, precision: "minutes" }),
+  ];
 };

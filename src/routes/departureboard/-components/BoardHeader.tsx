@@ -1,7 +1,7 @@
-import type { PointInfoDto, SimRailServerDto } from "@/api/generated";
-import { cn } from "@/lib/utils.ts";
 import { DateTime } from "luxon";
 import { type FC, useEffect, useState } from "react";
+import type { PointInfoDto, SimRailServerDto } from "@/api/rest";
+import { cn } from "@/lib/utils.ts";
 
 type BoardHeaderProps = {
   point: PointInfoDto;
@@ -9,17 +9,13 @@ type BoardHeaderProps = {
 };
 
 export const BoardHeader: FC<BoardHeaderProps> = ({ point, server }) => {
-  // updates the time every second to the current server time
-  const [serverTime, setServerTime] = useState(DateTime.now());
+  const [serverTime, setServerTime] = useState(DateTime.utc());
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      const serverTz = server.timezoneId === "Z" ? "utc" : server.timezoneId;
-      const cdt = DateTime.now();
-      const sdt = cdt.setZone(serverTz);
-      const dt = sdt.isValid ? sdt : cdt;
-      setServerTime(dt);
+    const intervalId = window.setInterval(() => {
+      const serverTime = DateTime.utc().plus({ hours: server.utcOffsetHours });
+      setServerTime(serverTime);
     }, 1000);
-    return () => clearInterval(intervalId);
+    return () => window.clearInterval(intervalId);
   }, [server]);
 
   return (

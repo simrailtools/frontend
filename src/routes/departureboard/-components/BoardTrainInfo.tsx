@@ -1,6 +1,6 @@
-import type { BoardTransportDto } from "@/api/generated";
-import { cn } from "@/lib/utils.ts";
 import type { FC } from "react";
+import type { BoardTransportDto } from "@/api/rest";
+import { cn } from "@/lib/utils.ts";
 
 type BoardTrainInfoProps = {
   isFreight: boolean;

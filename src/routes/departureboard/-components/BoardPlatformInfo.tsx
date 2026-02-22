@@ -1,5 +1,5 @@
-import type { BoardStopInfoDto } from "@/api/generated";
 import type { FC } from "react";
+import type { BoardStopInfoDto } from "@/api/rest";
 
 type BoardPlatformInfoProps = {
   scheduledStop?: BoardStopInfoDto;
@@ -16,17 +16,15 @@ export const BoardPlatformInfo: FC<BoardPlatformInfoProps> = ({ scheduledStop, r
 
   if (!realtimePlatformInfo || scheduledPlatformInfo === realtimePlatformInfo) {
     // no realtime info is known or train stops at the scheduled platform
-    return <span className="text-3xl font-bold text-black ml-auto whitespace-nowrap">{scheduledPlatformInfo}</span>;
+    return <span className={"text-3xl font-bold text-black ml-auto whitespace-nowrap"}>{scheduledPlatformInfo}</span>;
   }
 
   // train stops at a platform that differs from schedule
-  return <span className="text-3xl font-bold text-red-600 ml-auto whitespace-nowrap">{realtimePlatformInfo}</span>;
+  return <span className={"text-3xl font-bold text-red-600 ml-auto whitespace-nowrap"}>{realtimePlatformInfo}</span>;
 };
 
 /**
  * Formats the given platform info into a human-readable string.
  * @param platformInfo the platform info to format.
  */
-const formatPlatformInfo = (platformInfo: BoardStopInfoDto) => {
-  return `P: ${platformInfo.platform} T: ${platformInfo.track}`;
-};
+const formatPlatformInfo = (platformInfo: BoardStopInfoDto) => `P: ${platformInfo.platform} T: ${platformInfo.track}`;

@@ -1,10 +1,10 @@
-import type { BoardViaEventDto } from "@/api/generated";
-import { cn } from "@/lib/utils.ts";
 import type { FC } from "react";
+import type { BoardViaEventDto } from "@/api/rest";
+import { cn } from "@/lib/utils.ts";
 
 type BoardDestinationInfoProps = {
   currentPointName: string;
-  via: Array<BoardViaEventDto>;
+  via: BoardViaEventDto[];
 };
 
 export const BoardDestinationInfo: FC<BoardDestinationInfoProps> = ({ currentPointName, via }) => {
@@ -28,7 +28,7 @@ export const BoardDestinationInfo: FC<BoardDestinationInfoProps> = ({ currentPoi
  * indicating if the destination is scheduled, canceled or additional.
  * @param via the via events of the board entry to find the destination of.
  */
-const findDestination = (via: Array<BoardViaEventDto>): [string | null, "schedule" | "additional" | "canceled"] => {
+const findDestination = (via: BoardViaEventDto[]): [string | null, "schedule" | "additional" | "canceled"] => {
   const viaWithPassengerChange = via.filter(entry => entry.passengerChange);
   const relevantVia = viaWithPassengerChange.length ? viaWithPassengerChange : via;
 

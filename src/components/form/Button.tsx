@@ -1,7 +1,7 @@
+import type { ComponentProps, FC } from "react";
 import { cn } from "@/lib/utils.ts";
-import { type ComponentProps, type FC, forwardRef } from "react";
 
-export const Button: FC<ComponentProps<"button">> = forwardRef(({ children, className = "", ...props }, ref) => (
+export const Button: FC<ComponentProps<"button">> = ({ children, className = "", ref, ...props }) => (
   <button
     ref={ref}
     className={cn(
@@ -12,4 +12,4 @@ export const Button: FC<ComponentProps<"button">> = forwardRef(({ children, clas
   >
     {children}
   </button>
-));
+);

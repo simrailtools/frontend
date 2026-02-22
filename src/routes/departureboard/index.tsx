@@ -1,25 +1,19 @@
-import { findPointByIdOptions, findServerByIdOptions } from "@/api/generated/@tanstack/react-query.gen.ts";
+import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
+import { findPointByIdOptions, findServerByIdOptions } from "@/api/rest/@tanstack/react-query.gen.ts";
+import { BackgroundImage } from "@/components/BackgroundImage.tsx";
 import { BoardEntryTable } from "@/routes/departureboard/-components/BoardEntryTable.tsx";
 import { BoardHeader } from "@/routes/departureboard/-components/BoardHeader.tsx";
 import { BoardSelectForm } from "@/routes/departureboard/-components/BoardSelectForm.tsx";
-import { createFileRoute } from "@tanstack/react-router";
-import { zodValidator } from "@tanstack/zod-adapter";
-import { z } from "zod";
-
-/**
- * Validator for search (query) parameters of this route, point and server
- * id are optional to display a form to fill to make board finding easier.
- */
-const boardSearchSchema = z.object({
-  serverId: z.string().uuid().optional(),
-  pointId: z.string().uuid().optional(),
-  onlyPassengerTrains: z.boolean().catch(false),
-  timeSpan: z.number().gte(15).lte(180).catch(60),
-  sortOrder: z.enum(["schedule", "realtime"]).catch("realtime"),
-});
 
 export const Route = createFileRoute("/departureboard/")({
-  validateSearch: zodValidator(boardSearchSchema),
+  validateSearch: z.object({
+    serverId: z.uuid({ version: "v5" }).optional().catch(undefined),
+    pointId: z.uuidv4().optional().catch(undefined),
+    onlyPassengerTrains: z.boolean().catch(false),
+    timeSpan: z.number().gte(15).lte(180).catch(60),
+    sortOrder: z.enum(["schedule", "realtime"]).catch("realtime"),
+  }),
   loaderDeps: ({ search: { serverId, pointId } }) => ({ serverId, pointId }),
   loader: async ({ context: { queryClient }, deps: { serverId, pointId } }) => {
     if (serverId && pointId) {
@@ -51,5 +45,9 @@ function BoardComponent() {
     );
   }
 
-  return <BoardSelectForm {...searchParameters} />;
+  return (
+    <BackgroundImage>
+      <BoardSelectForm {...searchParameters} />
+    </BackgroundImage>
+  );
 }

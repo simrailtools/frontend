@@ -1,17 +1,16 @@
-import { cn } from "@/lib/utils.ts";
 import type { ClassValue } from "clsx";
-import type { DateTime } from "luxon";
+import { DateTime } from "luxon";
 import type { FC } from "react";
+import { cn } from "@/lib/utils.ts";
 
 type BoardTimeInfoProps = {
   time: string;
   scheduledTime?: string;
-  timeParser: (isoTime: string) => DateTime;
 };
 
-export const BoardTimeInfo: FC<BoardTimeInfoProps> = ({ time, scheduledTime, timeParser }) => {
-  const dtTime = timeParser(time);
-  const dtScheduled = scheduledTime ? timeParser(scheduledTime) : undefined;
+export const BoardTimeInfo: FC<BoardTimeInfoProps> = ({ time, scheduledTime }) => {
+  const dtTime = DateTime.fromISO(time);
+  const dtScheduled = scheduledTime ? DateTime.fromISO(scheduledTime) : undefined;
   const timeColorClass = getTimeColorClass(dtTime, dtScheduled);
   return (
     <span className={cn("text-5xl font-bold", scheduledTime && "font-semibold", timeColorClass)}>

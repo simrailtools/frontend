@@ -1,16 +1,16 @@
-import type { PointInfoDto, SimRailServerDto } from "@/api/generated";
-import { findPointByNameOptions, listServersOptions } from "@/api/generated/@tanstack/react-query.gen.ts";
-import { Heading } from "@/components/Heading.tsx";
-import { Throbber } from "@/components/Throbber.tsx";
-import { Button } from "@/components/form/Button.tsx";
-import { RangeInput } from "@/components/form/RangeInput.tsx";
-import { SelectInput } from "@/components/form/SelectInput.tsx";
-import { ToggleInput } from "@/components/form/ToggleInput.tsx";
-import { cn } from "@/lib/utils.ts";
 import { useForm, useStore } from "@tanstack/react-form";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { type FC, useEffect, useState } from "react";
+import type { PointInfoDto, SimRailServerDto } from "@/api/rest";
+import { findPointByNameOptions, listServersOptions } from "@/api/rest/@tanstack/react-query.gen.ts";
+import { Button } from "@/components/form/Button.tsx";
+import { RangeInput } from "@/components/form/RangeInput.tsx";
+import { SelectInput } from "@/components/form/SelectInput.tsx";
+import { ToggleInput } from "@/components/form/ToggleInput.tsx";
+import { Heading } from "@/components/Heading.tsx";
+import { Throbber } from "@/components/Throbber.tsx";
+import { cn } from "@/lib/utils.ts";
 
 type BoardSelectFormProps = {
   timeSpan: number;
@@ -29,6 +29,7 @@ type BoardSelectFormFields = {
 export const BoardSelectForm: FC<BoardSelectFormProps> = ({ timeSpan, onlyPassengerTrains, sortOrder }) => {
   const navigate = useNavigate();
   const form = useForm({
+    formId: "board_select_form",
     defaultValues: {
       timeSpan,
       sortOrder,
@@ -47,7 +48,6 @@ export const BoardSelectForm: FC<BoardSelectFormProps> = ({ timeSpan, onlyPassen
       }),
   });
 
-  //
   const selectedPoint = useStore(form.store, state => state.values.point);
   const [pointInputValue, setPointInputValue] = useState("");
   const [pointSearchTerm, setPointSearchTerm] = useState(pointInputValue);
@@ -80,8 +80,8 @@ export const BoardSelectForm: FC<BoardSelectFormProps> = ({ timeSpan, onlyPassen
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <div className={"flex items-center justify-center min-h-screen"}>
+      <div className={"bg-white p-8 rounded-lg shadow-lg w-full max-w-md"}>
         <Heading level={1} className={"flex justify-center whitespace-nowrap"}>
           Board Select
         </Heading>
@@ -89,7 +89,7 @@ export const BoardSelectForm: FC<BoardSelectFormProps> = ({ timeSpan, onlyPassen
           onSubmit={event => {
             event.preventDefault();
             event.stopPropagation();
-            form.handleSubmit();
+            form.handleSubmit().catch();
           }}
         >
           <div className={"flex flex-col space-y-4 mt-6"}>
