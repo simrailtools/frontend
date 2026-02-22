@@ -18,6 +18,7 @@ export const ServerMapText: FC<ServerMapTextProps & ComponentProps<"div">> = ({ 
       {scenery === "WARSAW_LODZ_KRAKOW" && <span>Warsaw - Łódź/Kraków</span>}
       {scenery === "WARSAW_LODZ_KATOWICE" && <span>Warsaw - Łódź/Katowice</span>}
       {scenery === "WARSAW_KATOWICE_KRAKOW" && <span>Warsaw - Katowice/Kraków</span>}
+      {scenery === "KATOWICE_PSARY_KOZLOW" && <span>Katowice - Psary/Kozłów</span>}
     </div>
   );
 };
