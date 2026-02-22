@@ -9,13 +9,13 @@ at https://simrail.tools. Currently implemented are:
 - A journey view showing live detailed information about a single journey (including future and past trains). Can
   currently only be accessed by selecting a train on the map and clicking on "Journey
   Details" (https://simrail.tools/journeys/<id\>)
+- Departure Boards, showing all departing trains at a point on a server (https://simrail.tools/departureboard)
 
 Planned features include:
 
 - A nicer home page
 - Journey search feature
 - Vehicle composition display (including images)
-- Departure Boards (preview available at https://departure-boards.sit-frontend.pages.dev/departureboard)
 
 If you want to request a feature feel free to [open an issue](https://github.com/simrailtools/frontend/issues/new) or
 contact me on Discord: `@derklaro`.
