@@ -12,7 +12,7 @@ export const BoardDestinationInfo: FC<BoardDestinationInfoProps> = ({ currentPoi
   return (
     <span
       className={cn(
-        "text-5xl font-bold ml-4 whitespace-nowrap",
+        "text-5xl font-bold ml-2.5 overflow-hidden whitespace-nowrap",
         diffType === "schedule" && "text-black",
         diffType === "canceled" && "text-red-600",
         diffType === "additional" && "text-green-600",

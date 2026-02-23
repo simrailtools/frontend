@@ -314,9 +314,13 @@ export type JourneyStopPlaceDto = {
 
 export type JourneyTransportDto = {
     /**
-     * The external category of the transport
+     * The category of the transport
      */
     category: string;
+    /**
+     * The external category of the transport (for example internal can be RPJ, external IR), null if the same as the internal category
+     */
+    categoryExternal?: string | null;
     /**
      * The number of the transport
      */
@@ -405,7 +409,7 @@ export type SimRailServerDto = {
     /**
      * The scenery (map part) that is available on the server
      */
-    scenery: 'FULL' | 'WARSAW_LODZ_PSARY' | 'WARSAW_LODZ_KRAKOW' | 'WARSAW_LODZ_KATOWICE' | 'WARSAW_KATOWICE_KRAKOW';
+    scenery: 'FULL' | 'WARSAW_LODZ_PSARY' | 'WARSAW_LODZ_KRAKOW' | 'WARSAW_LODZ_KATOWICE' | 'WARSAW_KATOWICE_KRAKOW' | 'KATOWICE_PSARY_KOZLOW';
     /**
      * The instant (ISO-8601) when the data of the server was last updated
      */
@@ -520,6 +524,10 @@ export type JourneyTransportSummaryDto = {
      * The external category of the transport
      */
     category: string;
+    /**
+     * The external category of the transport (for example internal can be RPJ, external IR), null if the same as the internal category
+     */
+    categoryExternal?: string | null;
     /**
      * The number of the transport
      */
@@ -777,9 +785,13 @@ export type BoardStopInfoDto = {
 
 export type BoardTransportDto = {
     /**
-     * The external category of the transport
+     * The category of the transport
      */
     category: string;
+    /**
+     * The external category of the transport (for example internal can be RPJ, external IR), null if the same as the internal category
+     */
+    categoryExternal?: string | null;
     /**
      * The number of the transport
      */

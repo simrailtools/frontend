@@ -13,7 +13,7 @@ export const BoardTrainInfo: FC<BoardTrainInfoProps> = ({ isFreight, isEventCanc
   return (
     <div
       className={cn(
-        "w-80 text-center rounded-lg py-1 px-2 ml-4 text-white text-4xl font-medium",
+        "min-w-72 max-w-72 text-center rounded-lg py-1 px-2 ml-2.5 text-white text-4xl font-medium",
         "bg-gray-700",
         isFreight && "bg-gray-500",
         isEventCancelled && "bg-transparent text-gray-600 border-2",

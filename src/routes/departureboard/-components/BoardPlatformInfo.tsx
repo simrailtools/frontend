@@ -16,11 +16,15 @@ export const BoardPlatformInfo: FC<BoardPlatformInfoProps> = ({ scheduledStop, r
 
   if (!realtimePlatformInfo || scheduledPlatformInfo === realtimePlatformInfo) {
     // no realtime info is known or train stops at the scheduled platform
-    return <span className={"text-3xl font-bold text-black ml-auto whitespace-nowrap"}>{scheduledPlatformInfo}</span>;
+    return (
+      <span className={"text-3xl font-bold text-black pl-2 ml-auto whitespace-nowrap"}>{scheduledPlatformInfo}</span>
+    );
   }
 
   // train stops at a platform that differs from schedule
-  return <span className={"text-3xl font-bold text-red-600 ml-auto whitespace-nowrap"}>{realtimePlatformInfo}</span>;
+  return (
+    <span className={"text-3xl font-bold text-red-600 pl-2 ml-auto whitespace-nowrap"}>{realtimePlatformInfo}</span>
+  );
 };
 
 /**
