@@ -7,7 +7,8 @@ export const RangeInput: FC<Omit<ComponentProps<"input">, "type">> = ({ classNam
       ref={ref}
       type={"range"}
       className={cn(
-        "w-full h-2 bg-gray-200 rounded-lg accent-blue-400 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400 transition",
+        "w-full h-2 bg-gray-200 rounded-lg accent-blue-400 appearance-none",
+        "focus:outline-none focus:ring-2 focus:ring-blue-400 transition",
         className,
       )}
       value={value}
