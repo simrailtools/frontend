@@ -35,7 +35,7 @@ const findDestination = (via: BoardViaEventDto[]): [string | null, "schedule" | 
   const destination = relevantVia.slice(-1)[0];
   const firstCancelledViaIndex = relevantVia.findIndex(entry => entry.cancelled);
   if (firstCancelledViaIndex === -1) {
-    // no canceled event, destination is equal to schedule+
+    // no canceled event, destination is equal to schedule
     const diffType = destination.additional ? "additional" : "schedule";
     return [destination.pointName, diffType];
   }
