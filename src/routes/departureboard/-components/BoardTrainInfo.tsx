@@ -1,0 +1,43 @@
+import type { FC } from "react";
+import type { BoardTransportDto } from "@/api/rest";
+import { cn } from "@/lib/utils.ts";
+
+type BoardTrainInfoProps = {
+  isFreight: boolean;
+  isEventCancelled: boolean;
+  transport: BoardTransportDto;
+};
+
+export const BoardTrainInfo: FC<BoardTrainInfoProps> = ({ isFreight, isEventCancelled, transport }) => {
+  const formattedName = formatTrainName(transport);
+  return (
+    <div
+      className={cn(
+        "min-w-72 max-w-72 text-center rounded-lg py-1 px-2 ml-2.5 text-white text-4xl font-medium",
+        "bg-gray-700",
+        isFreight && "bg-gray-500",
+        isEventCancelled && "bg-transparent text-gray-600 border-2",
+      )}
+    >
+      <span
+        className={cn("inline-block max-w-full whitespace-nowrap overflow-hidden", isEventCancelled && "line-through")}
+      >
+        {formattedName}
+      </span>
+    </div>
+  );
+};
+
+/**
+ * Formats the train name to display based on the given transport.
+ * @param transport the transport to format.
+ */
+const formatTrainName = (transport: BoardTransportDto): string => {
+  if (transport.line) {
+    // include line if given, e.g. 'RPJ S41 (40199)'
+    return `${transport.category} ${transport.line} (${transport.number})`;
+  }
+
+  // only display category and number, e.g. 'ECE 54001'
+  return `${transport.category} ${transport.number}`;
+};

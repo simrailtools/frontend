@@ -4,4 +4,14 @@
   --background-image-trains-snow: url("assets/background/background_snow.jpg");
   --background-image-trains-night: url("assets/background/background_night.jpg");
   --background-image-trains-normal: url("assets/background/background_normal.jpg");
+
+  --animate-marquee: marquee 30s infinite 2s linear;
+  @keyframes marquee {
+    0% {
+      transform: translate3d(0px, 0, 0);
+    }
+    100% {
+      transform: translate3d(calc(-50% + 0px), 0, 0);
+    }
+  }
 }

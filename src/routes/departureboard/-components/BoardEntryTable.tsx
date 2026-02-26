@@ -1,0 +1,96 @@
+import { useQuery } from "@tanstack/react-query";
+import { DateTime } from "luxon";
+import type { FC } from "react";
+import { type BoardEntryDto, listBoardDepartures, type PointInfoDto, type SimRailServerDto } from "@/api/rest";
+import { Throbber } from "@/components/Throbber.tsx";
+import { BoardEntry } from "@/routes/departureboard/-components/BoardEntry.tsx";
+import { BoardTableHeading } from "@/routes/departureboard/-components/BoardTableHeading.tsx";
+
+type BoardEntryTableProps = {
+  server: SimRailServerDto;
+  point: PointInfoDto;
+  timeSpan: number;
+  onlyPassengerTrains: boolean;
+  sortOrder: "schedule" | "realtime";
+};
+
+export const BoardEntryTable: FC<BoardEntryTableProps> = ({
+  server,
+  point,
+  timeSpan,
+  onlyPassengerTrains,
+  sortOrder,
+}) => {
+  const { data: boardEntries, isLoading } = useQuery({
+    queryFn: async ({ signal }) => {
+      const [timeStart, timeEnd] = getBoardFetchTimeRange(server, timeSpan);
+      return await listBoardDepartures({
+        query: {
+          serverId: server.id,
+          pointId: point.id,
+          timeStart,
+          timeEnd,
+          sortBy: sortOrder === "schedule" ? "SCHEDULED_TIME" : "REALTIME_TIME",
+        },
+        signal,
+        throwOnError: true,
+      });
+    },
+    queryKey: [],
+    refetchInterval: 15_000,
+  });
+  if (isLoading) {
+    return <Throbber />;
+  }
+  if (boardEntries === undefined) {
+    throw new Error("Unable to load board entries");
+  }
+
+  return (
+    <div className={"w-full max-w-full"}>
+      <BoardTableHeading />
+      <ul>
+        {boardEntries
+          .filter(entry => entry.realtimeTimeType !== "REAL")
+          .map(entry => {
+            const isFreight = isFreightTrain(entry);
+            return { entry, isFreight };
+          })
+          .filter(train => !onlyPassengerTrains || !train.isFreight)
+          .map(train => (
+            <BoardEntry key={train.entry.journeyId} {...train} currentPoint={point} />
+          ))}
+      </ul>
+    </div>
+  );
+};
+
+/**
+ * Checks if the given board entry is a freight train.
+ * @param entry the entry to check.
+ */
+const isFreightTrain = (entry: BoardEntryDto) => {
+  const transportType = entry.transport.type;
+  return (
+    transportType === "MANEUVER_TRAIN" ||
+    transportType === "EMPTY_TRANSFER_TRAIN" ||
+    transportType === "INTER_NATIONAL_CARGO_TRAIN" ||
+    transportType === "NATIONAL_CARGO_TRAIN" ||
+    transportType === "MAINTENANCE_TRAIN"
+  );
+};
+
+/**
+ * Gets the time range (start and end time) for the board fetch request.
+ * @param server the server to request the board of.
+ * @param timeSpan the time span (in minutes) that should be requested.
+ */
+const getBoardFetchTimeRange = (server: SimRailServerDto, timeSpan: number): [string, string] => {
+  const currentServerTime = DateTime.utc().plus({ hours: server.utcOffsetHours });
+  const timeStart = currentServerTime.minus({ minutes: 5 });
+  const timeEnd = currentServerTime.plus({ minutes: timeSpan });
+  return [
+    timeStart.toISO({ includeOffset: false, precision: "minutes" }),
+    timeEnd.toISO({ includeOffset: false, precision: "minutes" }),
+  ];
+};

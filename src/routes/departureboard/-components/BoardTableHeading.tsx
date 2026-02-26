@@ -1,0 +1,10 @@
+import type { FC } from "react";
+
+export const BoardTableHeading: FC = () => (
+  <div className={"flex pt-2 px-2 font-semibold text-gray-600"}>
+    <div className={"ml-3"}>Time</div>
+    <div className={"ml-24"}>Train</div>
+    <div className={"ml-66"}>Destination</div>
+    <div className={"ml-auto"}>Platform / Track</div>
+  </div>
+);
