@@ -75,17 +75,17 @@ export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition
         )}
 
         {/* Traction Unit, Wagon Count, Length/Weight */}
-        {composition !== undefined && (
+        {tractionUnit !== undefined && (
           <>
             <div className={"flex flex-row space-x-3"}>
               <InfoLine display={"Traction Unit"}>
                 <p>
-                  {tractionUnit?.railcar.displayName}
-                  {tractionUnit?.railcar.name != null && <> "{tractionUnit.railcar.name}"</>}
+                  {tractionUnit.railcar.displayName}
+                  {tractionUnit.railcar.name != null && <> "{tractionUnit.railcar.name}"</>}
                 </p>
               </InfoLine>
               <InfoLine display={"Wagon Count"}>
-                <p>{composition.vehicles.length}</p>
+                <p>{composition?.vehicles?.length ?? 0}</p>
               </InfoLine>
             </div>
             <div className={"flex flex-row space-x-3"}>
