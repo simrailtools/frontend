@@ -26,7 +26,7 @@ export const useLiveDispatchPostData = (serverId: string, postId?: string) => {
   );
 
   const snapshotLoader = useCallback(async (): Promise<[DispatchPostBaseData, DispatchPostUpdateFrame][]> => {
-    const dispatchPosts = await findDispatchPosts({ query: { serverId, limit: 250 } });
+    const dispatchPosts = await findDispatchPosts({ query: { serverId, limit: 250, deleted: false } });
     return (dispatchPosts?.items ?? [])
       .filter(post => !postId || post.id === postId)
       .map(post => {
