@@ -861,7 +861,7 @@ export type ProblemDetail = {
      * A URI reference that identifies the specific occurrence of the problem
      */
     instance?: string;
-    [key: string]: unknown | string | number | undefined;
+    [key: string]: unknown;
 };
 
 export type FindUserDetailsData = {
@@ -1779,7 +1779,7 @@ export type FindDispatchPostsData = {
          */
         serverId?: string;
         /**
-         * The difficulty of the dispatch posts to return (1-5)
+         * The difficulty of the dispatch posts to return (0-5)
          */
         difficulty?: number;
         /**
@@ -1787,7 +1787,7 @@ export type FindDispatchPostsData = {
          */
         pointId?: string;
         /**
-         * If the post should be deleted (removed from the SimRail backend)
+         * Filter for the deletion state of the dispatch post
          */
         deleted?: boolean;
         /**
