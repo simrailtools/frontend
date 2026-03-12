@@ -41,7 +41,9 @@ export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition
   const lastPlayableEvent = findLastPlayableEvent(journey.events);
 
   // find the maximum speed of the train long the events
-  const vMax = Math.max(...journey.events.map(event => event.transport.maxSpeed));
+  const vMax = Math.max(
+    ...journey.events.filter(event => event.transport.maxSpeed > 0).map(event => event.transport.maxSpeed),
+  );
 
   // resolve information about vehicle composition
   const tractionUnit = composition?.vehicles.at(0);
@@ -68,7 +70,7 @@ export const JourneyBaseInfo: FC<JourneyBaseInfoProps> = ({ journey, composition
         </div>
 
         {/* Journey Max Speed */}
-        {vMax !== Number.POSITIVE_INFINITY && (
+        {vMax > 0 && vMax < Number.MAX_SAFE_INTEGER && (
           <InfoLine display={"Vmax"}>
             <p>{vMax} km/h</p>
           </InfoLine>
