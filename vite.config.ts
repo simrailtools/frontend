@@ -6,10 +6,8 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   build: {
-    sourcemap: false,
     minify: "oxc",
     cssMinify: "lightningcss",
-    assetsInlineLimit: 4096,
     reportCompressedSize: true,
     target: "baseline-widely-available",
   },
