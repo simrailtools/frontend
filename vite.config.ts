@@ -1,18 +1,20 @@
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import tanstackRouter from "@tanstack/router-plugin/vite";
-import viteReact from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import viteTsConfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   build: {
     sourcemap: false,
-    minify: "esbuild",
-    cssMinify: "esbuild",
+    minify: "oxc",
+    cssMinify: "lightningcss",
     assetsInlineLimit: 4096,
     reportCompressedSize: true,
     target: "baseline-widely-available",
+  },
+  resolve: {
+    tsconfigPaths: true,
   },
   plugins: [
     devtools({
@@ -20,9 +22,6 @@ export default defineConfig({
       injectSource: {
         enabled: false,
       },
-    }),
-    viteTsConfigPaths({
-      projects: ["./tsconfig.json"],
     }),
     tailwindcss(),
     tanstackRouter({
@@ -33,6 +32,6 @@ export default defineConfig({
       routesDirectory: "./src/routes",
       generatedRouteTree: "./src/routeTree.gen.ts",
     }),
-    viteReact(),
+    react(),
   ],
 });
