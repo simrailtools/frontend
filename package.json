@@ -48,7 +48,7 @@
     "@bufbuild/buf": "^1.66.1",
     "@bufbuild/protoc-gen-es": "^2.11.0",
     "@hey-api/openapi-ts": "^0.94.0",
-    "@tailwindcss/vite": "^4.2.1",
+    "@tailwindcss/vite": "^4.2.2",
     "@tanstack/devtools-vite": "^0.6.0",
     "@types/geojson": "^7946.0.16",
     "@types/luxon": "^3.7.1",
