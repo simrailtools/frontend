@@ -12,7 +12,22 @@ type StopItemProps = {
   timeFormatter: (isoTime: string) => string;
 };
 
+const isDepartureConfirmed = (arrival?: JourneyEventDto, departure?: JourneyEventDto) => {
+  if (departure) {
+    // if there is a departure event, base this info on it exclusively
+    return departure.realtimeTimeType === "REAL";
+  }
+
+  if (arrival) {
+    // if there is only an arrival event for the point (last station of a journey), then use that info instead
+    return arrival.realtimeTimeType === "REAL";
+  }
+
+  return false;
+};
+
 export const JourneyStopItem: FC<StopItemProps> = ({ arrival, departure, timeFormatter }) => {
+  const departureConfirmed = isDepartureConfirmed(arrival, departure);
   const stopPlace = arrival?.stopPlace ?? departure?.stopPlace;
   return (
     <div className="flex items-center space-x-3">
@@ -33,8 +48,8 @@ export const JourneyStopItem: FC<StopItemProps> = ({ arrival, departure, timeFor
       </div>
 
       <div className={"flex flex-col justify-end ml-auto"}>
-        {arrival !== undefined && <JourneyStopPlatform event={arrival} />}
-        {departure !== undefined && <JourneyStopPlatform event={departure} />}
+        {arrival !== undefined && <JourneyStopPlatform event={arrival} departureConfirmed={departureConfirmed} />}
+        {departure !== undefined && <JourneyStopPlatform event={departure} departureConfirmed={departureConfirmed} />}
       </div>
     </div>
   );
