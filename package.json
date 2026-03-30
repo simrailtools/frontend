@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "packageManager": "pnpm@10.32.1",
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
     "dev": "vite",
     "build": "openapi-ts && tsc -b && vite build",
@@ -26,14 +26,14 @@
     "@tanstack/react-pacer-devtools": "^0.6.0",
     "@tanstack/react-query": "^5.95.2",
     "@tanstack/react-query-devtools": "^5.95.2",
-    "@tanstack/react-router": "^1.168.3",
+    "@tanstack/react-router": "^1.168.8",
     "@tanstack/react-router-devtools": "^1.166.11",
-    "@tanstack/router-plugin": "^1.167.4",
+    "@tanstack/router-plugin": "^1.167.9",
     "@yornaath/batshit": "^0.14.0",
     "clsx": "^2.1.1",
     "fast-equals": "^6.0.0",
     "luxon": "^3.7.2",
-    "maplibre-gl": "^5.21.0",
+    "maplibre-gl": "^5.21.1",
     "react": "^19.2.4",
     "react-clock": "^6.0.0",
     "react-dom": "^19.2.4",
@@ -44,10 +44,10 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.8",
+    "@biomejs/biome": "^2.4.9",
     "@bufbuild/buf": "^1.66.1",
     "@bufbuild/protoc-gen-es": "^2.11.0",
-    "@hey-api/openapi-ts": "^0.94.4",
+    "@hey-api/openapi-ts": "^0.94.5",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/devtools-vite": "^0.6.0",
     "@types/geojson": "^7946.0.16",
@@ -58,6 +58,6 @@
     "cross-env": "^10.1.0",
     "globals": "^17.4.0",
     "typescript": "^6.0.2",
-    "vite": "^8.0.2"
+    "vite": "^8.0.3"
   }
 }
