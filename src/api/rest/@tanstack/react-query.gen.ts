@@ -3,8 +3,8 @@
 import { type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { findDispatchPostById, findDispatchPosts, findJourneyById, findJourneysByEvent, findJourneysByIds, findJourneysByPlayableDeparture, findJourneysByRailcar, findMapPolylineByJourney, findPointById, findPointByName, findPointByPosition, findPointBySimRailPointId, findPointsById, findRailcarByApiName, findRailcarById, findRailcarsByIds, findServerByCode, findServerById, findUserDetails, findVehicleCompositionByJourneyId, listActiveJourneys, listBoardArrivals, listBoardDepartures, listPoints, listServers, type Options } from '../sdk.gen';
-import type { FindDispatchPostByIdData, FindDispatchPostByIdError, FindDispatchPostByIdResponse, FindDispatchPostsData, FindDispatchPostsError, FindDispatchPostsResponse, FindJourneyByIdData, FindJourneyByIdError, FindJourneyByIdResponse, FindJourneysByEventData, FindJourneysByEventError, FindJourneysByEventResponse, FindJourneysByIdsData, FindJourneysByIdsError, FindJourneysByIdsResponse, FindJourneysByPlayableDepartureData, FindJourneysByPlayableDepartureError, FindJourneysByPlayableDepartureResponse, FindJourneysByRailcarData, FindJourneysByRailcarError, FindJourneysByRailcarResponse, FindMapPolylineByJourneyData, FindMapPolylineByJourneyError, FindMapPolylineByJourneyResponse, FindPointByIdData, FindPointByIdError, FindPointByIdResponse, FindPointByNameData, FindPointByNameError, FindPointByNameResponse, FindPointByPositionData, FindPointByPositionError, FindPointByPositionResponse, FindPointBySimRailPointIdData, FindPointBySimRailPointIdError, FindPointBySimRailPointIdResponse, FindPointsByIdData, FindPointsByIdError, FindPointsByIdResponse, FindRailcarByApiNameData, FindRailcarByApiNameError, FindRailcarByApiNameResponse, FindRailcarByIdData, FindRailcarByIdError, FindRailcarByIdResponse, FindRailcarsByIdsData, FindRailcarsByIdsError, FindRailcarsByIdsResponse, FindServerByCodeData, FindServerByCodeError, FindServerByCodeResponse, FindServerByIdData, FindServerByIdError, FindServerByIdResponse, FindUserDetailsData, FindUserDetailsError, FindUserDetailsResponse, FindVehicleCompositionByJourneyIdData, FindVehicleCompositionByJourneyIdError, FindVehicleCompositionByJourneyIdResponse, ListActiveJourneysData, ListActiveJourneysError, ListActiveJourneysResponse, ListBoardArrivalsData, ListBoardArrivalsError, ListBoardArrivalsResponse, ListBoardDeparturesData, ListBoardDeparturesError, ListBoardDeparturesResponse, ListPointsData, ListPointsError, ListPointsResponse, ListServersData, ListServersError, ListServersResponse } from '../types.gen';
+import { findDispatchPostById, findDispatchPosts, findJourneyById, findJourneysByEvent, findJourneysByIds, findJourneysByPlayableDeparture, findJourneysByRailcar, findMapPolylineByJourney, findPointById, findPointByName, findPointByPosition, findPointsById, findRailcarByApiName, findRailcarById, findRailcarsByIds, findServerByCode, findServerById, findUserDetails, findVehicleCompositionByJourneyId, listActiveJourneys, listBoardArrivals, listBoardDepartures, listPoints, listServers, type Options } from '../sdk.gen';
+import type { FindDispatchPostByIdData, FindDispatchPostByIdError, FindDispatchPostByIdResponse, FindDispatchPostsData, FindDispatchPostsError, FindDispatchPostsResponse, FindJourneyByIdData, FindJourneyByIdError, FindJourneyByIdResponse, FindJourneysByEventData, FindJourneysByEventError, FindJourneysByEventResponse, FindJourneysByIdsData, FindJourneysByIdsError, FindJourneysByIdsResponse, FindJourneysByPlayableDepartureData, FindJourneysByPlayableDepartureError, FindJourneysByPlayableDepartureResponse, FindJourneysByRailcarData, FindJourneysByRailcarError, FindJourneysByRailcarResponse, FindMapPolylineByJourneyData, FindMapPolylineByJourneyError, FindMapPolylineByJourneyResponse, FindPointByIdData, FindPointByIdError, FindPointByIdResponse, FindPointByNameData, FindPointByNameError, FindPointByNameResponse, FindPointByPositionData, FindPointByPositionError, FindPointByPositionResponse, FindPointsByIdData, FindPointsByIdError, FindPointsByIdResponse, FindRailcarByApiNameData, FindRailcarByApiNameError, FindRailcarByApiNameResponse, FindRailcarByIdData, FindRailcarByIdError, FindRailcarByIdResponse, FindRailcarsByIdsData, FindRailcarsByIdsError, FindRailcarsByIdsResponse, FindServerByCodeData, FindServerByCodeError, FindServerByCodeResponse, FindServerByIdData, FindServerByIdError, FindServerByIdResponse, FindUserDetailsData, FindUserDetailsError, FindUserDetailsResponse, FindVehicleCompositionByJourneyIdData, FindVehicleCompositionByJourneyIdError, FindVehicleCompositionByJourneyIdResponse, ListActiveJourneysData, ListActiveJourneysError, ListActiveJourneysResponse, ListBoardArrivalsData, ListBoardArrivalsError, ListBoardArrivalsResponse, ListBoardDeparturesData, ListBoardDeparturesError, ListBoardDeparturesResponse, ListPointsData, ListPointsError, ListPointsResponse, ListServersData, ListServersError, ListServersResponse } from '../types.gen';
 
 /**
  * Get a batch of detailed user information (up to 250)
@@ -210,27 +210,6 @@ export const findPointByPositionOptions = (options: Options<FindPointByPositionD
         throwOnError: true
     }),
     queryKey: findPointByPositionQueryKey(options)
-});
-
-export const findPointBySimRailPointIdQueryKey = (options: Options<FindPointBySimRailPointIdData>) => createQueryKey('findPointBySimRailPointId', options);
-
-/**
- * Get a point by its SimRail point id
- *
- * Gets a point by its SimRail point id". Note that the resulting points are grouped by their operational unit, for
- * example '2528' (Małogoszcz) and '5460' (Małogoszcz PZS R35) will both return 'Małogoszcz'. Also note that some
- * points might not return any result if they are too close together and one point represents them enough
- * (for example the case for 'Zawiercie' and 'Zawiercie GT')
- *
- */
-export const findPointBySimRailPointIdOptions = (options: Options<FindPointBySimRailPointIdData>) => queryOptions<FindPointBySimRailPointIdResponse, FindPointBySimRailPointIdError, FindPointBySimRailPointIdResponse, ReturnType<typeof findPointBySimRailPointIdQueryKey>>({
-    queryFn: async ({ queryKey, signal }) => await findPointBySimRailPointId({
-        ...options,
-        ...queryKey[0],
-        signal,
-        throwOnError: true
-    }),
-    queryKey: findPointBySimRailPointIdQueryKey(options)
 });
 
 export const findPointByNameQueryKey = (options: Options<FindPointByNameData>) => createQueryKey('findPointByName', options);

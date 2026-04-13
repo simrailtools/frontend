@@ -1288,44 +1288,6 @@ export type FindPointByPositionResponses = {
 
 export type FindPointByPositionResponse = FindPointByPositionResponses[keyof FindPointByPositionResponses];
 
-export type FindPointBySimRailPointIdData = {
-    body?: never;
-    path: {
-        /**
-         * The id of the point in the SimRail backend, e.g. 2371
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/sit-points/v1/by-point-id/{id}';
-};
-
-export type FindPointBySimRailPointIdErrors = {
-    /**
-     * One of the filter parameters is invalid
-     */
-    400: ProblemDetail;
-    /**
-     * No point can be found with the given id
-     */
-    404: unknown;
-    /**
-     * An internal error occurred while processing the request
-     */
-    500: ProblemDetail;
-};
-
-export type FindPointBySimRailPointIdError = FindPointBySimRailPointIdErrors[keyof FindPointBySimRailPointIdErrors];
-
-export type FindPointBySimRailPointIdResponses = {
-    /**
-     * The point with the given id was successfully resolved
-     */
-    200: PointInfoDto;
-};
-
-export type FindPointBySimRailPointIdResponse = FindPointBySimRailPointIdResponses[keyof FindPointBySimRailPointIdResponses];
-
 export type FindPointByNameData = {
     body?: never;
     path: {

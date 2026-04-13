@@ -2,9 +2,9 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { FindDispatchPostByIdData, FindDispatchPostByIdErrors, FindDispatchPostByIdResponses, FindDispatchPostsData, FindDispatchPostsErrors, FindDispatchPostsResponses, FindJourneyByIdData, FindJourneyByIdErrors, FindJourneyByIdResponses, FindJourneysByEventData, FindJourneysByEventErrors, FindJourneysByEventResponses, FindJourneysByIdsData, FindJourneysByIdsErrors, FindJourneysByIdsResponses, FindJourneysByPlayableDepartureData, FindJourneysByPlayableDepartureErrors, FindJourneysByPlayableDepartureResponses, FindJourneysByRailcarData, FindJourneysByRailcarErrors, FindJourneysByRailcarResponses, FindMapPolylineByJourneyData, FindMapPolylineByJourneyErrors, FindMapPolylineByJourneyResponses, FindPointByIdData, FindPointByIdErrors, FindPointByIdResponses, FindPointByNameData, FindPointByNameErrors, FindPointByNameResponses, FindPointByPositionData, FindPointByPositionErrors, FindPointByPositionResponses, FindPointBySimRailPointIdData, FindPointBySimRailPointIdErrors, FindPointBySimRailPointIdResponses, FindPointsByIdData, FindPointsByIdErrors, FindPointsByIdResponses, FindRailcarByApiNameData, FindRailcarByApiNameErrors, FindRailcarByApiNameResponses, FindRailcarByIdData, FindRailcarByIdErrors, FindRailcarByIdResponses, FindRailcarsByIdsData, FindRailcarsByIdsErrors, FindRailcarsByIdsResponses, FindServerByCodeData, FindServerByCodeErrors, FindServerByCodeResponses, FindServerByIdData, FindServerByIdErrors, FindServerByIdResponses, FindUserDetailsData, FindUserDetailsErrors, FindUserDetailsResponses, FindVehicleCompositionByJourneyIdData, FindVehicleCompositionByJourneyIdErrors, FindVehicleCompositionByJourneyIdResponses, ListActiveJourneysData, ListActiveJourneysErrors, ListActiveJourneysResponses, ListBoardArrivalsData, ListBoardArrivalsErrors, ListBoardArrivalsResponses, ListBoardDeparturesData, ListBoardDeparturesErrors, ListBoardDeparturesResponses, ListPointsData, ListPointsErrors, ListPointsResponses, ListServersData, ListServersErrors, ListServersResponses } from './types.gen';
+import type { FindDispatchPostByIdData, FindDispatchPostByIdErrors, FindDispatchPostByIdResponses, FindDispatchPostsData, FindDispatchPostsErrors, FindDispatchPostsResponses, FindJourneyByIdData, FindJourneyByIdErrors, FindJourneyByIdResponses, FindJourneysByEventData, FindJourneysByEventErrors, FindJourneysByEventResponses, FindJourneysByIdsData, FindJourneysByIdsErrors, FindJourneysByIdsResponses, FindJourneysByPlayableDepartureData, FindJourneysByPlayableDepartureErrors, FindJourneysByPlayableDepartureResponses, FindJourneysByRailcarData, FindJourneysByRailcarErrors, FindJourneysByRailcarResponses, FindMapPolylineByJourneyData, FindMapPolylineByJourneyErrors, FindMapPolylineByJourneyResponses, FindPointByIdData, FindPointByIdErrors, FindPointByIdResponses, FindPointByNameData, FindPointByNameErrors, FindPointByNameResponses, FindPointByPositionData, FindPointByPositionErrors, FindPointByPositionResponses, FindPointsByIdData, FindPointsByIdErrors, FindPointsByIdResponses, FindRailcarByApiNameData, FindRailcarByApiNameErrors, FindRailcarByApiNameResponses, FindRailcarByIdData, FindRailcarByIdErrors, FindRailcarByIdResponses, FindRailcarsByIdsData, FindRailcarsByIdsErrors, FindRailcarsByIdsResponses, FindServerByCodeData, FindServerByCodeErrors, FindServerByCodeResponses, FindServerByIdData, FindServerByIdErrors, FindServerByIdResponses, FindUserDetailsData, FindUserDetailsErrors, FindUserDetailsResponses, FindVehicleCompositionByJourneyIdData, FindVehicleCompositionByJourneyIdErrors, FindVehicleCompositionByJourneyIdResponses, ListActiveJourneysData, ListActiveJourneysErrors, ListActiveJourneysResponses, ListBoardArrivalsData, ListBoardArrivalsErrors, ListBoardArrivalsResponses, ListBoardDeparturesData, ListBoardDeparturesErrors, ListBoardDeparturesResponses, ListPointsData, ListPointsErrors, ListPointsResponses, ListServersData, ListServersErrors, ListServersResponses } from './types.gen';
 
-export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
+export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
      * You can provide a client instance returned by `createClient()` instead of
      * individual options. This might be also useful if you want to implement a
@@ -142,21 +142,6 @@ export const findRailcarById = <ThrowOnError extends boolean = false>(options: O
 export const findPointByPosition = <ThrowOnError extends boolean = false>(options: Options<FindPointByPositionData, ThrowOnError>) => (options.client ?? client).get<FindPointByPositionResponses, FindPointByPositionErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     url: '/sit-points/v1/by-position',
-    ...options
-});
-
-/**
- * Get a point by its SimRail point id
- *
- * Gets a point by its SimRail point id". Note that the resulting points are grouped by their operational unit, for
- * example '2528' (Małogoszcz) and '5460' (Małogoszcz PZS R35) will both return 'Małogoszcz'. Also note that some
- * points might not return any result if they are too close together and one point represents them enough
- * (for example the case for 'Zawiercie' and 'Zawiercie GT')
- *
- */
-export const findPointBySimRailPointId = <ThrowOnError extends boolean = false>(options: Options<FindPointBySimRailPointIdData, ThrowOnError>) => (options.client ?? client).get<FindPointBySimRailPointIdResponses, FindPointBySimRailPointIdErrors, ThrowOnError, 'data'>({
-    responseStyle: 'data',
-    url: '/sit-points/v1/by-point-id/{id}',
     ...options
 });
 
