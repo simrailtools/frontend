@@ -1,4 +1,4 @@
-onlyBuiltDependencies:
-  - '@bufbuild/buf'
-  - esbuild
-  - protobufjs
+allowBuilds:
+  '@bufbuild/buf': true
+  esbuild: true
+  protobufjs: true

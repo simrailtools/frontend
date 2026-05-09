@@ -1,3 +1,4 @@
+// @ts-expect-error
 // biome-ignore lint/correctness/noNodejsModules: this file is not for the client side
 import process from "node:process";
 import { defineConfig } from "@hey-api/openapi-ts";
@@ -7,7 +8,7 @@ export default defineConfig({
   input: `${baseUrl}/docs/openapi.yaml`,
   output: {
     path: "./src/api/rest",
-    postProcess: ["biome:format", "biome:lint"],
+    postProcess: [],
   },
   plugins: [
     "@hey-api/typescript",
