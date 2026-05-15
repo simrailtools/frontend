@@ -12,6 +12,7 @@
   "timezone": "UTC",
   "rangeStrategy": "bump",
   "rebaseWhen": "conflicted",
+  "minimumReleaseAge": "3 days",
   "commitMessagePrefix": "chore: ",
   "commitMessageAction": "update",
   "vulnerabilityAlerts": {
