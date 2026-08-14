@@ -68,8 +68,7 @@ export const DispatchPostMarker: FC<{
             )}
           </button>
         </Marker>
-        {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
-        {popupVisible && (
+        {popupVisible ? (
           <Popup
             offset={23}
             anchor={"bottom"}
@@ -93,7 +92,7 @@ export const DispatchPostMarker: FC<{
               <span className={cn("text-sm", !userInfo && "italic")}>{formatUserName(userInfo) ?? "Bot"}</span>
             </div>
           </Popup>
-        )}
+        ) : null}
       </>
     );
   },

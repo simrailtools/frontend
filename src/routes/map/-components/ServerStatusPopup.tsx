@@ -58,15 +58,16 @@ export const ServerStatusPopup: FC<{ server: NatsSyncedEntry<ServerBaseData, Ser
         </div>
         <div className={"flex items-center"}>
           <button type={"button"} className={"cursor-pointer"} onClick={clockVisibilityToggle}>
-            {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
-            {clockVisible && <MdOutlineAccessTime className={"w-5 h-5"} />}
-            {!clockVisible && <MdOutlineAccessTimeFilled className={"w-5 h-5"} />}
+            {clockVisible ? (
+              <MdOutlineAccessTime className={"w-5 h-5"} />
+            ) : (
+              <MdOutlineAccessTimeFilled className={"w-5 h-5"} />
+            )}
           </button>
         </div>
       </div>
       <ServerMapText scenery={scenery} className={"leading-tight tracking-tight text-xs"} />
-      {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
-      {clockVisible && (
+      {clockVisible ? (
         <div className={"mt-2"}>
           <Clock
             size={160}
@@ -85,7 +86,7 @@ export const ServerStatusPopup: FC<{ server: NatsSyncedEntry<ServerBaseData, Ser
             value={serverTime}
           />
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

@@ -10,8 +10,8 @@ export const BoardViaInfo: FC<BoardViaInfoProps> = ({ via }) => {
   const viaPoints = useMemo(() => createViaElements(via), [via]);
 
   // handling of overflow on the screen
-  const containerRef = useRef<HTMLDivElement>(null);
-  const animatedDivRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const animatedDivRef = useRef<HTMLDivElement | null>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
   useEffect(() => {
     const container = containerRef.current;
@@ -54,14 +54,10 @@ export const BoardViaInfo: FC<BoardViaInfoProps> = ({ via }) => {
         )}
       >
         <span className={"mt-4"}>{...viaPoints}</span>
-        {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
-        {isOverflowing && <span> +++&nbsp;</span>}
-        {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
-        {isOverflowing && <span className={"mt-4"}>{...viaPoints} +++&nbsp;</span>}
-        {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
-        {isOverflowing && <span className={"mt-4"}>{...viaPoints} +++&nbsp;</span>}
-        {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
-        {isOverflowing && <span className={"mt-4"}>{...viaPoints} +++&nbsp;</span>}
+        {isOverflowing ? <span> +++&nbsp;</span> : null}
+        {isOverflowing ? <span className={"mt-4"}>{...viaPoints} +++&nbsp;</span> : null}
+        {isOverflowing ? <span className={"mt-4"}>{...viaPoints} +++&nbsp;</span> : null}
+        {isOverflowing ? <span className={"mt-4"}>{...viaPoints} +++&nbsp;</span> : null}
       </div>
     </div>
   );

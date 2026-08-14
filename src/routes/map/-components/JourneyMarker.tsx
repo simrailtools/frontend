@@ -23,7 +23,7 @@ export const JourneyMarker: FC<MarkerComponentProps> = memo(
     const driver = journey.live?.journeyData?.driver;
     const { data: userInfo, isLoading: userInfoLoading } = useUserData(driver);
 
-    const markerRef = useRef<MarkerInstance>(null);
+    const markerRef = useRef<MarkerInstance | null>(null);
     const updatePosition = useCallback((lat: number, lon: number) => {
       const marker = markerRef.current;
       if (marker) {

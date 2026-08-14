@@ -68,15 +68,12 @@ export const BoardSelectForm: FC<BoardSelectFormProps> = ({ timeSpan, onlyPassen
     placeholderData: prev => prev,
     enabled: showPointSuggestions && pointSearchTerm.length >= 3,
   });
-  const { data: servers, isLoading: isServersLoading } = useQuery({
+  const { data: servers } = useQuery({
     ...listServersOptions({ query: { includeOffline: true } }),
   });
 
-  if (isServersLoading) {
-    return <Throbber />;
-  }
   if (!servers) {
-    throw new Error("Unable to load server list from backend");
+    return <Throbber />;
   }
 
   return (

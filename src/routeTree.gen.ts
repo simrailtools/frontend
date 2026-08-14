@@ -10,19 +10,14 @@
 
 import { Route as rootRouteImport } from "./routes/__root"
 import { Route as IndexRouteImport } from "./routes/index"
-import { Route as MapIndexRouteImport } from "./routes/map/index"
 import { Route as DepartureboardIndexRouteImport } from "./routes/departureboard/index"
-import { Route as MapServerIdRouteImport } from "./routes/map/$serverId"
 import { Route as JourneysJourneyIdRouteImport } from "./routes/journeys/$journeyId"
+import { Route as MapIndexRouteImport } from "./routes/map/index"
+import { Route as MapServerIdRouteImport } from "./routes/map/$serverId"
 
 const IndexRoute = IndexRouteImport.update({
   id: "/",
   path: "/",
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MapIndexRoute = MapIndexRouteImport.update({
-  id: "/map/",
-  path: "/map/",
   getParentRoute: () => rootRouteImport,
 } as any)
 const DepartureboardIndexRoute = DepartureboardIndexRouteImport.update({
@@ -30,14 +25,19 @@ const DepartureboardIndexRoute = DepartureboardIndexRouteImport.update({
   path: "/departureboard/",
   getParentRoute: () => rootRouteImport,
 } as any)
-const MapServerIdRoute = MapServerIdRouteImport.update({
-  id: "/map/$serverId",
-  path: "/map/$serverId",
-  getParentRoute: () => rootRouteImport,
-} as any)
 const JourneysJourneyIdRoute = JourneysJourneyIdRouteImport.update({
   id: "/journeys/$journeyId",
   path: "/journeys/$journeyId",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapIndexRoute = MapIndexRouteImport.update({
+  id: "/map/",
+  path: "/map/",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapServerIdRoute = MapServerIdRouteImport.update({
+  id: "/map/$serverId",
+  path: "/map/$serverId",
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -73,11 +73,7 @@ export interface FileRouteTypes {
     | "/map/"
   fileRoutesByTo: FileRoutesByTo
   to:
-    | "/"
-    | "/journeys/$journeyId"
-    | "/map/$serverId"
-    | "/departureboard"
-    | "/map"
+    "/" | "/journeys/$journeyId" | "/map/$serverId" | "/departureboard" | "/map"
   id:
     | "__root__"
     | "/"
@@ -104,13 +100,6 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/map/": {
-      id: "/map/"
-      path: "/map"
-      fullPath: "/map/"
-      preLoaderRoute: typeof MapIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     "/departureboard/": {
       id: "/departureboard/"
       path: "/departureboard"
@@ -118,18 +107,25 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof DepartureboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/map/$serverId": {
-      id: "/map/$serverId"
-      path: "/map/$serverId"
-      fullPath: "/map/$serverId"
-      preLoaderRoute: typeof MapServerIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     "/journeys/$journeyId": {
       id: "/journeys/$journeyId"
       path: "/journeys/$journeyId"
       fullPath: "/journeys/$journeyId"
       preLoaderRoute: typeof JourneysJourneyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/map/": {
+      id: "/map/"
+      path: "/map"
+      fullPath: "/map/"
+      preLoaderRoute: typeof MapIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/map/$serverId": {
+      id: "/map/$serverId"
+      path: "/map/$serverId"
+      fullPath: "/map/$serverId"
+      preLoaderRoute: typeof MapServerIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

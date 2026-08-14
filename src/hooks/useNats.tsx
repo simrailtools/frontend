@@ -130,7 +130,7 @@ export const NatsContextProvider: FC<PropsWithChildren<NatsContextOptions>> = ({
       return;
     }
 
-    if (connectionRef.current || connectionRef.current === null) {
+    if (connectionRef.current !== undefined) {
       // a connection is already established or in-flight, do nothing
       return;
     }
