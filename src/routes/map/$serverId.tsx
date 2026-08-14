@@ -1,8 +1,8 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./map.css";
-import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { type FC, useEffect, useMemo } from "react";
 import { AttributionControl, Layer, Map as MapLibreMap, Source } from "react-map-gl/maplibre";
 import { z } from "zod";
@@ -130,10 +130,10 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
         keyboard={false}
         scrollZoom={true}
         maplibreLogo={false}
-        workerUrl={maplibreWorkerUrl}
         doubleClickZoom={false}
         attributionControl={false}
         refreshExpiredTiles={false}
+        workerUrl={maplibreWorkerUrl}
         mapStyle={tileLayer.spec}
         onClick={() => setSelectedJourney(undefined)}
       >
