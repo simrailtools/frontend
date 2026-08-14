@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.8/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -21,7 +21,7 @@
   "assist": {
     "enabled": true,
     "actions": {
-      "recommended": true,
+      "preset": "recommended",
       "source": {
         "organizeImports": "on",
         "noDuplicateClasses": "on"
@@ -31,7 +31,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "style": {
         "noEnum": "error",
         "noCommonJs": "error",
@@ -59,6 +59,8 @@
       "complexity": {
         "noVoid": "error",
         "useWhile": "error",
+        "noDivRegex": "error",
+        "useArrayFind": "error",
         "noUselessUndefined": "error",
         "noUselessStringConcat": "error"
       },
@@ -73,34 +75,29 @@
         "noNestedComponentDefinitions": "error"
       },
       "nursery": {
-        "noProto": "error",
-        "noForIn": "error",
-        "useFind": "error",
-        "noDivRegex": "error",
         "useRegexpExec": "error",
-        "noLeakedRender": "error",
         "noMisusedPromises": "error",
-        "noUnknownAttribute": "error",
         "noFloatingPromises": "error",
-        "useArraySortCompare": "error",
-        "noAmbiguousAnchorText": "error",
-        "noDuplicateEnumValues": "error",
-        "noDuplicatedSpreadProps": "error",
-        "noUnnecessaryConditions": "error",
         "useExhaustiveSwitchCases": "error"
       },
       "suspicious": {
         "noVar": "error",
+        "noForIn": "error",
         "noAlert": "error",
+        "noProto": "error",
         "useAwait": "error",
         "useErrorMessage": "error",
         "noEvolvingTypes": "error",
         "noReactForwardRef": "error",
+        "noUnknownAttribute": "error",
         "noDeprecatedImports": "error",
+        "useArraySortCompare": "error",
         "noUnusedExpressions": "error",
         "noMisplacedAssertion": "error",
         "noUnassignedVariables": "error",
+        "noDuplicateEnumValues": "error",
         "noEmptyBlockStatements": "error",
+        "noDuplicatedSpreadProps": "error",
         "noConstantBinaryExpressions": "error",
         "useNumberToFixedDigitsArgument": "error"
       },
@@ -109,6 +106,9 @@
         "noBarrelFile": "error",
         "noReExportAll": "error",
         "noNamespaceImport": "error"
+      },
+      "a11y": {
+        "noAmbiguousAnchorText": "error"
       }
     },
     "domains": {

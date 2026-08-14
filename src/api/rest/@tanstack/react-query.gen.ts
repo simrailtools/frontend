@@ -296,26 +296,29 @@ export const listPointsInfiniteQueryKey = (options?: Options<ListPointsData>): Q
 /**
  * List all points that are registered
  */
-export const listPointsInfiniteOptions = (options?: Options<ListPointsData>) => infiniteQueryOptions<ListPointsResponse, ListPointsError, InfiniteData<ListPointsResponse>, QueryKey<Options<ListPointsData>>, number | Pick<QueryKey<Options<ListPointsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
-// @ts-ignore
-{
-    queryFn: async ({ pageParam, queryKey, signal }) => {
-        // @ts-ignore
-        const page: Pick<QueryKey<Options<ListPointsData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
-            query: {
-                page: pageParam
-            }
-        };
-        const params = createInfiniteParams(queryKey, page);
-        return await listPoints({
-            ...options,
-            ...params,
-            signal,
-            throwOnError: true
-        });
-    },
-    queryKey: listPointsInfiniteQueryKey(options)
-});
+export const listPointsInfiniteOptions = (options?: Options<ListPointsData>) => {
+    const opts = infiniteQueryOptions<ListPointsResponse, ListPointsError, InfiniteData<ListPointsResponse>, QueryKey<Options<ListPointsData>>, number | Pick<QueryKey<Options<ListPointsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<ListPointsData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    page: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            return await listPoints({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+        },
+        queryKey: listPointsInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
 
 export const findMapPolylineByJourneyQueryKey = (options: Options<FindMapPolylineByJourneyData>) => createQueryKey('findMapPolylineByJourney', options);
 
@@ -362,26 +365,29 @@ export const findJourneysByRailcarInfiniteQueryKey = (options: Options<FindJourn
  * and not the real composition of the journey.
  *
  */
-export const findJourneysByRailcarInfiniteOptions = (options: Options<FindJourneysByRailcarData>) => infiniteQueryOptions<FindJourneysByRailcarResponse, FindJourneysByRailcarError, InfiniteData<FindJourneysByRailcarResponse>, QueryKey<Options<FindJourneysByRailcarData>>, number | Pick<QueryKey<Options<FindJourneysByRailcarData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
-// @ts-ignore
-{
-    queryFn: async ({ pageParam, queryKey, signal }) => {
-        // @ts-ignore
-        const page: Pick<QueryKey<Options<FindJourneysByRailcarData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
-            query: {
-                page: pageParam
-            }
-        };
-        const params = createInfiniteParams(queryKey, page);
-        return await findJourneysByRailcar({
-            ...options,
-            ...params,
-            signal,
-            throwOnError: true
-        });
-    },
-    queryKey: findJourneysByRailcarInfiniteQueryKey(options)
-});
+export const findJourneysByRailcarInfiniteOptions = (options: Options<FindJourneysByRailcarData>) => {
+    const opts = infiniteQueryOptions<FindJourneysByRailcarResponse, FindJourneysByRailcarError, InfiniteData<FindJourneysByRailcarResponse>, QueryKey<Options<FindJourneysByRailcarData>>, number | Pick<QueryKey<Options<FindJourneysByRailcarData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<FindJourneysByRailcarData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    page: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            return await findJourneysByRailcar({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+        },
+        queryKey: findJourneysByRailcarInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
 
 export const findJourneysByPlayableDepartureQueryKey = (options: Options<FindJourneysByPlayableDepartureData>) => createQueryKey('findJourneysByPlayableDeparture', options);
 
@@ -415,26 +421,29 @@ export const findJourneysByPlayableDepartureInfiniteQueryKey = (options: Options
  * to the start time plus 15 minutes.
  *
  */
-export const findJourneysByPlayableDepartureInfiniteOptions = (options: Options<FindJourneysByPlayableDepartureData>) => infiniteQueryOptions<FindJourneysByPlayableDepartureResponse, FindJourneysByPlayableDepartureError, InfiniteData<FindJourneysByPlayableDepartureResponse>, QueryKey<Options<FindJourneysByPlayableDepartureData>>, number | Pick<QueryKey<Options<FindJourneysByPlayableDepartureData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
-// @ts-ignore
-{
-    queryFn: async ({ pageParam, queryKey, signal }) => {
-        // @ts-ignore
-        const page: Pick<QueryKey<Options<FindJourneysByPlayableDepartureData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
-            query: {
-                page: pageParam
-            }
-        };
-        const params = createInfiniteParams(queryKey, page);
-        return await findJourneysByPlayableDeparture({
-            ...options,
-            ...params,
-            signal,
-            throwOnError: true
-        });
-    },
-    queryKey: findJourneysByPlayableDepartureInfiniteQueryKey(options)
-});
+export const findJourneysByPlayableDepartureInfiniteOptions = (options: Options<FindJourneysByPlayableDepartureData>) => {
+    const opts = infiniteQueryOptions<FindJourneysByPlayableDepartureResponse, FindJourneysByPlayableDepartureError, InfiniteData<FindJourneysByPlayableDepartureResponse>, QueryKey<Options<FindJourneysByPlayableDepartureData>>, number | Pick<QueryKey<Options<FindJourneysByPlayableDepartureData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<FindJourneysByPlayableDepartureData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    page: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            return await findJourneysByPlayableDeparture({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+        },
+        queryKey: findJourneysByPlayableDepartureInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
 
 export const findJourneyByIdQueryKey = (options: Options<FindJourneyByIdData>) => createQueryKey('findJourneyById', options);
 
@@ -487,26 +496,29 @@ export const findJourneysByEventInfiniteQueryKey = (options: Options<FindJourney
  * journey line must be provided.
  *
  */
-export const findJourneysByEventInfiniteOptions = (options: Options<FindJourneysByEventData>) => infiniteQueryOptions<FindJourneysByEventResponse, FindJourneysByEventError, InfiniteData<FindJourneysByEventResponse>, QueryKey<Options<FindJourneysByEventData>>, number | Pick<QueryKey<Options<FindJourneysByEventData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
-// @ts-ignore
-{
-    queryFn: async ({ pageParam, queryKey, signal }) => {
-        // @ts-ignore
-        const page: Pick<QueryKey<Options<FindJourneysByEventData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
-            query: {
-                page: pageParam
-            }
-        };
-        const params = createInfiniteParams(queryKey, page);
-        return await findJourneysByEvent({
-            ...options,
-            ...params,
-            signal,
-            throwOnError: true
-        });
-    },
-    queryKey: findJourneysByEventInfiniteQueryKey(options)
-});
+export const findJourneysByEventInfiniteOptions = (options: Options<FindJourneysByEventData>) => {
+    const opts = infiniteQueryOptions<FindJourneysByEventResponse, FindJourneysByEventError, InfiniteData<FindJourneysByEventResponse>, QueryKey<Options<FindJourneysByEventData>>, number | Pick<QueryKey<Options<FindJourneysByEventData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<FindJourneysByEventData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    page: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            return await findJourneysByEvent({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+        },
+        queryKey: findJourneysByEventInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
 
 export const listActiveJourneysQueryKey = (options: Options<ListActiveJourneysData>) => createQueryKey('listActiveJourneys', options);
 
@@ -558,26 +570,29 @@ export const findDispatchPostsInfiniteQueryKey = (options?: Options<FindDispatch
  * listing endpoint.
  *
  */
-export const findDispatchPostsInfiniteOptions = (options?: Options<FindDispatchPostsData>) => infiniteQueryOptions<FindDispatchPostsResponse, FindDispatchPostsError, InfiniteData<FindDispatchPostsResponse>, QueryKey<Options<FindDispatchPostsData>>, number | Pick<QueryKey<Options<FindDispatchPostsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
-// @ts-ignore
-{
-    queryFn: async ({ pageParam, queryKey, signal }) => {
-        // @ts-ignore
-        const page: Pick<QueryKey<Options<FindDispatchPostsData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
-            query: {
-                page: pageParam
-            }
-        };
-        const params = createInfiniteParams(queryKey, page);
-        return await findDispatchPosts({
-            ...options,
-            ...params,
-            signal,
-            throwOnError: true
-        });
-    },
-    queryKey: findDispatchPostsInfiniteQueryKey(options)
-});
+export const findDispatchPostsInfiniteOptions = (options?: Options<FindDispatchPostsData>) => {
+    const opts = infiniteQueryOptions<FindDispatchPostsResponse, FindDispatchPostsError, InfiniteData<FindDispatchPostsResponse>, QueryKey<Options<FindDispatchPostsData>>, number | Pick<QueryKey<Options<FindDispatchPostsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<FindDispatchPostsData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    page: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            return await findDispatchPosts({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+        },
+        queryKey: findDispatchPostsInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
 
 export const findDispatchPostByIdQueryKey = (options: Options<FindDispatchPostByIdData>) => createQueryKey('findDispatchPostById', options);
 

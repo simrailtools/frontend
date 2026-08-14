@@ -1,5 +1,6 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./map.css";
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { type FC, useEffect, useMemo } from "react";
@@ -129,6 +130,7 @@ const ServerMap: FC<{ serverId: string }> = ({ serverId }) => {
         keyboard={false}
         scrollZoom={true}
         maplibreLogo={false}
+        workerUrl={maplibreWorkerUrl}
         doubleClickZoom={false}
         attributionControl={false}
         refreshExpiredTiles={false}

@@ -48,8 +48,7 @@ export const MapLayerControl: FC<LayerControlProps> = ({ mapOptions, onBaseLayer
         >
           <img src={settingsIcon} alt="" className="h-10 w-10" />
         </button>
-        {/** biome-ignore lint/nursery/noLeakedRender: biomejs/biome#8664 */}
-        {open && (
+        {open ? (
           <div
             id={panelId}
             className="absolute bottom-14 right-0 w-56 rounded-lg bg-white/95 p-3 text-sm text-gray-800 shadow-lg backdrop-blur"
@@ -82,7 +81,7 @@ export const MapLayerControl: FC<LayerControlProps> = ({ mapOptions, onBaseLayer
               ))}
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
