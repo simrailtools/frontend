@@ -33,7 +33,7 @@
     "clsx": "^2.1.1",
     "fast-equals": "^6.0.2",
     "luxon": "^3.7.2",
-    "maplibre-gl": "^6.3.0",
+    "maplibre-gl": "^6.4.1",
     "react": "^19.2.8",
     "react-clock": "^6.0.0",
     "react-dom": "^19.2.8",
